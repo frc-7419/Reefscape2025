@@ -20,20 +20,24 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
+import frc.robot.util.CombinedAlert;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
-  private final Alert canErrorAlert = new Alert("RIO CAN errors detected.", AlertType.kError);
-  private final Alert canivoreErrorAlert = new Alert("CANivore error detected.", AlertType.kError);
-  private final Alert lowBatteryAlert = new Alert(
-      "Low Battery / Brownout",
-      AlertType.kWarning);
+  private final CombinedAlert canErrorAlert = new CombinedAlert(CombinedAlert.Severity.ERROR,
+      "RIO CAN errors detected.", "The RIO CAN bus is not responding properly.");
+  private final CombinedAlert canivoreErrorAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "CANivore error detected.",
+      "The CANivore device is not responding properly.");
+  private final CombinedAlert lowBatteryAlert = new CombinedAlert(CombinedAlert.Severity.WARNING,
+      "Low Battery / Brownout", "Voltage is under " + RobotConstants.kLowBatteryVoltage + "V.");
   CANBus canivore = new CANBus(RobotConstants.kCANivoreBus);
-  
-  private void updateRobotStatus(){
+
+  private void updateRobotStatus() {
     CANStatus rioCanStatus = RobotController.getCANStatus();
     CANBusStatus canivoreStatus = canivore.getStatus();
 
@@ -50,17 +54,17 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
 
-    if(rioCanStatus.receiveErrorCount > 0 || rioCanStatus.transmitErrorCount > 0){
+    if (rioCanStatus.receiveErrorCount > 0 || rioCanStatus.transmitErrorCount > 0) {
       canErrorAlert.set(true);
-    }else{
+    } else {
       canErrorAlert.set(false);
     }
-    if(canivoreStatus.Status.isError()){
+    if (canivoreStatus.Status.isError()) {
       canivoreErrorAlert.set(true);
-    }else{
+    } else {
       canivoreErrorAlert.set(false);
     }
-    if(RobotController.getBatteryVoltage() <= RobotConstants.kLowBatteryVoltage){
+    if (RobotController.getBatteryVoltage() <= RobotConstants.kLowBatteryVoltage) {
       lowBatteryAlert.set(true);
     } else {
       lowBatteryAlert.set(false);
