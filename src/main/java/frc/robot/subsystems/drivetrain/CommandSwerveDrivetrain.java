@@ -20,6 +20,8 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -254,6 +256,51 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return m_sysIdRoutineToApply.dynamic(direction);
     }
 
+    /**
+     * Alternate telemetry supported by Elastic to view swerve module states
+     * visually.
+     */
+    Sendable swerveStates = new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.setSmartDashboardType("SwerveDrive");
+
+            builder.addDoubleProperty("Front Left Angle",
+                    () -> getState().ModuleStates[0].angle.getRadians(),
+                    null);
+
+            builder.addDoubleProperty("Front Left Velocity",
+                    () -> getState().ModuleStates[0].speedMetersPerSecond,
+                    null);
+
+            builder.addDoubleProperty("Front Right Angle",
+                    () -> getState().ModuleStates[1].angle.getRadians(),
+                    null);
+
+            builder.addDoubleProperty("Front Right Velocity",
+                    () -> getState().ModuleStates[1].speedMetersPerSecond,
+                    null);
+
+            builder.addDoubleProperty("Back Left Angle",
+                    () -> getState().ModuleStates[2].angle.getRadians(),
+                    null);
+
+            builder.addDoubleProperty("Back Left Velocity",
+                    () -> getState().ModuleStates[2].speedMetersPerSecond,
+                    null);
+
+            builder.addDoubleProperty("Back Right Angle",
+                    () -> getState().ModuleStates[3].angle.getRadians(),
+                    null);
+
+            builder.addDoubleProperty("Back Right Velocity",
+                    () -> getState().ModuleStates[3].speedMetersPerSecond,
+                    null);
+
+            builder.addDoubleProperty("Robot Angle", () -> getState().Pose.getRotation().getRadians(), null);
+        }
+    };
+
     @Override
     public void periodic() {
         /*
@@ -278,6 +325,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
         field.setRobotPose(getState().Pose);
         SmartDashboard.putData("Estimated Robot Pose", field);
+        SmartDashboard.putData("Swerve States", swerveStates);
     }
 
     private void startSimThread() {
