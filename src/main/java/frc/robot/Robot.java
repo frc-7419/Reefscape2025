@@ -4,50 +4,54 @@
 
 package frc.robot;
 
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
-
 import edu.wpi.first.hal.can.CANStatus;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
+import java.util.Optional;
+import org.photonvision.EstimatedRobotPose;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
-  private final CombinedAlert canErrorAlert = new CombinedAlert(CombinedAlert.Severity.ERROR,
-      "RIO CAN errors detected.", "The RIO CAN bus is not responding properly.");
-  private final CombinedAlert canivoreErrorAlert = new CombinedAlert(
-      CombinedAlert.Severity.ERROR,
-      "CANivore error detected.",
-      "The CANivore device is not responding properly.");
-  private final CombinedAlert lowBatteryAlert = new CombinedAlert(CombinedAlert.Severity.WARNING,
-      "Low Battery / Brownout", "Voltage is under " + RobotConstants.kLowBatteryVoltage + "V.");
+  private final CombinedAlert canErrorAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "RIO CAN errors detected.",
+          "The RIO CAN bus is not responding properly.");
+  private final CombinedAlert canivoreErrorAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "CANivore error detected.",
+          "The CANivore device is not responding properly.");
+  private final CombinedAlert lowBatteryAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.WARNING,
+          "Low Battery / Brownout",
+          "Voltage is under " + RobotConstants.kLowBatteryVoltage + "V.");
   CANBus canivore = new CANBus(RobotConstants.kCANivoreBus);
 
   private void updateRobotStatus() {
     CANStatus rioCanStatus = RobotController.getCANStatus();
     CANBusStatus canivoreStatus = canivore.getStatus();
 
-    SmartDashboard.putNumber("RIO CAN Bus Utilization (%)", rioCanStatus.percentBusUtilization * 100);
+    SmartDashboard.putNumber(
+        "RIO CAN Bus Utilization (%)", rioCanStatus.percentBusUtilization * 100);
     SmartDashboard.putNumber("RIO CAN Bus Off Count", rioCanStatus.busOffCount);
     SmartDashboard.putNumber("RIO CAN TX Full Count", rioCanStatus.txFullCount);
     SmartDashboard.putNumber("RIO CAN Receive Error Count", rioCanStatus.receiveErrorCount);
     SmartDashboard.putNumber("RIO CAN Transmit Error Count", rioCanStatus.transmitErrorCount);
 
-    SmartDashboard.putNumber("CANivore CAN Bus Utilization (%)", canivoreStatus.BusUtilization * 100);
+    SmartDashboard.putNumber(
+        "CANivore CAN Bus Utilization (%)", canivoreStatus.BusUtilization * 100);
     SmartDashboard.putNumber("CANivore CAN Bus Off Count", canivoreStatus.BusOffCount);
     SmartDashboard.putNumber("CANivore CAN TX Full Count", canivoreStatus.TxFullCount);
     SmartDashboard.putString("CANivore CAN Status", canivoreStatus.Status.getName());
@@ -80,23 +84,20 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     Optional<EstimatedRobotPose> result = m_robotContainer.photonvision.getEstimatedGlobalPose();
     if (result.isPresent()) {
-      m_robotContainer.drivetrain.addVisionMeasurement(result.get().estimatedPose.toPose2d(),
-          result.get().timestampSeconds);
+      m_robotContainer.drivetrain.addVisionMeasurement(
+          result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
     }
     updateRobotStatus();
   }
 
   @Override
-  public void disabledInit() {
-  }
+  public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {
-  }
+  public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {
-  }
+  public void disabledExit() {}
 
   @Override
   public void autonomousInit() {
@@ -108,12 +109,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {
-  }
+  public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {
-  }
+  public void autonomousExit() {}
 
   @Override
   public void teleopInit() {
@@ -123,12 +122,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   @Override
-  public void teleopExit() {
-  }
+  public void teleopExit() {}
 
   @Override
   public void testInit() {
@@ -136,10 +133,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
   @Override
-  public void testExit() {
-  }
+  public void testExit() {}
 }
