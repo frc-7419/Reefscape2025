@@ -14,6 +14,10 @@
     "**/.factorypath": true,
     "**/*~": true
   },
+  "workbench.startupEditor": "readme",
+  "workbench.editorAssociations": {
+    "*.md": "default"
+  },
   "java.test.config": [
     {
       "name": "WPIlibUnitTests",
@@ -26,5 +30,6 @@
     }
   ],
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable"
+  "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
+  "files.autoSave": "onFocusChange"
 }
