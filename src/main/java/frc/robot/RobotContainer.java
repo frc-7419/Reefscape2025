@@ -6,8 +6,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.security.GeneralSecurityException;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -21,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
-import frc.robot.subsystems.buttonboard.ButtonBoard;
-import frc.robot.subsystems.buttonboard.ButtonBoard;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
 public class RobotContainer {
@@ -53,26 +49,26 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", autoChooser);
     SmartDashboard.putString("Button States: ", "0 for not pressed 1 for pressed");
-        SmartDashboard.putBoolean("Button 0 Pressed: ", buttonBoard.getRawButton(0));
-        SmartDashboard.putBoolean("Button 1 Pressed: ", buttonBoard.getRawButton(1));
-        SmartDashboard.putBoolean("Button 2 Pressed: ", buttonBoard.getRawButton(2));
-        SmartDashboard.putBoolean("Button 3 Pressed: ", buttonBoard.getRawButton(3));
-        SmartDashboard.putBoolean("Button 4 Pressed: ", buttonBoard.getRawButton(4));
-        SmartDashboard.putBoolean("Button 5 Pressed: ", buttonBoard.getRawButton(5));
-        SmartDashboard.putBoolean("Button 6 Pressed: ", buttonBoard.getRawButton(6));
-        SmartDashboard.putBoolean("Button 7 Pressed: ", buttonBoard.getRawButton(7));
-        SmartDashboard.putBoolean("Button 8 Pressed: ", buttonBoard.getRawButton(9));
-        SmartDashboard.putBoolean("Button 9 Pressed: ", buttonBoard.getRawButton(9));
-        SmartDashboard.putBoolean("Button 10 Pressed: ", buttonBoard.getRawButton(10));
-        SmartDashboard.putBoolean("Button 11 Pressed: ", buttonBoard.getRawButton(11));
-        SmartDashboard.putBoolean("Button 12 Pressed: ", buttonBoard.getRawButton(12));
-        SmartDashboard.putBoolean("Button 13 Pressed: ", buttonBoard.getRawButton(13));
-        SmartDashboard.putBoolean("Button 14 Pressed: ", buttonBoard.getRawButton(14));
-        SmartDashboard.putBoolean("Button 15 Pressed: ", buttonBoard.getRawButton(15));
-        SmartDashboard.putNumber("Left joystick X axis", operator.getLeftX());
-        SmartDashboard.putNumber("Left joystick Y axis", operator.getLeftY());
-        SmartDashboard.putNumber("Right joystick X axis", operator.getRightX());
-        SmartDashboard.putNumber("Right joystick Y axis", operator.getRightY());
+    SmartDashboard.putBoolean("Button 0 Pressed: ", buttonBoard.getRawButton(0));
+    SmartDashboard.putBoolean("Button 1 Pressed: ", buttonBoard.getRawButton(1));
+    SmartDashboard.putBoolean("Button 2 Pressed: ", buttonBoard.getRawButton(2));
+    SmartDashboard.putBoolean("Button 3 Pressed: ", buttonBoard.getRawButton(3));
+    SmartDashboard.putBoolean("Button 4 Pressed: ", buttonBoard.getRawButton(4));
+    SmartDashboard.putBoolean("Button 5 Pressed: ", buttonBoard.getRawButton(5));
+    SmartDashboard.putBoolean("Button 6 Pressed: ", buttonBoard.getRawButton(6));
+    SmartDashboard.putBoolean("Button 7 Pressed: ", buttonBoard.getRawButton(7));
+    SmartDashboard.putBoolean("Button 8 Pressed: ", buttonBoard.getRawButton(9));
+    SmartDashboard.putBoolean("Button 9 Pressed: ", buttonBoard.getRawButton(9));
+    SmartDashboard.putBoolean("Button 10 Pressed: ", buttonBoard.getRawButton(10));
+    SmartDashboard.putBoolean("Button 11 Pressed: ", buttonBoard.getRawButton(11));
+    SmartDashboard.putBoolean("Button 12 Pressed: ", buttonBoard.getRawButton(12));
+    SmartDashboard.putBoolean("Button 13 Pressed: ", buttonBoard.getRawButton(13));
+    SmartDashboard.putBoolean("Button 14 Pressed: ", buttonBoard.getRawButton(14));
+    SmartDashboard.putBoolean("Button 15 Pressed: ", buttonBoard.getRawButton(15));
+    SmartDashboard.putNumber("Left joystick X axis", operator.getLeftX());
+    SmartDashboard.putNumber("Left joystick Y axis", operator.getLeftY());
+    SmartDashboard.putNumber("Right joystick X axis", operator.getRightX());
+    SmartDashboard.putNumber("Right joystick Y axis", operator.getRightY());
     photonvision = new PhotonvisionSubsystem("frontCamera");
     configureBindings();
   }
