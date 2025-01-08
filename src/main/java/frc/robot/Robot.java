@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("CANivore CAN Status", canivoreStatus.Status.getName());
 
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+    
 
     if (rioCanStatus.receiveErrorCount > 0 || rioCanStatus.transmitErrorCount > 0) {
       canErrorAlert.set(true);
