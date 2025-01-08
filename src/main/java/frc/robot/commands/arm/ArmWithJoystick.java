@@ -4,18 +4,16 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.ArmSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ArmWithJoystick extends Command {
   private ArmSubsystem armSubsystem;
-  private XboxController joystick;
 
-  public ArmWithJoystick(ArmSubsystem armSubsystem, XboxController joystick) {
+  public ArmWithJoystick(ArmSubsystem armSubsystem) {
     this.armSubsystem = armSubsystem;
-    this.joystick = joystick;
+
     addRequirements(armSubsystem);
   }
 
