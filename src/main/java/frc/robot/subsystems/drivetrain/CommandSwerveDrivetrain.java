@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -27,13 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
  * be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsystem {
+public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
@@ -49,8 +49,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
       new SwerveRequest.ApplyRobotSpeeds();
 
-  private final Field2d field = new Field2d();
-
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
       new SwerveRequest.SysIdSwerveTranslation();
@@ -58,6 +56,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
+
+  private final Field2d field = new Field2d();
 
   /*
    * SysId routine for characterizing translation. This is used to find PID gains
@@ -129,7 +129,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
    * @param modules Constants for each specific module
    */
   public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
+      SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
     if (Utils.isSimulation()) {
       startSimThread();
@@ -150,9 +150,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
    */
   public CommandSwerveDrivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
-      double OdometryUpdateFrequency,
-      SwerveModuleConstants... modules) {
-    super(drivetrainConstants, OdometryUpdateFrequency, modules);
+      double odometryUpdateFrequency,
+      SwerveModuleConstants<?, ?, ?>... modules) {
+    super(drivetrainConstants, odometryUpdateFrequency, modules);
     if (Utils.isSimulation()) {
       startSimThread();
     }
@@ -168,8 +168,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
    * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
    * @param odometryUpdateFrequency The frequency to run the odometry loop. If unspecified or set to
    *     0 Hz, this is 250 Hz on CAN FD, and 100 Hz on CAN 2.0.
-   * @param odometryStandardDeviation The standard deviation for odometry calculation
-   * @param visionStandardDeviation The standard deviation for vision calculation
+   * @param odometryStandardDeviation The standard deviation for odometry calculation in the form
+   *     [x, y, theta]ᵀ, with units in meters and radians
+   * @param visionStandardDeviation The standard deviation for vision calculation in the form [x, y,
+   *     theta]ᵀ, with units in meters and radians
    * @param modules Constants for each specific module
    */
   public CommandSwerveDrivetrain(
@@ -177,7 +179,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       double odometryUpdateFrequency,
       Matrix<N3, N1> odometryStandardDeviation,
       Matrix<N3, N1> visionStandardDeviation,
-      SwerveModuleConstants... modules) {
+      SwerveModuleConstants<?, ?, ?>... modules) {
     super(
         drivetrainConstants,
         odometryUpdateFrequency,
