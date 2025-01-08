@@ -12,7 +12,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -38,23 +37,18 @@ public class RobotContainer {
       new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  private final CommandXboxController driver = new CommandXboxController(0);
-  private final CommandXboxController operator = new CommandXboxController(1);
+
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SendableChooser<Command> autoChooser;
   public final PhotonvisionSubsystem photonvision;
 
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
   public final GenericHID buttonBoard = new GenericHID(2);
 
   public RobotContainer() {
     autoChooser = AutoBuilder.buildAutoChooser("Tests");
-    for (int i = 0; i < 12; i++) {
-      SmartDashboard.putBoolean("Button " + i + " Pressed: ", buttonBoard.getRawButton(i));
-    }
-    SmartDashboard.putNumber("Left joystick X axis", operator.getLeftX());
-    SmartDashboard.putNumber("Left joystick Y axis", operator.getLeftY());
-    SmartDashboard.putNumber("Right joystick X axis", operator.getRightX());
-    SmartDashboard.putNumber("Right joystick Y axis", operator.getRightY());
+
     photonvision = new PhotonvisionSubsystem("frontCamera");
     configureBindings();
   }
@@ -105,6 +99,13 @@ public class RobotContainer {
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+    // change command to actual command when we decide which ones to command the buttons to
+
+    // buttonBoard.button(0, null).castTo(Trigger::new).onTrue(new WaitCommand(0.1));
+    // buttonBoard.button(0, null).castTo(Trigger::new).onTrue(new WaitCommand(0.1));
+    // buttonBoard.button(0, null).castTo(Trigger::new).onTrue(new WaitCommand(0.1));
+    // buttonBoard.button(0, null).castTo(Trigger::new).onTrue(new WaitCommand(0.1));
+
   }
 
   public Command getAutonomousCommand() {
