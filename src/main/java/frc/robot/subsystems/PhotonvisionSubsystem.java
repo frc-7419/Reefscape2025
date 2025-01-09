@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -23,18 +24,18 @@ public class PhotonvisionSubsystem {
     this.robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
     this.poseEstimator =
         new PhotonPoseEstimator(
-            AprilTagFields.k2024Crescendo
-                .loadAprilTagLayoutField(), // TODO deprecated please update
+            AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCam);
   }
 
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-    return null;
-    // return poseEstimator.update(getLatestResults());
-    // TODO: the getLatestResult() now returns a list whcih is up to 20 PhotonPipelineResults from a
-    // FIFO queue, figure out how to update the pose for every missed one and return the most
-    // updated pose, maybe pass in a pose
+    Optional<EstimatedRobotPose> latestPose = Optional.empty();
+    for (PhotonPipelineResult result : getLatestResults()) {
+      latestPose = poseEstimator.update(result);
+    }
+
+    return latestPose;
   }
 
   public List<PhotonPipelineResult> getLatestResults() {
