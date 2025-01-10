@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.constants.Constants;
-
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
@@ -24,7 +23,7 @@ public class PhotonvisionSubsystem {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator poseEstimator;
   private final Transform3d robotToCam;
-  private Matrix<N3, N1> curStdDevs; 
+  private Matrix<N3, N1> curStdDevs;
 
   public PhotonvisionSubsystem(String cameraName) {
     this.camera = new PhotonCamera(cameraName);
@@ -45,44 +44,47 @@ public class PhotonvisionSubsystem {
 
     return latestPose;
   }
+
   private void updateEstimationStdDevs(
-        Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
-        if (estimatedPose.isEmpty()) {
-            // if no pose input then default to the regular single tag devieations
-            curStdDevs = Constants.kSingleTagStdDevs;
-        } else {
-            // start running heurisitc(basically its good enough for pose caluclation)
-            var estStdDevs = Constants.kSingleTagStdDevs;
-            int numTags = 0;
-            double avgDist = 0;
-            //precalculation
-            for (var tgt : targets) {
-                var tagPose = poseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
-                if (tagPose.isEmpty()) continue;
-                numTags++;
-                avgDist +=
-                        tagPose
-                                .get()
-                                .toPose2d()
-                                .getTranslation()
-                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
-            }
+      Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
+    if (estimatedPose.isEmpty()) {
+      // if no pose input then default to the regular single tag devieations
+      curStdDevs = Constants.kSingleTagStdDevs;
+    } else {
+      // start running heurisitc(basically its good enough for pose caluclation)
+      var estStdDevs = Constants.kSingleTagStdDevs;
+      int numTags = 0;
+      double avgDist = 0;
+      // precalculation
+      for (var tgt : targets) {
+        var tagPose = poseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
+        if (tagPose.isEmpty()) continue;
+        numTags++;
+        avgDist +=
+            tagPose
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+      }
 
-            if (numTags == 0) {
-                curStdDevs = Constants.kSingleTagStdDevs;
-            } else {
-                avgDist /= numTags;
-                if (numTags > 1) estStdDevs = Constants.kMultiTagStdDevs;
-                if (numTags == 1 && avgDist > 4)
-                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
-                curStdDevs = estStdDevs;
-            }
-        }
+      if (numTags == 0) {
+        curStdDevs = Constants.kSingleTagStdDevs;
+      } else {
+        avgDist /= numTags;
+        if (numTags > 1) estStdDevs = Constants.kMultiTagStdDevs;
+        if (numTags == 1 && avgDist > 4)
+          estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+        curStdDevs = estStdDevs;
+      }
     }
+  }
 
-  public Matrix<N3, N1> getEstimationStdDevs() { //we can use this later on to add both global pose and std dev pose to drive train pose
-      return curStdDevs;
+  public Matrix<N3, N1>
+      getEstimationStdDevs() { // we can use this later on to add both global pose and std dev pose
+    // to drive train pose
+    return curStdDevs;
   }
 
   public List<PhotonPipelineResult> getLatestResults() {
