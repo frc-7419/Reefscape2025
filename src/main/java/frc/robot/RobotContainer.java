@@ -9,7 +9,10 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.Topic;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,12 +44,12 @@ public class RobotContainer {
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final SendableChooser<Command> autoChooser;
+  private final ToPose toPose = new ToPose(drivetrain);
+//   private final SendableChooser<Command> autoChooser;
   public final PhotonvisionSubsystem photonvision;
 
   public RobotContainer() {
-    autoChooser = AutoBuilder.buildAutoChooser("Tests");
-    SmartDashboard.putData("Auto Mode", autoChooser);
+
     photonvision = new PhotonvisionSubsystem("frontCamera");
     configureBindings();
   }
@@ -85,7 +88,7 @@ public class RobotContainer {
         .pov(180)
         .whileTrue(
             drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    driver.x().whileTrue(new ToPose(drivetrain));
+    driver.x().whileTrue(toPose);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -102,6 +105,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return autoChooser.getSelected();
+    return new PathPlannerAuto("Example Path");
   }
 }
