@@ -20,11 +20,11 @@ public class ToPose extends SequentialCommandGroup {
     Optional<Alliance> alliance = DriverStation.getAlliance();
 
     SmartDashboard.putBoolean("alliance present", alliance.isPresent());
-    targetPose = new Pose2d(3.812, 5.392, new Rotation2d(0.2));
+    targetPose = new Pose2d(3.812, 5.392, Rotation2d.fromDegrees(180));
 
     PathConstraints pathConstraints =
         new PathConstraints(3, 4, Units.degreesToRadians(540), Units.degreesToRadians(720));
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, pathConstraints, 0.0);
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, pathConstraints, 0);
 
     addCommands(pathfindingCommand);
   }

@@ -105,7 +105,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    // return new PathPlannerAuto("Example Path");
-    return null;
+    return new PathPlannerAuto("Example Path");
   }
 }
