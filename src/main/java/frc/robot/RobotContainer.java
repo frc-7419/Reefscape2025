@@ -10,16 +10,14 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.Topic;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.commands.ToPose;
+import frc.robot.constants.Constants.DrivetrainConstants;
+// import frc.robot.commands.ToPose;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -28,6 +26,9 @@ public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
 
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
+  
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
@@ -41,17 +42,16 @@ public class RobotContainer {
       new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  private final CommandXboxController driver = new CommandXboxController(0);
-  private final CommandXboxController operator = new CommandXboxController(1);
+
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final ToPose toPose = new ToPose(drivetrain);
-//   private final SendableChooser<Command> autoChooser;
+//   private final ToPose toPose = new ToPose(drivetrain);
+  //   private final SendableChooser<Command> autoChooser;
   public final PhotonvisionSubsystem photonvision;
 
   public RobotContainer() {
-
     photonvision = new PhotonvisionSubsystem("frontCamera");
     configureBindings();
+    SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
   }
 
   private void configureBindings() {
@@ -80,15 +80,15 @@ public class RobotContainer {
                     point.withModuleDirection(
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-    driver
-        .pov(0)
-        .whileTrue(
-            drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    driver
-        .pov(180)
-        .whileTrue(
-            drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    driver.x().whileTrue(toPose);
+    // driver
+    //     .pov(0)
+    //     .whileTrue(
+    //         drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+    // driver
+    //     .pov(180)
+    //     .whileTrue(
+    //         drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+    // driver.x().whileTrue(toPose);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -105,6 +105,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return new PathPlannerAuto("Example Path");
+    // return new PathPlannerAuto("Example Path");
+    return null;
   }
 }
