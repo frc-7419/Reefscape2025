@@ -17,7 +17,11 @@ public class ElevatorToSetpoint extends Command {
   private TrapezoidProfile.Constraints constraints;
 
   /** Creates a new ElevatorToSetpoint. */
-  public ElevatorToSetpoint(ElevatorSubsystem elevatorSubsystem, double pos, double kp, TrapezoidProfile.Constraints constraints) {
+  public ElevatorToSetpoint(
+      ElevatorSubsystem elevatorSubsystem,
+      double pos,
+      double kp,
+      TrapezoidProfile.Constraints constraints) {
     this.elevatorSubsystem = elevatorSubsystem;
     this.pos = pos;
     this.kp = kp;
@@ -30,7 +34,7 @@ public class ElevatorToSetpoint extends Command {
   public void initialize() {
     pidController = new ProfiledPIDController(kp, 0, 0, constraints);
     pidController.setGoal(pos);
-    pidController.setTolerance(1000); //placeholder
+    pidController.setTolerance(1000); // placeholder
   }
 
   // Called every time the scheduler runs while the command is scheduled.
