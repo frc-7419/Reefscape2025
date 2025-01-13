@@ -25,4 +25,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public TalonFX getLeftElevator() {
+    return leftElevatorMotor;
+  }
+
+  public TalonFX getRightElevator() {
+    return rightElevatorMotor;
+  }
+
 }
