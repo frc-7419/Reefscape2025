@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.PhotonvisionSubsystem;
+
 import java.util.function.Supplier;
 
 /**
@@ -40,6 +42,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
+  private final PhotonvisionSubsystem photonvision = new PhotonvisionSubsystem("Photon_Vision_Cam_1");
 
   /** Swerve request to apply during robot-centric path following */
   private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
@@ -242,6 +245,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   @Override
   public void periodic() {
+    var pose = photonvision.getEstimatedGlobalPose();
+    if(pose.isPresent()) addVisionMeasurement(pose.get().estimatedPose.toPose2d(), kNumConfigAttempts);
     /*
      * Periodically try to apply the operator perspective.
      * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
