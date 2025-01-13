@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 5.2850944010416665,
+        "y": 5.289509186921296
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 3.850955222800925,
+        "y": 6.522864221643519
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ReefTopRight"
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 1.272148437499999,
+        "y": 5.84277199074074
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 1.8565071614583324,
+        "y": 5.949511357060184
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.994052255614946
   },
   "useDefaultConstraints": true
 }
