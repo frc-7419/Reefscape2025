@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
-import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
