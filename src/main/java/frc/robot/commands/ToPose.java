@@ -24,7 +24,7 @@ public class ToPose extends SequentialCommandGroup {
 
     PathConstraints pathConstraints =
         new PathConstraints(3, 4, Units.degreesToRadians(540), Units.degreesToRadians(720));
-        
+
     Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, pathConstraints, 0);
 
     addCommands(pathfindingCommand);
