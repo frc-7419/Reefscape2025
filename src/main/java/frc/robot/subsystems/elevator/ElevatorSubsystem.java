@@ -10,6 +10,8 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -20,14 +22,16 @@ import frc.robot.constants.Constants.ElevatorConstants;
 // No motion magic unless cancoder :(
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
-  private TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
-  private DutyCycleEncoder elevatorEncoder =
-      new DutyCycleEncoder(ElevatorConstants.kElevatorEncoderPort);
+  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
+  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
+  private final DutyCycleEncoder elevatorEncoder = new DutyCycleEncoder(ElevatorConstants.kElevatorEncoderPort);
+  private final ElevatorFeedforward elevatorFeedforward;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), true));
+    elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG,
+        ElevatorConstants.kV, ElevatorConstants.kA);
   }
 
   /**
@@ -44,14 +48,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       brake();
     } else {
       coast();
-      leftElevatorMotor.set(power);
+      leftElevatorMotor.set(power + elevatorFeedforward.calculate(0));
     }
   }
 
   /**
    * Sets the motors to coast mode.
    *
-   * <p>In coast mode, the motors will spin freely when no power is applied.
+   * <p>
+   * In coast mode, the motors will spin freely when no power is applied.
    */
   public void coast() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -61,7 +66,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to brake mode.
    *
-   * <p>In brake mode, the motors resist motion when no power is applied.
+   * <p>
+   * In brake mode, the motors resist motion when no power is applied.
    */
   public void brake() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);

@@ -35,5 +35,9 @@ public class Constants {
     public static final Distance kLowerSoftLimit = Feet.of(0);
     public static final Angle kElevatorEncoderOffset = Rotations.of(0); // Arbitrary offset (change)
     public static final double kRotationToMetersRatio = 1; // Arbitrary ratio (change)
+    public static final double kS = 0.1;
+    public static final double kG = 0.2;
+    public static final double kV = 0.2;
+    public static final double kA = 0.3;
   }
 }
