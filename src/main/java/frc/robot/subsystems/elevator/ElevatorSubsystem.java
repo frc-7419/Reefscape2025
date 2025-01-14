@@ -4,59 +4,150 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants.ElevatorConstants;
+import frc.robot.util.CombinedAlert;
 
-// Assuming REV Through Bore Encoder is used for elevator position feedback
-// No motion magic unless cancoder :(
-
+/**
+ * The {@code ElevatorSubsystem} class controls the elevator subsystem of the robot. It manages the
+ * motion and height of the elevator using TalonFX motors.
+ */
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
   private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
-  private final DutyCycleEncoder elevatorEncoder = new DutyCycleEncoder(ElevatorConstants.kElevatorEncoderPort);
-  private final ElevatorFeedforward elevatorFeedforward;
 
-  /** Creates a new ElevatorSubsystem. */
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
+  private final MotionMagicExpoVoltage motionMagicRequest =
+      new MotionMagicExpoVoltage(0).withSlot(0);
+
+  private enum ControlMode {
+    MANUAL,
+    MOTIONMAGIC
+  }
+
+  private ControlMode controlMode = ControlMode.MANUAL;
+
+  private final CombinedAlert positionAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Elevator Out of Range",
+          "The encoder value is outside the safe range. Subsystem disabled.");
+
+  private final CombinedAlert velocityAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Elevator Velocity Error",
+          "The elevator velocity is outside the safe range. Subsystem disabled.");
+
+  private final CombinedAlert accelerationAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Elevator Acceleration Error",
+          "The elevator acceleration is outside the safe range. Subsystem disabled.");
+
+  private final CombinedAlert overheatingAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Elevator Overheating",
+          "The elevator motors are overheating. Subsystem disabled.");
+
+  /** Creates a new {@code ElevatorSubsystem}. */
   public ElevatorSubsystem() {
+    leftElevatorMotor.setPosition(0);
+    rightElevatorMotor.setPosition(0);
+
+    leftElevatorMotor.getConfigurator().apply(ElevatorConstants.elevatorTalonFXConfiguration);
+    rightElevatorMotor.getConfigurator().apply(ElevatorConstants.elevatorTalonFXConfiguration);
+
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), true));
-    elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG,
-        ElevatorConstants.kV, ElevatorConstants.kA);
+
+    coast();
   }
 
   /**
-   * Sets the power for the elevator motors while respecting soft limits.
+   * Sets the elevator power in manual mode.
    *
-   * @param power The desired motor power, ranging from -1.0 to 1.0.
+   * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
+   *     negative values move it down.
    */
   public void setElevatorPower(double power) {
-    if (power > 0 && getElevatorHeight().gt(ElevatorConstants.kUpperSoftLimit)) {
-      power = 0;
-      brake();
-    } else if (power < 0 && getElevatorHeight().lt(ElevatorConstants.kLowerSoftLimit)) {
-      power = 0;
-      brake();
-    } else {
-      coast();
-      leftElevatorMotor.set(power + elevatorFeedforward.calculate(0));
-    }
+    if (controlMode == ControlMode.MOTIONMAGIC) return;
+
+    if (!safetyCheck()) return;
+
+    power = Math.max(-1, Math.min(1, power));
+
+    leftElevatorMotor.setControl(
+        velocityRequest
+            .withVelocity(
+                power
+                    * ElevatorConstants.kMaxVelocity.in(MetersPerSecond)
+                    / ElevatorConstants.kMetersPerRotationRatio)
+            .withLimitForwardMotion(getElevatorHeight().gt(ElevatorConstants.kUpperSoftLimit))
+            .withLimitReverseMotion(getElevatorHeight().lt(ElevatorConstants.kLowerSoftLimit)));
+  }
+
+  /**
+   * Moves the elevator to the specified position using Motion Magic.
+   *
+   * @param position The desired position in meters.
+   */
+  private void toPosition(double position) {
+    controlMode = ControlMode.MOTIONMAGIC;
+
+    if (!safetyCheck()) return;
+
+    leftElevatorMotor.setControl(
+        motionMagicRequest
+            .withPosition(position / ElevatorConstants.kMetersPerRotationRatio)
+            .withLimitForwardMotion(getElevatorHeight().gt(ElevatorConstants.kUpperSoftLimit))
+            .withLimitReverseMotion(getElevatorHeight().lt(ElevatorConstants.kLowerSoftLimit)));
+  }
+
+  /**
+   * Switches the control mode of the elevator.
+   *
+   * @param controlMode The desired control mode (MANUAL or MOTIONMAGIC).
+   */
+  private void switchControlMode(ControlMode controlMode) {
+    this.controlMode = controlMode;
+  }
+
+  /**
+   * Returns a command to set the elevator position.
+   *
+   * @param position The target position as a {@link Distance}.
+   * @return The command to execute.
+   */
+  public Command setPosition(Distance position) {
+    return this.runEnd(
+        () -> toPosition(position.in(Meters) / ElevatorConstants.kMetersPerRotationRatio),
+        () -> switchControlMode(ControlMode.MANUAL));
   }
 
   /**
    * Sets the motors to coast mode.
    *
-   * <p>
-   * In coast mode, the motors will spin freely when no power is applied.
+   * <p>In coast mode, the motors will spin freely when no power is applied.
    */
   public void coast() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -66,10 +157,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to brake mode.
    *
-   * <p>
-   * In brake mode, the motors resist motion when no power is applied.
+   * <p>In brake mode, the motors resist motion when no power is applied.
    */
   public void brake() {
+    // Reduncancy to ensure both motors are stopped
+    leftElevatorMotor.set(0);
+    rightElevatorMotor.set(0);
+
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     rightElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
@@ -79,9 +173,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return The current encoder position as an {@link Angle}.
    */
-  public Angle getElevatorEncoder() {
-    return Rotations.of(
-        elevatorEncoder.get() + ElevatorConstants.kElevatorEncoderOffset.in(Rotations));
+  public Angle getPosition() {
+    return leftElevatorMotor.getPosition().getValue();
   }
 
   /**
@@ -90,12 +183,27 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return The current height of the elevator as a {@link Distance}.
    */
   public Distance getElevatorHeight() {
-    return Meters.of(getElevatorEncoder().in(Rotations) * ElevatorConstants.kRotationToMetersRatio);
+    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotationRatio);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Elevator Height (Meters)", getElevatorHeight().in(Meters));
+    SmartDashboard.putNumber("Elevator Encoder Position", getPosition().in(Rotations));
+    SmartDashboard.putString("Elevator Control Mode", controlMode.toString());
+    SmartDashboard.putBoolean("Disabled", !safetyCheck());
+    SmartDashboard.putNumber(
+        "Elevator Velocity (RotationsPerSecond)",
+        leftElevatorMotor.getVelocity().getValue().in(RotationsPerSecond));
+    SmartDashboard.putNumber(
+        "Elevator Temperature Left (Celsius)",
+        leftElevatorMotor.getDeviceTemp().getValue().in(Celsius));
+    SmartDashboard.putNumber(
+        "Elevator Temperature Right (Celsius)",
+        rightElevatorMotor.getDeviceTemp().getValue().in(Celsius));
+    SmartDashboard.putNumber(
+        "Elevator Acceleration (RotationsPerSecondPerSecond)",
+        leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
   }
 
   /**
@@ -114,5 +222,75 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public TalonFX getRightElevator() {
     return rightElevatorMotor;
+  }
+
+  /**
+   * Performs a safety check to ensure the elevator operates within safe parameters.
+   *
+   * <p>This method verifies several safety conditions, including velocity, acceleration,
+   * temperature, and position limits. If any of these conditions are violated, the subsystem is
+   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
+   * are safe, the subsystem remains operational.
+   *
+   * @return {@code true} if the elevator passes all safety checks and is operating safely, {@code
+   *     false} otherwise.
+   */
+  private boolean safetyCheck() {
+    if (!ElevatorConstants.runSafetyCheck) {
+      return true;
+    }
+
+    AngularVelocity maxAngularVelocity =
+        RotationsPerSecond.of(
+            ElevatorConstants.unsafeVelocity.in(MetersPerSecond)
+                / ElevatorConstants.kMetersPerRotationRatio);
+
+    AngularAcceleration maxAngularAcceleration =
+        RotationsPerSecondPerSecond.of(
+            ElevatorConstants.unsafeAcceleration.in(MetersPerSecondPerSecond)
+                / ElevatorConstants.kMetersPerRotationRatio);
+
+    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond)
+        >= maxAngularVelocity.in(RotationsPerSecond)) {
+      brake();
+      velocityAlert.set(true);
+      return false;
+    } else {
+      velocityAlert.set(false);
+    }
+
+    if (leftElevatorMotor.getAcceleration().getValue().abs(RotationsPerSecondPerSecond)
+        >= maxAngularAcceleration.in(RotationsPerSecondPerSecond)) {
+      brake();
+      accelerationAlert.set(true);
+      return false;
+    } else {
+      accelerationAlert.set(false);
+    }
+
+    if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)
+        || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)) {
+      brake();
+      overheatingAlert.set(true);
+      return false;
+    } else {
+      overheatingAlert.set(false);
+    }
+
+    if ((getElevatorHeight()
+            .gt(ElevatorConstants.kUpperSoftLimit.plus(ElevatorConstants.overextensionTolerance))
+        || getElevatorHeight()
+            .lt(
+                ElevatorConstants.kLowerSoftLimit.minus(
+                    ElevatorConstants.overextensionTolerance)))) {
+      brake();
+      positionAlert.set(true);
+      return false;
+    } else {
+      coast();
+      positionAlert.set(false);
+    }
+
+    return true;
   }
 }
