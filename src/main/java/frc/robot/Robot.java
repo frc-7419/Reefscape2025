@@ -6,22 +6,23 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
-import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+
+  private final Field2d vision = new Field2d();
 
   private final CombinedAlert canErrorAlert =
       new CombinedAlert(
@@ -83,13 +84,19 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    Optional<EstimatedRobotPose> result = m_robotContainer.photonvision.getEstimatedGlobalPose();
-    if (result.isPresent()) {
-      m_robotContainer.drivetrain.addVisionMeasurement(
-          result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
+    var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+        est -> {
+          var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
 
-      System.out.println("Latency" + (Timer.getFPGATimestamp() - result.get().timestampSeconds));
-    }
+          m_robotContainer.drivetrain.addVisionMeasurement(
+              est.estimatedPose.toPose2d(),
+              Utils.fpgaToCurrentTime(est.timestampSeconds),
+              estStdDevs);
+
+          vision.setRobotPose(est.estimatedPose.toPose2d());
+        });
+    SmartDashboard.putData("Vision Field", vision);
     updateRobotStatus();
   }
 
