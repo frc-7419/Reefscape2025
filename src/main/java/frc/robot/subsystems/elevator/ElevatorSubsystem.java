@@ -75,8 +75,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.setPosition(0);
     rightElevatorMotor.setPosition(0);
 
-    leftElevatorMotor.getConfigurator().apply(ElevatorConstants.elevatorTalonFXConfiguration);
-    rightElevatorMotor.getConfigurator().apply(ElevatorConstants.elevatorTalonFXConfiguration);
+    leftElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
+    rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
 
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), true));
 
@@ -89,17 +89,17 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
    *     negative values move it down.
    */
-  public void setElevatorPower(double power) {
+  public void setPower(double power) {
     if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
     power = Math.max(-1, Math.min(1, power));
     leftElevatorMotor.setControl(
         velocityRequest
             .withVelocity(
                 power
-                    * ElevatorConstants.kMaxVelocity.in(MetersPerSecond)
-                    / ElevatorConstants.kMetersPerRotationRatio)
-            .withLimitForwardMotion(getElevatorHeight().gt(ElevatorConstants.kUpperSoftLimit))
-            .withLimitReverseMotion(getElevatorHeight().lt(ElevatorConstants.kLowerSoftLimit)));
+                    * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
+                    / ElevatorConstants.kMetersPerRotation)
+            .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
+            .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
   }
 
   /**
@@ -114,9 +114,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leftElevatorMotor.setControl(
         motionMagicRequest
-            .withPosition(position / ElevatorConstants.kMetersPerRotationRatio)
-            .withLimitForwardMotion(getElevatorHeight().gt(ElevatorConstants.kUpperSoftLimit))
-            .withLimitReverseMotion(getElevatorHeight().lt(ElevatorConstants.kLowerSoftLimit)));
+            .withPosition(position / ElevatorConstants.kMetersPerRotation)
+            .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
+            .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
   }
 
   /**
@@ -136,7 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command setPosition(Distance position) {
     return this.runEnd(
-        () -> toPosition(position.in(Meters) / ElevatorConstants.kMetersPerRotationRatio),
+        () -> toPosition(position.in(Meters) / ElevatorConstants.kMetersPerRotation),
         () -> switchControlMode(ControlMode.MANUAL));
   }
 
@@ -178,13 +178,13 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return The current height of the elevator as a {@link Distance}.
    */
-  public Distance getElevatorHeight() {
-    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotationRatio);
+  public Distance getHeight() {
+    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator Height (Meters)", getElevatorHeight().in(Meters));
+    SmartDashboard.putNumber("Elevator Height (Meters)", getHeight().in(Meters));
     SmartDashboard.putNumber("Elevator Encoder Position", getPosition().in(Rotations));
     SmartDashboard.putString("Elevator Control Mode", controlMode.toString());
     SmartDashboard.putBoolean("Disabled", !safetyCheck());
@@ -207,7 +207,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return The left TalonFX motor instance.
    */
-  public TalonFX getLeftElevator() {
+  public TalonFX getLeftMotor() {
     return leftElevatorMotor;
   }
 
@@ -216,7 +216,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @return The right TalonFX motor instance.
    */
-  public TalonFX getRightElevator() {
+  public TalonFX getRightMotor() {
     return rightElevatorMotor;
   }
 
@@ -236,13 +236,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(
-            ElevatorConstants.unsafeVelocity.in(MetersPerSecond)
-                / ElevatorConstants.kMetersPerRotationRatio);
+            ElevatorConstants.UNSAFE_SPEED.in(MetersPerSecond)
+                / ElevatorConstants.kMetersPerRotation);
 
     AngularAcceleration maxAngularAcceleration =
         RotationsPerSecondPerSecond.of(
-            ElevatorConstants.unsafeAcceleration.in(MetersPerSecondPerSecond)
-                / ElevatorConstants.kMetersPerRotationRatio);
+            ElevatorConstants.UNSAFE_ACCELERATION.in(MetersPerSecondPerSecond)
+                / ElevatorConstants.kMetersPerRotation);
 
     if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond)
         >= maxAngularVelocity.in(RotationsPerSecond)) {
@@ -258,19 +258,17 @@ public class ElevatorSubsystem extends SubsystemBase {
       return false;
     } else accelerationAlert.set(false);
 
-    if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)
-        || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)) {
+    if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
+        || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)) {
       brake();
       overheatingAlert.set(true);
       return false;
     } else overheatingAlert.set(false);
 
-    if ((getElevatorHeight()
-            .gt(ElevatorConstants.kUpperSoftLimit.plus(ElevatorConstants.overextensionTolerance))
-        || getElevatorHeight()
-            .lt(
-                ElevatorConstants.kLowerSoftLimit.minus(
-                    ElevatorConstants.overextensionTolerance)))) {
+    if ((getHeight()
+            .gt(ElevatorConstants.kMaxHeight.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
+        || getHeight()
+            .lt(ElevatorConstants.kMinHeight.minus(ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
       brake();
       positionAlert.set(true);
       return false;

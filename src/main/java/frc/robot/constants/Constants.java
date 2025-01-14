@@ -29,55 +29,55 @@ public class Constants {
   public static class ElevatorConstants {
     public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
     public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
-    public static final Distance kUpperSoftLimit = Feet.of(12); // Arbitrary height (change)
-    public static final Distance kLowerSoftLimit = Feet.of(0);
-    public static final double kMetersPerRotationRatio = 1; // meters per rotation (change)
-    public static final LinearVelocity kMaxVelocity =
+    public static final Distance kMaxHeight = Feet.of(12); // Arbitrary height (change)
+    public static final Distance kMinHeight = Feet.of(0);
+    public static final double kMetersPerRotation = 1; // meters per rotation (change)
+    public static final LinearVelocity kMaxSpeed =
         MetersPerSecond.of(1.27); // Arbitrary velocity (change)
-    public static final TalonFXConfiguration elevatorTalonFXConfiguration =
+    public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
         new TalonFXConfiguration();
-    public static final Slot0Configs elevatorSlot0Configs = elevatorTalonFXConfiguration.Slot0;
+    public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
 
     static {
-      elevatorSlot0Configs.kG = 0; // output to overcome gravity (output)
-      elevatorSlot0Configs.kS = 0; // output to overcome static friction (output)
-      elevatorSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      elevatorSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
-      elevatorSlot0Configs.kP = 0; // output per unit of error in position (output)
-      elevatorSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
-      elevatorSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
+      kElevatorSlot0Configs.kG = 0; // output to overcome gravity (output)
+      kElevatorSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kElevatorSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
+      kElevatorSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
+      kElevatorSlot0Configs.kP = 0; // output per unit of error in position (output)
+      kElevatorSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
+      kElevatorSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs elevatorMotionMagicConfigs =
-        elevatorTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig =
+        kElevatorTalonFXConfiguration.MotionMagic;
 
     static {
-      elevatorMotionMagicConfigs.MotionMagicCruiseVelocity =
+      kMotionMagicConfig.MotionMagicCruiseVelocity =
           0; // peak velocity of the profile; set to 0 to target the
       // system’s max velocity
-      elevatorMotionMagicConfigs.MotionMagicExpo_kV =
+      kMotionMagicConfig.MotionMagicExpo_kV =
           0; // voltage required to maintain a given velocity, in V/rps
-      elevatorMotionMagicConfigs.MotionMagicExpo_kA =
+      kMotionMagicConfig.MotionMagicExpo_kA =
           0; // voltage required to maintain a given velocity, in V/rps
     }
 
-    public static final CurrentLimitsConfigs elevatorCurrentLimitsConfigs =
-        elevatorTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig =
+        kElevatorTalonFXConfiguration.CurrentLimits;
 
     static {
-      elevatorCurrentLimitsConfigs.StatorCurrentLimit = 80; // current limit in amps
-      elevatorCurrentLimitsConfigs.StatorCurrentLimitEnable = true; // enable current limiting
+      kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
+      kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
 
-    public static final Distance overextensionTolerance = Inches.of(1); // 1 inch
-    public static final LinearVelocity unsafeVelocity = InchesPerSecond.of(50); // 50 in/s
-    public static final LinearAcceleration unsafeAcceleration =
+    public static final Distance OVEREXTENSION_TOLERANCE = Inches.of(1); // 1 inch
+    public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(50); // 50 in/s
+    public static final LinearAcceleration UNSAFE_ACCELERATION =
         MetersPerSecondPerSecond.of(4 * 9.81); // 4g im not
     // mechanical i
     // wouldnt know
     // :(
-    public static final Temperature maxTemperature = Celsius.of(100); // Max rated temperature
+    public static final Temperature MAX_TEMPERATURE = Celsius.of(100); // Max rated temperature
     public static final boolean runSafetyCheck = true; // Enable safety checks
   }
 }
