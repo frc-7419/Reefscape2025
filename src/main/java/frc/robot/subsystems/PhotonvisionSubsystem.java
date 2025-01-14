@@ -68,9 +68,8 @@ public class PhotonvisionSubsystem {
                 .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
       }
 
-      if (numTags == 0) {
-        curStdDevs = Constants.kSingleTagStdDevs;
-      } else {
+      if (numTags == 0) curStdDevs = Constants.kSingleTagStdDevs;
+      else {
         avgDist /= numTags;
         if (numTags > 1) estStdDevs = Constants.kMultiTagStdDevs;
         if (numTags == 1 && avgDist > 4)
@@ -96,39 +95,26 @@ public class PhotonvisionSubsystem {
   }
 
   public PhotonTrackedTarget getBestTarget() {
-    if (hasTargets()) return getLatestResults().get(0).getBestTarget();
-    return null;
+    return hasTargets() ? getLatestResults().get(0).getBestTarget() : null;
   }
 
   public double getYaw() {
     PhotonTrackedTarget target = getBestTarget();
-    if (target != null) {
-      return target.getYaw();
-    }
-    return 0.0;
+    return target != null ? target.getYaw() : 0.0;
   }
 
   public double getPitch() {
     PhotonTrackedTarget target = getBestTarget();
-    if (target != null) {
-      return target.getPitch();
-    }
-    return 0.0;
+    return target != null ? target.getPitch() : 0.0;
   }
 
   public double getArea() {
     PhotonTrackedTarget target = getBestTarget();
-    if (target != null) {
-      return target.getArea();
-    }
-    return 0.0;
+    return target != null ? target.getArea() : 0.0;
   }
 
   public double getSkew() {
     PhotonTrackedTarget target = getBestTarget();
-    if (target != null) {
-      return target.getSkew();
-    }
-    return 0.0;
+    return target != null ? target.getSkew() : 0.0;
   }
 }
