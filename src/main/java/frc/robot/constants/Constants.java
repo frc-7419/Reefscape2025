@@ -2,6 +2,7 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -46,6 +47,7 @@ public class Constants {
       elevatorSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
       elevatorSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
     }
+
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
     public static final MotionMagicConfigs elevatorMotionMagicConfigs =
         elevatorTalonFXConfiguration.MotionMagic;
@@ -58,6 +60,14 @@ public class Constants {
           0; // voltage required to maintain a given velocity, in V/rps
       elevatorMotionMagicConfigs.MotionMagicExpo_kA =
           0; // voltage required to maintain a given velocity, in V/rps
+    }
+
+    public static final CurrentLimitsConfigs elevatorCurrentLimitsConfigs =
+        elevatorTalonFXConfiguration.CurrentLimits;
+
+    static {
+      elevatorCurrentLimitsConfigs.StatorCurrentLimit = 80; // current limit in amps
+      elevatorCurrentLimitsConfigs.StatorCurrentLimitEnable = true; // enable current limiting
     }
 
     public static final Distance overextensionTolerance = Inches.of(1); // 1 inch
