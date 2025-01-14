@@ -21,28 +21,27 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonvisionSubsystem {
   private final PhotonCamera camera;
-  private final PhotonPoseEstimator poseEstimator;
+  private final PhotonPoseEstimator photonPoseEstimator;
   private final Transform3d robotToCam;
   private Matrix<N3, N1> curStdDevs;
 
   public PhotonvisionSubsystem(String cameraName) {
     this.camera = new PhotonCamera(cameraName);
     this.robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
-    this.poseEstimator =
+    this.photonPoseEstimator =
         new PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
+            AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField),
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCam);
   }
 
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
-    Optional<EstimatedRobotPose> latestPose = Optional.empty();
-    for (PhotonPipelineResult result : getLatestResults()) {
-      latestPose = poseEstimator.update(result);
-      updateEstimationStdDevs(latestPose, result.getTargets());
+    Optional<EstimatedRobotPose> visionEst = Optional.empty();
+    for (var change : camera.getAllUnreadResults()) {
+      visionEst = photonPoseEstimator.update(change);
+      updateEstimationStdDevs(visionEst, change.getTargets());
     }
-
-    return latestPose;
+    return visionEst;
   }
 
   private void updateEstimationStdDevs(
@@ -57,7 +56,7 @@ public class PhotonvisionSubsystem {
       double avgDist = 0;
       // precalculation
       for (var tgt : targets) {
-        var tagPose = poseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
+        var tagPose = photonPoseEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
         if (tagPose.isEmpty()) continue;
         numTags++;
         avgDist +=
