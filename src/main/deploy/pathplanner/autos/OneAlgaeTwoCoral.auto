@@ -19,13 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "goToNet"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "goToReef"
+            "pathName": "backToReef"
           }
         },
         {
