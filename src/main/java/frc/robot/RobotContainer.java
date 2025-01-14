@@ -48,7 +48,7 @@ public class RobotContainer {
   public final PhotonvisionSubsystem photonvision;
 
   public RobotContainer() {
-    photonvision = new PhotonvisionSubsystem("frontCamera");
+    photonvision = new PhotonvisionSubsystem("Photon_Vision_Cam_1");
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
   }
