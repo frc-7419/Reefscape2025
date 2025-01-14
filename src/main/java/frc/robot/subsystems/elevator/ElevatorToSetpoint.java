@@ -10,29 +10,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorToSetpoint extends Command {
-  private ElevatorSubsystem elevatorSubsystem;
-  private ProfiledPIDController pidController;
-  private double pos;
-  private double kp;
-  private TrapezoidProfile.Constraints constraints;
+  private final ElevatorSubsystem elevatorSubsystem;
+  private final ProfiledPIDController pidController;
+  private final double pos;
+  private final TrapezoidProfile.Constraints constraints;
 
   /** Creates a new ElevatorToSetpoint. */
   public ElevatorToSetpoint(
       ElevatorSubsystem elevatorSubsystem,
       double pos,
       double kp,
+      double kd,
       TrapezoidProfile.Constraints constraints) {
     this.elevatorSubsystem = elevatorSubsystem;
     this.pos = pos;
-    this.kp = kp;
     this.constraints = constraints;
+    pidController = new ProfiledPIDController(kp, kd, 0, constraints);
     addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pidController = new ProfiledPIDController(kp, 0, 0, constraints);
     pidController.setGoal(pos);
     pidController.setTolerance(1000); // placeholder
   }

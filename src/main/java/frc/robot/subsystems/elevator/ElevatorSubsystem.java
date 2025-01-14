@@ -90,12 +90,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setElevatorPower(double power) {
-    if (controlMode == ControlMode.MOTIONMAGIC) return;
-
-    if (!safetyCheck()) return;
-
+    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
     power = Math.max(-1, Math.min(1, power));
-
     leftElevatorMotor.setControl(
         velocityRequest
             .withVelocity(
@@ -236,9 +232,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!ElevatorConstants.runSafetyCheck) {
-      return true;
-    }
+    if (!ElevatorConstants.runSafetyCheck) return true;
 
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(
@@ -255,27 +249,21 @@ public class ElevatorSubsystem extends SubsystemBase {
       brake();
       velocityAlert.set(true);
       return false;
-    } else {
-      velocityAlert.set(false);
-    }
+    } else velocityAlert.set(false);
 
     if (leftElevatorMotor.getAcceleration().getValue().abs(RotationsPerSecondPerSecond)
         >= maxAngularAcceleration.in(RotationsPerSecondPerSecond)) {
       brake();
       accelerationAlert.set(true);
       return false;
-    } else {
-      accelerationAlert.set(false);
-    }
+    } else accelerationAlert.set(false);
 
     if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)
         || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.maxTemperature)) {
       brake();
       overheatingAlert.set(true);
       return false;
-    } else {
-      overheatingAlert.set(false);
-    }
+    } else overheatingAlert.set(false);
 
     if ((getElevatorHeight()
             .gt(ElevatorConstants.kUpperSoftLimit.plus(ElevatorConstants.overextensionTolerance))
@@ -290,7 +278,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       coast();
       positionAlert.set(false);
     }
-
     return true;
   }
 }
