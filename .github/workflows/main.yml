@@ -47,3 +47,12 @@ jobs:
 
       - name: Build and Test
         run: ./gradlew build
+
+      - name: Debug environment
+        run: |
+          echo "User: $(whoami)"
+          echo "Home: $HOME"
+          ls -la $HOME
+
+      - name: Initialize Gradle directories
+        run: ./gradlew help
