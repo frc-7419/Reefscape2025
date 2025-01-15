@@ -27,7 +27,7 @@ public class Constants {
 
   public static class Vision {
     public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+        new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
 
     public static final AprilTagFieldLayout kTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
