@@ -25,7 +25,7 @@ public class ElevatorToSetpoint extends Command {
     this.elevatorSubsystem = elevatorSubsystem;
     this.pos = pos;
     this.constraints = constraints;
-    pidController = new ProfiledPIDController(kp, kd, 0, constraints);
+    pidController = new ProfiledPIDController(kp, 0, kd, constraints);
     addRequirements(elevatorSubsystem);
   }
 
