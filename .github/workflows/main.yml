@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Add repository to git safe directories
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -30,19 +28,21 @@ jobs:
         with:
           distribution: zulu
           java-version: 17
+          cache: gradle
 
       - name: Cache Gradle Dependencies
         uses: actions/cache@v3
         with:
           path: |
-            /root/.gradle/caches
-            /root/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+            ./build
+            ./.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/gradle.lockfile') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            gradle-${{ runner.os }}
+            gradle-
 
       - name: Run Spotless Check
-        if: ${{ github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/master') }}
+        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
         run: ./gradlew spotlessCheck
 
       - name: Build and Test
