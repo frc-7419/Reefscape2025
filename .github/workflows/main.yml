@@ -9,8 +9,50 @@ on:
       - "*"
 
 jobs:
-  build:
+  spotless:
+    name: Spotless Check
     runs-on: ubuntu-latest
+
+    if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add repository to git safe directories
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17.0.12+7
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/daemon
+            ~/.gradle/wrapper
+            ./build
+            ./.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}
+            gradle-
+
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck
+
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/master' }}
 
     steps:
       - name: Checkout code
@@ -44,10 +86,6 @@ jobs:
 
       - name: Warm up Gradle Daemon
         run: ./gradlew help
-
-      - name: Run Spotless Check
-        if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
-        run: ./gradlew spotlessCheck
 
       - name: Build and Test
         run: ./gradlew build
