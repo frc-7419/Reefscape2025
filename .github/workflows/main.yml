@@ -43,7 +43,7 @@ jobs:
             gradle-
 
       - name: Warm up Gradle Daemon
-        run: ./gradlew --no-daemon help
+        run: ./gradlew help
 
       - name: Run Spotless Check
         if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
