@@ -37,7 +37,7 @@ jobs:
             ~/.gradle/wrapper
             ./build
             ./.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/gradle.lockfile') }}
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ runner.os }}
             gradle-
