@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.20407371238426,
-        "y": 5.969717881944444
+        "x": 4.758793041087962,
+        "y": 6.228967013888889
       },
       "isLocked": false,
       "linkedName": "Reef 1"
     },
     {
       "anchor": {
-        "x": 6.36774486400463,
-        "y": 0.6363599537037032
+        "x": 2.0425003616898136,
+        "y": 5.860241608796295
       },
       "prevControl": {
-        "x": 6.577846137152777,
-        "y": 1.860921947337962
+        "x": 1.7187537548307037,
+        "y": 5.88021251882013
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,11 +41,11 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.74204731249228
+    "velocity": 0.0,
+    "rotation": -179.37771090446816
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -121.33795391423628
