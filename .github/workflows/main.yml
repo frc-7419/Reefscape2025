@@ -35,8 +35,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+            /root/.gradle/caches
+            /root/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -47,12 +47,3 @@ jobs:
 
       - name: Build and Test
         run: ./gradlew build
-
-      - name: Debug environment
-        run: |
-          echo "User: $(whoami)"
-          echo "Home: $HOME"
-          ls -la $HOME
-
-      - name: Initialize Gradle directories
-        run: ./gradlew help
