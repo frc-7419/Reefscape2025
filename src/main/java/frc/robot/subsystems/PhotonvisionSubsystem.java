@@ -24,23 +24,26 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.constants.Constants.VisionConstants.*;
+import static frc.robot.constants.Constants.VisionConstants.kMultiTagStdDevs;
+import static frc.robot.constants.Constants.VisionConstants.kSingleTagStdDevs;
+import static frc.robot.constants.Constants.VisionConstants.kTagLayout;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import frc.robot.constants.Constants.CameraConfig;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -70,10 +73,9 @@ public class PhotonvisionSubsystem {
       PhotonCamera camera = new PhotonCamera(config.name);
       cameras.add(camera);
 
-      PhotonPoseEstimator estimator = new PhotonPoseEstimator(
-          kTagLayout,
-          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          config.cameraToRobot);
+      PhotonPoseEstimator estimator =
+          new PhotonPoseEstimator(
+              kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, config.cameraToRobot);
       estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
       photonEstimators.add(estimator);
 
@@ -95,25 +97,18 @@ public class PhotonvisionSubsystem {
   }
 
   /**
-   * The latest estimated robot pose on the field from vision data. This may be
-   * empty. This should
+   * The latest estimated robot pose on the field from vision data. This may be empty. This should
    * only be called once per loop.
    *
-   * <p>
-   * Also includes updates for the standard deviations, which can (optionally) be
-   * retrieved with
+   * <p>Also includes updates for the standard deviations, which can (optionally) be retrieved with
    * {@link getEstimationStdDevs}
    *
-   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate
-   *         timestamp, and targets
-   *         used for estimation.
+   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate timestamp, and targets
+   *     used for estimation.
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
     List<PhotonTrackedTarget> allCameraTargets = new ArrayList<>();
-
-    Optional<EstimatedRobotPose> bestEstimate = Optional.empty();
-    int mostTargets = 0;
-    PhotonPoseEstimator bestEstimator = null;
+    List<EstimatedRobotPose> allVisionEstimates = new ArrayList<>();
 
     for (int i = 0; i < cameras.size(); i++) {
       final int index = i;
@@ -127,41 +122,64 @@ public class PhotonvisionSubsystem {
         Optional<EstimatedRobotPose> visionEst = estimator.update(pipelineResult);
 
         if (visionEst.isPresent()) {
-          int targets = visionEst.get().targetsUsed.size();
-          if (targets > mostTargets) {
-            mostTargets = targets;
-            bestEstimate = visionEst;
-            bestEstimator = estimator;
-          }
+          allVisionEstimates.add(visionEst.get());
         }
 
         if (Robot.isSimulation()) {
           visionEst.ifPresentOrElse(
-              est -> getSimDebugField()
-                  .getObject("VisionEstimation" + index)
-                  .setPose(est.estimatedPose.toPose2d()),
-              () -> getSimDebugField()
-                  .getObject("VisionEstimation" + index)
-                  .setPoses());
+              est ->
+                  getSimDebugField()
+                      .getObject("VisionEstimation" + index)
+                      .setPose(est.estimatedPose.toPose2d()),
+              () -> getSimDebugField().getObject("VisionEstimation" + index).setPoses());
         }
       }
     }
 
-    if (bestEstimator != null) {
-      updateEstimationStdDevs(bestEstimate, allCameraTargets, bestEstimator);
+    return averageVisionEstimates(allVisionEstimates);
+  }
+
+  private Optional<EstimatedRobotPose> averageVisionEstimates(List<EstimatedRobotPose> estimates) {
+    if (estimates.isEmpty()) {
+      return Optional.empty();
     }
 
-    return bestEstimate;
+    double x = 0.0, y = 0.0, rotation = 0.0;
+    double avgTimestamp = 0.0;
+    List<PhotonTrackedTarget> combinedTargets = new ArrayList<>();
+    Set<Integer> seenTargets = new HashSet<>();
+
+    for (EstimatedRobotPose estimate : estimates) {
+      Pose2d pose = estimate.estimatedPose.toPose2d();
+      x += pose.getX();
+      y += pose.getY();
+      rotation += pose.getRotation().getRadians();
+      avgTimestamp += estimate.timestampSeconds;
+
+      for (PhotonTrackedTarget target : estimate.targetsUsed) {
+        if (seenTargets.add(target.getFiducialId())) {
+          combinedTargets.add(target);
+        }
+      }
+    }
+
+    x /= estimates.size();
+    y /= estimates.size();
+    rotation /= estimates.size();
+    avgTimestamp /= estimates.size();
+
+    Pose3d avgPose = new Pose3d(x, y, 0, new Rotation3d(0, 0, rotation));
+
+    return Optional.of(
+        new EstimatedRobotPose(avgPose, avgTimestamp, combinedTargets, estimates.get(0).strategy));
   }
 
   /**
-   * Calculates new standard deviations This algorithm is a heuristic that creates
-   * dynamic standard
-   * deviations based on number of tags, estimation strategy, and distance from
-   * the tags.
+   * Calculates new standard deviations This algorithm is a heuristic that creates dynamic standard
+   * deviations based on number of tags, estimation strategy, and distance from the tags.
    *
    * @param estimatedPose The estimated pose to guess standard deviations for.
-   * @param targets       All targets in this camera frame
+   * @param targets All targets in this camera frame
    */
   private void updateEstimationStdDevs(
       Optional<EstimatedRobotPose> estimatedPose,
@@ -177,14 +195,14 @@ public class PhotonvisionSubsystem {
 
       for (var tgt : targets) {
         var tagPose = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
-        if (tagPose.isEmpty())
-          continue;
+        if (tagPose.isEmpty()) continue;
         numTags++;
-        avgDist += tagPose
-            .get()
-            .toPose2d()
-            .getTranslation()
-            .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+        avgDist +=
+            tagPose
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
       }
 
       if (numTags == 0) {
@@ -209,8 +227,7 @@ public class PhotonvisionSubsystem {
   /**
    * Returns the latest standard deviations of the estimated pose from {@link
    * #getEstimatedGlobalPose()}, for use with {@link
-   * edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-   * SwerveDrivePoseEstimator}. This should
+   * edu.wpi.first.math.estimator.SwerveDrivePoseEstimator SwerveDrivePoseEstimator}. This should
    * only be used when there are targets visible.
    */
   public Matrix<N3, N1> getEstimationStdDevs() {
@@ -225,14 +242,12 @@ public class PhotonvisionSubsystem {
 
   /** Reset pose history of the robot in the vision system simulation. */
   public void resetSimPose(Pose2d pose) {
-    if (Robot.isSimulation())
-      visionSim.resetRobotPose(pose);
+    if (Robot.isSimulation()) visionSim.resetRobotPose(pose);
   }
 
   /** A Field2d for visualizing our robot and objects on the field. */
   public Field2d getSimDebugField() {
-    if (!Robot.isSimulation())
-      return null;
+    if (!Robot.isSimulation()) return null;
     return visionSim.getDebugField();
   }
 }
