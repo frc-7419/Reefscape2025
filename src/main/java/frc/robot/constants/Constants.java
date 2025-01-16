@@ -25,14 +25,26 @@ public class Constants {
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(0.75);
   }
 
-  public static class Vision {
-    public static final Transform3d kRobotToCam =
-        new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
+  public static class VisionConstants {
+    public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0.5, 0.1, 0.4),
+        new Rotation3d(0, 0.34, 0));
 
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+    public static final Transform3d kRobotToCamTwo = new Transform3d(new Translation3d(-0.5, 0.1, 0.4),
+        new Rotation3d(0, 0.34, 0));
+
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
+
+  public static class CameraConfig {
+    public final String name;
+    public final Transform3d cameraToRobot;
+
+    public CameraConfig(String name, Transform3d cameraToRobot) {
+      this.name = name;
+      this.cameraToRobot = cameraToRobot;
+    }
   }
 }
