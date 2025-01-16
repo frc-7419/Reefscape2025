@@ -136,6 +136,13 @@ public class PhotonvisionSubsystem {
       }
     }
 
+    updateEstimationStdDevs(
+        allVisionEstimates.isEmpty()
+            ? Optional.empty()
+            : Optional.of(allVisionEstimates.get(allVisionEstimates.size() - 1)),
+        allCameraTargets,
+        photonEstimators.get(0));
+
     return averageVisionEstimates(allVisionEstimates);
   }
 
@@ -145,7 +152,7 @@ public class PhotonvisionSubsystem {
     }
 
     double x = 0.0, y = 0.0, rotation = 0.0;
-    double avgTimestamp = 0.0;
+    double latestTimestamp = 0.0;
     List<PhotonTrackedTarget> combinedTargets = new ArrayList<>();
     Set<Integer> seenTargets = new HashSet<>();
 
@@ -154,7 +161,10 @@ public class PhotonvisionSubsystem {
       x += pose.getX();
       y += pose.getY();
       rotation += pose.getRotation().getRadians();
-      avgTimestamp += estimate.timestampSeconds;
+
+      if (estimate.timestampSeconds > latestTimestamp) {
+        latestTimestamp = estimate.timestampSeconds;
+      }
 
       for (PhotonTrackedTarget target : estimate.targetsUsed) {
         if (seenTargets.add(target.getFiducialId())) {
@@ -166,12 +176,12 @@ public class PhotonvisionSubsystem {
     x /= estimates.size();
     y /= estimates.size();
     rotation /= estimates.size();
-    avgTimestamp /= estimates.size();
 
     Pose3d avgPose = new Pose3d(x, y, 0, new Rotation3d(0, 0, rotation));
 
     return Optional.of(
-        new EstimatedRobotPose(avgPose, avgTimestamp, combinedTargets, estimates.get(0).strategy));
+        new EstimatedRobotPose(
+            avgPose, latestTimestamp, combinedTargets, estimates.get(0).strategy));
   }
 
   /**
