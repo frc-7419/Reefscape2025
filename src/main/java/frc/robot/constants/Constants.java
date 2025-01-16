@@ -16,6 +16,8 @@ public class Constants {
   public static class RobotConstants {
     public static final String kCANivoreBus = "";
     public static final double kLowBatteryVoltage = 11.8;
+    public static final double kTippingThresholdDeg = 10;
+    public static final double kComHeight = 0.5; // meters
   }
 
   public static class DrivetrainConstants {

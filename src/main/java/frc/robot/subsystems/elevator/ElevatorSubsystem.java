@@ -140,6 +140,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         () -> switchControlMode(ControlMode.MANUAL));
   }
 
+  public Command joystickControl(double power) {
+    return this.run(() -> setPower(power));
+  }
+
   /**
    * Sets the motors to coast mode.
    *

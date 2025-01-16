@@ -15,11 +15,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
@@ -43,14 +45,19 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final ToPose toPose = new ToPose(drivetrain);
-  //   private final SendableChooser<Command> autoChooser;
+
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
+
+  private final ToPose toPose =
+      new ToPose(drivetrain); // private final SendableChooser<Command> autoChooser;
   public final PhotonvisionSubsystem photonvision;
 
   public RobotContainer() {
     photonvision = new PhotonvisionSubsystem("frontCamera");
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
+    // antiTip.schedule();
   }
 
   private void configureBindings() {
@@ -80,13 +87,15 @@ public class RobotContainer {
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
     // driver
-    //     .pov(0)
-    //     .whileTrue(
-    //         drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+    // .pov(0)
+    // .whileTrue(
+    // drivetrain.applyRequest(() ->
+    // forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     // driver
-    //     .pov(180)
-    //     .whileTrue(
-    //         drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+    // .pov(180)
+    // .whileTrue(
+    // drivetrain.applyRequest(() ->
+    // forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     driver.x().whileTrue(toPose);
 
     // Run SysId routines when holding back/start and X/Y.
@@ -100,6 +109,10 @@ public class RobotContainer {
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
+
+    elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
   }
 
   public Command getAutonomousCommand() {
