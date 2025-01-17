@@ -51,7 +51,7 @@ public class PhotonvisionSubsystem {
       // if no pose input then default to the regular single tag devieations
       curStdDevs = Constants.kSingleTagStdDevs;
     } else {
-      // start running heurisitc(basically its good enough for pose caluclation)
+      // start running heuristic (basically its good enough for pose caluclation)
       var estStdDevs = Constants.kSingleTagStdDevs;
       int numTags = 0;
       double avgDist = 0;
