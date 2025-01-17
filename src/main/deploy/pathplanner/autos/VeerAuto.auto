@@ -1,0 +1,67 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ToCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "From Coral to Algae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ToProcessor"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreAlgaeInProcessor"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ProcessorToStation"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StationToCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
