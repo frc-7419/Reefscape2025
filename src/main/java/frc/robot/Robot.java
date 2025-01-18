@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.numbers.N0;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -24,17 +20,17 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-            // Correct pose estimate with vision measurements
-            var visionEst = m_robotContainer.visionSubsystem.getEstimatedGlobalPose();
-            visionEst.ifPresent(
-                    est -> {
-                        // Change our trust in the measurement based on the tags we can see
-                        var estStdDevs = m_robotContainer.visionSubsystem.getEstimationStdDevs();
-                        // Matrix<N3, N1> estStdDevs = new Matrix<N3, N1>(N3.instance, N1.instance);
-                        m_robotContainer.drivetrain.resetPose(est.estimatedPose.toPose2d());
-                        // m_robotContainer.drivetrain.addVisionMeasurement(
-                        //         est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                    });
+    // Correct pose estimate with vision measurements
+    var visionEst = m_robotContainer.visionSubsystem.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+        est -> {
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = m_robotContainer.visionSubsystem.getEstimationStdDevs();
+          // Matrix<N3, N1> estStdDevs = new Matrix<N3, N1>(N3.instance, N1.instance);
+          m_robotContainer.drivetrain.resetPose(est.estimatedPose.toPose2d());
+          // m_robotContainer.drivetrain.addVisionMeasurement(
+          //         est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+        });
   }
 
   @Override
