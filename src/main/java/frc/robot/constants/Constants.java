@@ -86,6 +86,8 @@ public class Constants {
     // :(
     public static final Temperature MAX_TEMPERATURE = Celsius.of(100); // Max rated temperature
     public static final boolean runSafetyCheck = true; // Enable safety checks
+  }
+
   public static class Vision {
     public static final Transform3d kRobotToCam =
         new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
