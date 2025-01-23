@@ -17,11 +17,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
+import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
+import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
@@ -45,16 +49,26 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
+  private final ToPose toPose = new ToPose(drivetrain);
+  // private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-
-  private final ToPose toPose =
-      new ToPose(drivetrain); // private final SendableChooser<Command> autoChooser;
   public final PhotonvisionSubsystem photonvision;
+  private final CameraConfig photonCamOne =
+      new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
+  private final CameraConfig photonCamTwo =
+      new CameraConfig("Photon_Vision_Cam_2", VisionConstants.kRobotToCamOne);
+  private final List<CameraConfig> cameraConfigs =
+      new ArrayList<CameraConfig>() {
+        {
+          add(photonCamOne);
+          add(photonCamTwo);
+        }
+      };
 
   public RobotContainer() {
-    photonvision = new PhotonvisionSubsystem("Photon_Vision_Cam_1");
+    photonvision = new PhotonvisionSubsystem(cameraConfigs);
+
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
     // antiTip.schedule();
