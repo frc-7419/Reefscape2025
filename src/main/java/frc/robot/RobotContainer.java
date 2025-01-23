@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -52,7 +51,6 @@ public class RobotContainer {
   private final ToPose toPose = new ToPose(drivetrain);
   // private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);

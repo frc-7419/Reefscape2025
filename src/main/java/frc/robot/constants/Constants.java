@@ -42,7 +42,8 @@ public class Constants {
   }
 
   public static class WristConstants {
-    public static final int kWristMotorID = 0;
+    public static final int kWristMotorID = 0; // Arbitrary ID (change)
+    public static final int kWristEncoderID = 0; // Arbitrary ID (change)
     public static final TalonFXConfiguration kWristTalonFXConfiguration =
         new TalonFXConfiguration();
     public static final Slot0Configs kWristSlot0Configs = kWristTalonFXConfiguration.Slot0;
