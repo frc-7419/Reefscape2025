@@ -41,6 +41,52 @@ public class Constants {
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
 
+  public static class WristConstants {
+    public static final int kWristMotorID = 0;
+    public static final TalonFXConfiguration kWristTalonFXConfiguration =
+        new TalonFXConfiguration();
+    public static final Slot0Configs kWristSlot0Configs = kWristTalonFXConfiguration.Slot0;
+
+    static {
+      kWristSlot0Configs.kG = 0; // output to overcome gravity (output)
+      kWristSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kWristSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
+      kWristSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
+      kWristSlot0Configs.kP = 0; // output per unit of error in position (output)
+      kWristSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
+      kWristSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
+    }
+
+    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
+    public static final MotionMagicConfigs kMotionMagicConfig =
+        kWristTalonFXConfiguration.MotionMagic;
+
+    static {
+      kMotionMagicConfig.MotionMagicCruiseVelocity =
+          0; // peak velocity of the profile; set to 0 to target the
+      // system’s max velocity
+      kMotionMagicConfig.MotionMagicExpo_kV =
+          0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kA =
+          0; // voltage required to maintain a given velocity, in V/rps
+    }
+
+    public static final CurrentLimitsConfigs kCurrentLimitConfig =
+        kWristTalonFXConfiguration.CurrentLimits;
+
+    static {
+      kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
+      kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
+    }
+
+    public static final Distance OVEREXTENSION_TOLERANCE = Inches.of(1); // 1 inch
+    public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(50); // 50 in/s
+    public static final LinearAcceleration UNSAFE_ACCELERATION =
+        MetersPerSecondPerSecond.of(2 * 9.81);
+    public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
+    public static final boolean runSafetyCheck = true; // Enable safety checks
+  }
+
   public static class ElevatorConstants {
     public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
     public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
