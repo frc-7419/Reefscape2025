@@ -40,6 +40,12 @@ public class Constants {
     public static final Transform3d kRobotToCamTwo =
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
+  public static class ClawConstants{
+    public static final int kClawMotorId = 10; //TODO: change this to the real ID
+    public static final int kDutyEncoderChannel = 11;//TODO: change this to the real ID
+    public static final int kBeambreakid = 12;//TODO: change this to the real ID
+    public static final int kAbsoluteEncoderId = 13;//TODO: change this to the real ID
+  }
 
   public static class ElevatorConstants {
     public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
