@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -12,19 +11,21 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunHanger extends Command {
   /** Creates a new RunHanger. */
-  
   private ElevatorSubsystem elevatorSubsystem;
+
   private boolean humanInterference = false; // Human hanging or auto hanging
   private CommandXboxController xboxController;
 
-  public RunHanger(ElevatorSubsystem elevatorSubsystem, boolean humanInterference, CommandXboxController xboxController) {
+  public RunHanger(
+      ElevatorSubsystem elevatorSubsystem,
+      boolean humanInterference,
+      CommandXboxController xboxController) {
     this.xboxController = xboxController;
     this.humanInterference = humanInterference;
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
-  
 
   // Called when the command is initially scheduled.
   @Override
@@ -37,8 +38,7 @@ public class RunHanger extends Command {
   public void execute() {
     if (humanInterference) {
       elevatorSubsystem.setPower(xboxController.getLeftY()); // Arbitrary joystick input
-    }
-    else {
+    } else {
       elevatorSubsystem.setPower(-0.5);
     }
   }
