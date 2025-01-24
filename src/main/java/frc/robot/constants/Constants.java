@@ -2,10 +2,13 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -23,6 +26,7 @@ public class Constants {
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
+    public static final boolean runSafetyCheck = true; // Enable safety checks (DISABLE IN COMP)
   }
 
   public static class DrivetrainConstants {
@@ -44,8 +48,30 @@ public class Constants {
   public static class WristConstants {
     public static final int kWristMotorID = 0; // Arbitrary ID (change)
     public static final int kWristEncoderID = 0; // Arbitrary ID (change)
+    public static final AngularVelocity kMaxSpeed =
+        RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final Angle kAngleTolerance = Degrees.of(5); // Arbitrary angle (change)
+    public static final Angle kMaxAngle = Degrees.of(90); // Arbitrary angle (change)
+    public static final Angle kMinAngle = Degrees.of(90); // Arbitrary angle (change)
     public static final TalonFXConfiguration kWristTalonFXConfiguration =
         new TalonFXConfiguration();
+
+    static {
+      kWristTalonFXConfiguration.Feedback.FeedbackRemoteSensorID = kWristEncoderID;
+      kWristTalonFXConfiguration.Feedback.FeedbackSensorSource =
+          FeedbackSensorSourceValue.FusedCANcoder;
+      kWristTalonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0;
+      kWristTalonFXConfiguration.Feedback.RotorToSensorRatio = 1; // Don't know yet
+    }
+
+    public static final CANcoderConfiguration kWristCANCoderConfig = new CANcoderConfiguration();
+
+    static {
+      kWristCANCoderConfig.MagnetSensor.SensorDirection =
+          SensorDirectionValue.CounterClockwise_Positive;
+      kWristCANCoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0)); // Change offset
+    }
+
     public static final Slot0Configs kWristSlot0Configs = kWristTalonFXConfiguration.Slot0;
 
     static {
@@ -80,12 +106,8 @@ public class Constants {
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
 
-    public static final Distance OVEREXTENSION_TOLERANCE = Inches.of(1); // 1 inch
-    public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(50); // 50 in/s
-    public static final LinearAcceleration UNSAFE_ACCELERATION =
-        MetersPerSecondPerSecond.of(2 * 9.81);
+    public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
-    public static final boolean runSafetyCheck = true; // Enable safety checks
   }
 
   public static class ElevatorConstants {
@@ -140,7 +162,6 @@ public class Constants {
     // wouldnt know
     // :(
     public static final Temperature MAX_TEMPERATURE = Celsius.of(100); // Max rated temperature
-    public static final boolean runSafetyCheck = true; // Enable safety checks
   }
 
   public static class CameraConfig {

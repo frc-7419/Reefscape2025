@@ -1,14 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -18,13 +13,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
 
+/**
+ * The {@code WristSubsystem} class controls the wrist subsystem of the robot. It manages the motion
+ * and angle of the elevator using TalonFX motors with a fused CANCoder.
+ */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor;
-  private final CANcoder encoder;
+  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID);
+  private final CANcoder wristEncoder = new CANcoder(WristConstants.kWristEncoderID);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -41,56 +42,109 @@ public class WristSubsystem extends SubsystemBase {
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Out of Range",
-          "The encoder value is outside the safe range. Subsystem disabled.");
+          "The wrist angle is outside the safe range. Subsystem disabled.");
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Velocity Error",
-          "The elevator velocity is outside the safe range. Subsystem disabled.");
-
-  private final CombinedAlert accelerationAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Acceleration Error",
-          "The elevator acceleration is outside the safe range. Subsystem disabled.");
+          "The wrist velocity is outside the safe range. Subsystem disabled.");
 
   private final CombinedAlert overheatingAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Overheating",
-          "The elevator motors are overheating. Subsystem disabled.");
+          "The wrist motor is overheating. Subsystem disabled.");
 
+  /** Creates a new {@code WristSubsystem} with a TalonFX and a CANcoder. */
   public WristSubsystem() {
-    wristMotor = new TalonFX(WristConstants.kWristMotorID);
-    encoder = new CANcoder(WristConstants.kWristEncoderID);
-    wristMotor.setPosition(0);
     wristMotor.getConfigurator().apply(WristConstants.kWristTalonFXConfiguration);
+    wristEncoder.getConfigurator().apply(WristConstants.kWristCANCoderConfig);
     brake();
   }
 
-  public AngularVelocity getVelocity() {
-    return wristMotor.getVelocity().getValue();
-  }
-
-  public void setVoltage(double voltage) {
-    wristMotor.setVoltage(voltage);
-  }
-
+  /**
+   * Sets the wrist power in manual mode.
+   *
+   * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
+   *     negative values move it down.
+   */
   public void setPower(double power) {
-    wristMotor.set(power);
+    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
+      return;
+    }
+
+    power = Math.max(-1, Math.min(1, power));
+
+    wristMotor.setControl(
+        velocityRequest
+            .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
+            .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+            .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
   }
 
+  /**
+   * Moves the wrist to a specified angle using Motion Magic.
+   *
+   * @param angle The desired angle (e.g., 0° is horizontal, 90° is vertical).
+   */
+  private void toAngle(Angle angle) {
+    controlMode = ControlMode.MOTIONMAGIC;
+
+    if (!safetyCheck()) {
+      return;
+    }
+
+    wristMotor.setControl(
+        motionMagicRequest
+            .withPosition(angle.in(Rotations))
+            .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+            .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+  }
+
+  /**
+   * Returns a Command that drives the wrist to a specific angle and then ends, returning the
+   * control mode to MANUAL.
+   *
+   * @param angle The target angle
+   * @return A command for scheduling.
+   */
+  public Command setAngle(Angle angle) {
+    return this.runEnd(() -> toAngle(angle), () -> switchControlMode(ControlMode.MANUAL));
+  }
+
+  /**
+   * Returns a Command that applies manual wrist control (ex, from a joystick).
+   *
+   * @param power The power from -1 to 1.
+   * @return A command for scheduling.
+   */
+  public Command joystickControl(double power) {
+    return this.run(() -> setPower(power));
+  }
+
+  /** Switches the current control mode. */
+  private void switchControlMode(ControlMode mode) {
+    this.controlMode = mode;
+  }
+
+  /** Sets the TalonFX to brake mode (resists motion when no power is applied). */
   public void brake() {
+    wristMotor.set(0);
     wristMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
+  /** Sets the TalonFX to coast mode (spins freely when no power is applied). */
   public void coast() {
     wristMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
   public Angle getPosition() {
-    return encoder.getPosition().getValue();
+    return wristEncoder.getAbsolutePosition().getValue();
+  }
+
+  public AngularVelocity getVelocity() {
+    return wristEncoder.getVelocity().getValue();
   }
 
   @Override
@@ -101,8 +155,52 @@ public class WristSubsystem extends SubsystemBase {
         "Wrist Velocity (RotationsPerSecond)", getVelocity().in(RotationsPerSecond));
     SmartDashboard.putNumber(
         "Wrist Temperature (Celsius)", wristMotor.getDeviceTemp().getValue().in(Celsius));
-    SmartDashboard.putNumber(
-        "Wrist Acceleration (RotationsPerSecondPerSecond)",
-        wristMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
+  }
+
+  /**
+   * Performs a safety check to ensure the wrist operates within safe parameters.
+   *
+   * <p>This method verifies several safety conditions, including velocity, acceleration,
+   * temperature, and angle limits. If any of these conditions are violated, the subsystem is
+   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
+   * are safe, the subsystem remains operational.
+   *
+   * @return {@code true} if the wrist passes all safety checks and is operating safely, {@code
+   *     false} otherwise.
+   */
+  private boolean safetyCheck() {
+    if (!RobotConstants.runSafetyCheck) {
+      return true;
+    }
+
+    if (getVelocity().abs(RotationsPerSecond)
+        >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+      brake();
+      velocityAlert.set(true);
+      return false;
+    } else {
+      velocityAlert.set(false);
+    }
+
+    if (wristMotor.getDeviceTemp().getValue().gte(WristConstants.MAX_TEMPERATURE)) {
+      brake();
+      overheatingAlert.set(true);
+      return false;
+    } else {
+      overheatingAlert.set(false);
+    }
+
+    Angle currentAngle = getPosition();
+    if (currentAngle.gt(WristConstants.kMaxAngle.plus(WristConstants.kAngleTolerance))
+        || currentAngle.lt(WristConstants.kMinAngle.minus(WristConstants.kAngleTolerance))) {
+      brake();
+      positionAlert.set(true);
+      return false;
+    } else {
+      positionAlert.set(false);
+      coast();
+    }
+
+    return true;
   }
 }
