@@ -46,10 +46,44 @@ public class Constants {
     public static final int kDutyEncoderChannel = 11; // TODO: change this to the real ID
     public static final int kBeambreakid = 12; // TODO: change this to the real ID
     public static final int kAbsoluteEncoderChannel = 13; // TODO: change this to the real ID
-    private static final double clawOpenSetpoint =
-        19; // TODO: figure out the value of setpoint for the desired claw open
-    private static final double clawCloseSetpoint =
+    public static final double clawOpenSetpoint =
+        19; // TODO: figure  out the value of setpoint for the desired claw open
+    public static final double clawCloseSetpoint =
         20; // TODO: figure out the value for setpoint for claw close
+
+    public static final TalonFXConfiguration kClawTalonFXConfiguration =
+        new TalonFXConfiguration();
+    public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
+
+    static {
+      kClawSlot0Configs.kG = 0; // output to overcome gravity (output)
+      kClawSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kClawSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
+      kClawSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
+      kClawSlot0Configs.kP = 0; // output per unit of error in position (output)
+      kClawSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
+      kClawSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
+    }
+
+    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
+    public static final MotionMagicConfigs kMotionMagicConfig = kClawTalonFXConfiguration.MotionMagic;
+
+    static {
+      kMotionMagicConfig.MotionMagicCruiseVelocity =
+          0; // peak velocity of the profile; set to 0 to target the
+      // system’s max velocity
+      kMotionMagicConfig.MotionMagicExpo_kV =
+          0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kA =
+          0; // voltage required to maintain a given velocity, in V/rps
+    }
+
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kClawTalonFXConfiguration.CurrentLimits;
+
+    static {
+      kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
+      kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
+    }
   }
 
   public static class ElevatorConstants {
