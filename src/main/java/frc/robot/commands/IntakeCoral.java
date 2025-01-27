@@ -15,10 +15,10 @@ public class IntakeCoral extends Command {
   private final LightSensorSubsystem lightSensorSubsystem;
 
   /** Creates a new IntakeCoral. */
-  public IntakeCoral(WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
+  public IntakeCoral(
+      WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.lightSensorSubsystem = lightSensorSubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(wristIntakeSubsystem, lightSensorSubsystem);
   }
 
@@ -31,13 +31,13 @@ public class IntakeCoral extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    wristIntakeSubsystem.setCoralPower(Constants.IntakeCoralConstants.IntakeCoralPower);
+    wristIntakeSubsystem.setPower(Constants.IntakeCoralConstants.intakeCoralPower);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    wristIntakeSubsystem.setCoralPower(0);
+    wristIntakeSubsystem.setPower(0);
     wristIntakeSubsystem.brakeCoral();
   }
 

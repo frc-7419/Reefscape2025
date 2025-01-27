@@ -34,6 +34,15 @@ public class Constants {
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(0.75);
   }
 
+  public static class IntakeCoralConstants {
+    public static final double intakeCoralPower = 0.1; // placeholder, insert actual value
+  }
+
+  public static class ScoringL4Constants {
+    public static final double elevatorSetPoint = 0; // replace
+    public static final double wristSetPoint = 0; // replace
+  }
+
   public static class VisionConstants {
     public static final Transform3d kRobotToCamOne =
         new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
@@ -100,6 +109,51 @@ public class Constants {
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kWristTalonFXConfiguration.CurrentLimits;
+
+    static {
+      kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
+      kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
+    }
+
+    public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
+    public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
+  }
+
+  public static class WristIntakeConstants {
+    public static final int kWristIntakeMotorID = 0; // Arbitrary ID (change)
+    public static final AngularVelocity kMaxSpeed =
+        RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration =
+        new TalonFXConfiguration();
+    public static final Slot0Configs kWristIntakeSlot0Configs =
+        kWristIntakeTalonFXConfiguration.Slot0;
+
+    static {
+      kWristIntakeSlot0Configs.kG = 0; // output to overcome gravity (output)
+      kWristIntakeSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kWristIntakeSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
+      kWristIntakeSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
+      kWristIntakeSlot0Configs.kP = 0; // output per unit of error in position (output)
+      kWristIntakeSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
+      kWristIntakeSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
+    }
+
+    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
+    public static final MotionMagicConfigs kMotionMagicConfig =
+        kWristIntakeTalonFXConfiguration.MotionMagic;
+
+    static {
+      kMotionMagicConfig.MotionMagicCruiseVelocity =
+          0; // peak velocity of the profile; set to 0 to target the
+      // system’s max velocity
+      kMotionMagicConfig.MotionMagicExpo_kV =
+          0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kA =
+          0; // voltage required to maintain a given velocity, in V/rps
+    }
+
+    public static final CurrentLimitsConfigs kCurrentLimitConfig =
+        kWristIntakeTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps

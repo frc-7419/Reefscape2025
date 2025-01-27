@@ -23,6 +23,7 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class RobotContainer {
   private final ToPose toPose = new ToPose(drivetrain);
   // private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
@@ -124,7 +126,9 @@ public class RobotContainer {
 
     operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
 
-    elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
+    elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
+
+    wrist.setDefaultCommand(wrist.joystickControl(operator.getRightY()));
   }
 
   public Command getAutonomousCommand() {

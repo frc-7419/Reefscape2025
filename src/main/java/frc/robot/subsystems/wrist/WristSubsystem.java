@@ -169,18 +169,14 @@ public class WristSubsystem extends SubsystemBase {
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) {
-      return true;
-    }
+    if (!RobotConstants.runSafetyCheck) return true;
 
     if (getVelocity().abs(RotationsPerSecond)
         >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
-    } else {
-      velocityAlert.set(false);
-    }
+    } else velocityAlert.set(false);
 
     if (wristMotor.getDeviceTemp().getValue().gte(WristConstants.MAX_TEMPERATURE)) {
       brake();
@@ -200,7 +196,6 @@ public class WristSubsystem extends SubsystemBase {
       positionAlert.set(false);
       coast();
     }
-
     return true;
   }
 }
