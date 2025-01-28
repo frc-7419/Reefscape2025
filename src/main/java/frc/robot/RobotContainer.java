@@ -15,12 +15,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AntiTip;
 import frc.robot.commands.AlgaeClampWithJoystick;
+import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
-import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -57,10 +56,8 @@ public class RobotContainer {
   private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
 
   public final PhotonvisionSubsystem photonvision;
-  private final CameraConfig photonCamOne =
-      new CameraConfig();
-  private final CameraConfig photonCamTwo =
-      new CameraConfig();
+  private final CameraConfig photonCamOne = new CameraConfig();
+  private final CameraConfig photonCamTwo = new CameraConfig();
   private final List<CameraConfig> cameraConfigs =
       new ArrayList<CameraConfig>() {
         {

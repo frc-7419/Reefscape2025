@@ -81,7 +81,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
 
-    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), true));
+    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
 
     coast();
   }
@@ -186,7 +186,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return The current height of the elevator as a {@link Distance}.
    */
   public Distance getHeight() {
-    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation);
+    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation)
+        .plus(ElevatorConstants.kHeightOffset);
   }
 
   @Override
