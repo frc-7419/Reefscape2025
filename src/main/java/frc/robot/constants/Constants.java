@@ -84,6 +84,10 @@ public class Constants {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
+    public static final Angle kMinPosition = Degrees.of(0);
+    public static final Angle kMaxPosition = Degrees.of(0);
+    public static final AngularVelocity kMaxSpeed =
+        RotationsPerSecond.of(1);
   }
 
   public static class ElevatorConstants {

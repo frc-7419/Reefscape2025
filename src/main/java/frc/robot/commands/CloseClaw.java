@@ -26,13 +26,13 @@ public class CloseClaw extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    // clawSubsystem.setClosingVoltage(1.00);
-    clawSubsystem.
-  }
+  
 
   // Called every time the scheduler runs while the command is scheduled.
-  @Override
+  @Overridepublic void initialize() {
+    // clawSubsystem.setClosingVoltage(1.00);
+    clawSubsystem.request();
+  }
   public void execute() {
     // double pidPower = pid.calculate(clawSubsystem.getPose());
     // clawSubsystem.setOpeningVoltage(pidPower);
