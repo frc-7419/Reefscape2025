@@ -14,7 +14,6 @@ public class IntakeCoral extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
   private final LightSensorSubsystem lightSensorSubsystem;
 
-  /** Creates a new IntakeCoral. */
   public IntakeCoral(
       WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
@@ -25,7 +24,7 @@ public class IntakeCoral extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wristIntakeSubsystem.coastCoral();
+    wristIntakeSubsystem.coast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,7 +37,7 @@ public class IntakeCoral extends Command {
   @Override
   public void end(boolean interrupted) {
     wristIntakeSubsystem.setPower(0);
-    wristIntakeSubsystem.brakeCoral();
+    wristIntakeSubsystem.brake();
   }
 
   // Returns true when the command should end.
