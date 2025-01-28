@@ -6,7 +6,10 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -18,11 +21,24 @@ import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
 
 public class Robot extends TimedRobot {
+  private Orchestra m_orchestra;
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
   private final Field2d vision = new Field2d();
+
+  private void initOrchestra(){
+    m_orchestra = new Orchestra();
+
+    TalonFX[] motors = { new TalonFX(1, "Ryan Biggee"), new TalonFX(2, "Ryan Biggee"), new TalonFX(3, "Ryan Biggee"), new TalonFX(4, "Ryan Biggee"), new TalonFX(5, "Ryan Biggee"), new TalonFX(6, "Ryan Biggee"), new TalonFX(7, "Ryan Biggee"), new TalonFX(8, "Ryan Biggee")};
+
+    for (int i = 0; i < motors.length; ++i) {
+      m_orchestra.addInstrument(motors[i]);
+  }
+
+  System.out.println(m_orchestra.loadMusic("songs/tetris.chrp"));
+  }
 
   private final CombinedAlert canErrorAlert =
       new CombinedAlert(
@@ -79,24 +95,25 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    initOrchestra();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-        est -> {
-          var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
+    // var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
+    // visionEst.ifPresent(
+    //     est -> {
+    //       var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
 
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              est.estimatedPose.toPose2d(),
-              Utils.fpgaToCurrentTime(est.timestampSeconds),
-              estStdDevs);
+    //       m_robotContainer.drivetrain.addVisionMeasurement(
+    //           est.estimatedPose.toPose2d(),
+    //           Utils.fpgaToCurrentTime(est.timestampSeconds),
+    //           estStdDevs);
 
-          vision.setRobotPose(est.estimatedPose.toPose2d());
-        });
-    SmartDashboard.putData("Vision Field", vision);
+    //       vision.setRobotPose(est.estimatedPose.toPose2d());
+    //     });
+    // SmartDashboard.putData("Vision Field", vision);
     updateRobotStatus();
   }
 
@@ -129,6 +146,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_orchestra.play();
   }
 
   @Override

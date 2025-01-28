@@ -23,7 +23,7 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
+// import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,8 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDeadband(MaxSpeed * 0.02)
+          .withRotationalDeadband(MaxAngularRate * 0.02) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -51,9 +51,9 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final ToPose toPose = new ToPose(drivetrain);
   // private final SendableChooser<Command> autoChooser;
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-  public final PhotonvisionSubsystem photonvision;
+//   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+//   private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
+//   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
   private final CameraConfig photonCamTwo =
@@ -67,7 +67,7 @@ public class RobotContainer {
       };
 
   public RobotContainer() {
-    photonvision = new PhotonvisionSubsystem(cameraConfigs);
+    // photonvision = new PhotonvisionSubsystem(cameraConfigs);
 
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
@@ -124,9 +124,9 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
+    // operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
 
-    elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
+    // elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
   }
 
   public Command getAutonomousCommand() {
