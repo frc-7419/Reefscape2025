@@ -12,9 +12,11 @@ import frc.robot.subsystems.algae.GroundIntakeSubsystem;
 public class RunGroundIntakeWithJoystick extends Command {
   /** Creates a new RunAlgaeGroundIntake. */
   private GroundIntakeSubsystem algaeIntakeSubsystem;
+
   private XboxController joystick;
-  public RunGroundIntakeWithJoystick(GroundIntakeSubsystem algaeIntakeSubsystem, XboxController joystick)
-  {
+
+  public RunGroundIntakeWithJoystick(
+      GroundIntakeSubsystem algaeIntakeSubsystem, XboxController joystick) {
     this.algaeIntakeSubsystem = algaeIntakeSubsystem;
     this.joystick = joystick;
     addRequirements(algaeIntakeSubsystem);

@@ -42,9 +42,9 @@ public class Constants {
   }
 
   public static class GroundIntakeConstants {
-    public static final int kLeftIntakeMotorId = 14; //Arbitrary ID
-    public static final int kRightIntakeMotorId = 15; //Arbitrary ID
-    public static final int kBeambreakId = 16; //Arbitrary ID
+    public static final int kLeftIntakeMotorId = 14; // Arbitrary ID
+    public static final int kRightIntakeMotorId = 15; // Arbitrary ID
+    public static final int kBeambreakId = 16; // Arbitrary ID
   }
 
   public static class ClawConstants {
@@ -57,8 +57,7 @@ public class Constants {
     public static final double clawCloseSetpoint =
         20; // TODO: figure out the value for setpoint for claw close
 
-    public static final TalonFXConfiguration kClawTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
 
     static {
@@ -72,7 +71,8 @@ public class Constants {
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig = kClawTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig =
+        kClawTalonFXConfiguration.MotionMagic;
 
     static {
       kMotionMagicConfig.MotionMagicCruiseVelocity =
@@ -84,16 +84,17 @@ public class Constants {
           0; // voltage required to maintain a given velocity, in V/rps
     }
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig = kClawTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig =
+        kClawTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
+
     public static final Angle kMinPosition = Degrees.of(0);
     public static final Angle kMaxPosition = Degrees.of(0);
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1);
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1);
   }
 
   public static class ElevatorConstants {

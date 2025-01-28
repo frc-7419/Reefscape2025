@@ -21,7 +21,7 @@ public class RunGroundIntake extends Command {
   @Override
   public void initialize() {
     groundIntakeSubsystem.coast();
-    groundIntakeSubsystem.setSpeed(0.1); //Arbitrary number
+    groundIntakeSubsystem.setSpeed(0.1); // Arbitrary number
   }
 
   // Called every time the scheduler runs while the command is scheduled.
