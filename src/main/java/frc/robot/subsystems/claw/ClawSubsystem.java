@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.claw;
 
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
@@ -16,7 +18,7 @@ public class ClawSubsystem extends SubsystemBase {
   /** Creates a new clawsubsystem. */
   private TalonFX clawMotor;
 
-  private AbsoluteEncoder absEncoder;
+  private CANcoder absEncoder;
   // private DigitalInput limitSwitch;
 
   private DigitalInput beamBreak;
@@ -24,9 +26,9 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {
     this.clawMotor = new TalonFX(Constants.ClawConstants.kClawMotorId);
     this.absEncoder =
-        new AbsoluteEncoder(
-            Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
+        new CANcoder(Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
     this.beamBreak = new DigitalInput(Constants.ClawConstants.kBeambreakid);
+    clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
     // limitSwitch = new DigitalInput(4);
 
   }
@@ -48,12 +50,15 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   public double getPose() {
-    return absEncoder.getPosition();
+    return absEncoder.getPosition().getValueAsDouble();
   }
 
+  public void setControl(ControlRequest request) {
+    absEncoder.setControl(request);
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("AMRIT Claw Velocity is", absEncoder.getVelocity());
+    SmartDashboard.putNumber("AMRIT Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
   }
 }

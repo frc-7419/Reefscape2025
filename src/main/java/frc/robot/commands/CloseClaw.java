@@ -18,8 +18,8 @@ public class CloseClaw extends Command {
 
   public CloseClaw(ClawSubsystem clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    this.pid = new PIDController(0.5, 0, 0.1);
-    pid.setSetpoint(ClawConstants.clawCloseSetpoint);
+    // this.pid = new PIDController(0.5, 0, 0.1);
+    // pid.setSetpoint(ClawConstants.clawCloseSetpoint);
     
     addRequirements(clawSubsystem);
   }
@@ -27,14 +27,15 @@ public class CloseClaw extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    clawSubsystem.setClosingVoltage(1.00);
+    // clawSubsystem.setClosingVoltage(1.00);
+    clawSubsystem.
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double pidPower = pid.calculate(clawSubsystem.getPose());
-    clawSubsystem.setOpeningVoltage(pidPower);
+    // double pidPower = pid.calculate(clawSubsystem.getPose());
+    // clawSubsystem.setOpeningVoltage(pidPower);
   }
   // Called once the command ends or is interrupted.
   @Override
