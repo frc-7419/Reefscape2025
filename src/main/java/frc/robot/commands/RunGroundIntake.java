@@ -5,43 +5,44 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.algae.AlgaeIntakeSubsystem;
+import frc.robot.subsystems.algae.GroundIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RunAlgaeGroundIntake extends Command {
-  /** Creates a new RunAlgaeGroundIntake. */
-  private AlgaeIntakeSubsystem algaeIntakeSubsystem = new AlgaeIntakeSubsystem(TalonFX motor1, TalonFX motor2);
-  private XboxController joystick;
-  public RunAlgaeGroundIntake(AlgaeIntakeSubsystem algaeIntakeSubsystem, XboxController joystick)
-  {
-    joystick = new XboxController(0);
-    this.algaeIntakeSubsystem = algaeIntakeSubsystem;
-    this.joystick = joystick;
-    addRequirements(algaeIntakeSubsystem);
+public class RunGroundIntake extends Command {
+  private final GroundIntakeSubsystem groundIntakeSubsystem;
+  /** Creates a new RunGroundIntake. */
+  public RunGroundIntake(GroundIntakeSubsystem groundIntakeSubsystem) {
+    this.groundIntakeSubsystem = groundIntakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(groundIntakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    algaeIntakeSubsystem.coast();
+    groundIntakeSubsystem.coast();
+    groundIntakeSubsystem.setSpeed(0.1); //Arbitrary number
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    algaeIntakeSubsystem.set(joystick.getLeftY() * 0.5f);
+    if (groundIntakeSubsystem.beamBreakIsTriggered()) {
+      groundIntakeSubsystem.setSpeed(0);
+      groundIntakeSubsystem.brake();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    algaeIntakeSubsystem.brake();
+    groundIntakeSubsystem.setSpeed(0);
+    groundIntakeSubsystem.brake();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return groundIntakeSubsystem.beamBreakIsTriggered();
   }
 }
