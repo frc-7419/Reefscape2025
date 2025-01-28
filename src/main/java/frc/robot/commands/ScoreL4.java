@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-
+import edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -40,7 +40,14 @@ public class ScoreL4 extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+
+
+    // Need the constants as a distance
+    Distance distance1 = Inches.of(Constants.ScoringL4Constants.elevatorSetPoint);
+    elevator.setPosition(distance1); // Random Value
+
+  }
 
   // Called once the command ends or is interrupted.
   @Override
