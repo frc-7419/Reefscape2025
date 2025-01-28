@@ -146,15 +146,15 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    operator.a().onTrue(elevator.setPosition(Meters.of(0)));
+    operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
 
-    operator.b().onTrue(scoreL4);
+    operator.b().whileTrue(scoreL4);
 
-    operator.x().onTrue(scoreL2);
+    operator.x().whileTrue(scoreL2);
 
-    operator.y().onTrue(scoreL3);
+    operator.y().whileTrue(scoreL3);
 
-    operator.leftBumper().onTrue(scoreL1);
+    operator.leftBumper().whileTrue(scoreL1);
 
     elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
 

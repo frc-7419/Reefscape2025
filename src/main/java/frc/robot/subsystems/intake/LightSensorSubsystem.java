@@ -15,7 +15,7 @@ public class LightSensorSubsystem extends SubsystemBase {
     this.lightSensor = lightSensor;
   }
 
-  public boolean coralThere() {
+  public boolean hasCoral() {
     return lightSensor.getIsDetected().getValue();
   }
 
