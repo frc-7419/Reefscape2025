@@ -13,9 +13,11 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ToPose;
+import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.VisionConstants;
@@ -65,6 +67,26 @@ public class RobotContainer {
           add(photonCamTwo);
         }
       };
+  private final Command elevatorToL1 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
+  private final Command elevatorToL2 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
+  private final Command elevatorToL3 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
+  private final Command elevatorToL4 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
+  private final Command wristL1 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
+  private final Command wristL2 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
+  private final Command wristL3 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
+  private final Command wristL4 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
+  private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
+  private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
+  private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
+  private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
 
   public RobotContainer() {
     photonvision = new PhotonvisionSubsystem(cameraConfigs);
@@ -124,7 +146,15 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
+    operator.a().onTrue(elevator.setPosition(Meters.of(0)));
+
+    operator.b().onTrue(scoreL4);
+
+    operator.x().onTrue(scoreL2);
+
+    operator.y().onTrue(scoreL3);
+
+    operator.leftBumper().onTrue(scoreL1);
 
     elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
 

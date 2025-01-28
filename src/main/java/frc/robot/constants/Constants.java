@@ -38,9 +38,15 @@ public class Constants {
     public static final double intakeCoralPower = 0.1; // placeholder, insert actual value
   }
 
-  public static class ScoringL4Constants {
-    public static final double elevatorSetPoint = 0; // replace
-    public static final double wristSetPoint = 0; // replace
+  public static class ScoringConstants {
+    public static final double elevatorSetPointL4 = 0; // replace
+    public static final double elevatorSetPointL3 = 0; // replace
+    public static final double elevatorSetPointL2 = 0; // replace
+    public static final double elevatorSetPointL1 = 0; // replace
+    public static final double wristSetPointL4 = 0; // replace
+    public static final double wristSetPointL3 = 0; // replace
+    public static final double wristSetPointL2 = 0; // replace
+    public static final double wristSetPointL1 = 0; // replace
   }
 
   public static class VisionConstants {
