@@ -103,5 +103,6 @@ public class ClawSubsystem extends SubsystemBase {
   public void periodic() {
     double currentVelocity = absEncoder.getVelocity().getValueAsDouble();
     SmartDashboard.putNumber("Claw Velocity RPS", currentVelocity);
+    SmartDashboard.putBoolean("Claw Beam Broken?: ", beamBreak.get());
   }
 }

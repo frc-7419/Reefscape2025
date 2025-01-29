@@ -33,8 +33,8 @@ public class CloseClaw extends Command {
   }
 
   public void execute() {
-    // double pidPower = pid.calculate(clawSubsystem.getPose());
-    // clawSubsystem.setOpeningVoltage(pidPower);
+    double pidPower = pid.calculate(clawSubsystem.getPositionDouble());
+    clawSubsystem.setOpeningVoltage(pidPower);
   }
   // Called once the command ends or is interrupted.
   @Override
