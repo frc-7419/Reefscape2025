@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -16,6 +17,7 @@ public class ClawSubsystem extends SubsystemBase {
 
   private TalonFX clawMotor;
   private CANcoder absEncoder;
+  private DigitalInput beamBreak;
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
 
@@ -38,6 +40,7 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor = new TalonFX(Constants.ClawConstants.kClawMotorId);
     absEncoder = new CANcoder(Constants.ClawConstants.kAbsoluteEncoderChannel);
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
+    this.beamBreak = new DigitalInput(ClawConstants.kBeambreakid);
   }
 
   private boolean safetyCheck() {
@@ -51,6 +54,10 @@ public class ClawSubsystem extends SubsystemBase {
       velocityAlert.set(false);
       return true;
     }
+  }
+
+  public Boolean getBeamBreak() {
+    return beamBreak.get(); // Iniyan Coding :)
   }
 
   public void setPower(double power) {
