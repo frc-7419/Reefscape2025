@@ -13,30 +13,28 @@ public class OpenClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private PIDController pid = new PIDController(1, 0, 1); // need values later
+  private PIDController pid;
 
   public OpenClaw(
-      ClawSubsystem clawSubsystem,
-      double setpoint) { // TODO: figure out the value of setpoint for the desired claw open
+      ClawSubsystem
+          clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    pid.setSetpoint(setpoint);
-    addRequirements(clawSubsystem);
-  }
+    // this.pid = new PIDController(0.5, 0, 0.1);
+    // pid.setSetpoint(ClawConstants.clawCloseSetpoint);
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    clawSubsystem.coast();
+    addRequirements(clawSubsystem);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
+  public void initialize() {
+    // clawSubsystem.setClosingVoltage(1.00);
+    clawSubsystem.coast();
+  }
+
   public void execute() {
     double pidPower = pid.calculate(clawSubsystem.getPositionDouble());
-
-    while (!(clawSubsystem.getBeamBreak())) {
-      clawSubsystem.setOpeningVoltage(pidPower);
-    }
+    clawSubsystem.setOpeningVoltage(pidPower);
   }
   // Called once the command ends or is interrupted.
   @Override
