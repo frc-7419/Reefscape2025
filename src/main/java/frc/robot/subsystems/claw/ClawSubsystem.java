@@ -1,42 +1,34 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.claw;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
+import frc.robot.util.CombinedAlert;
 
 public class ClawSubsystem extends SubsystemBase {
-  /** Creates a new clawsubsystem. */
-  private TalonFX clawMotor;
 
+  private TalonFX clawMotor;
   private CANcoder absEncoder;
-  private DigitalInput beamBreak;
+
+
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
 
-  public ClawSubsystem() {
-    this.clawMotor = new TalonFX(Constants.ClawConstants.kClawMotorId);
-    this.absEncoder =
-        new CANcoder(
-            Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
-    this.beamBreak = new DigitalInput(Constants.ClawConstants.kBeambreakid);
-    clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
-    // limitSwitch = new DigitalInput(4);
 
-  }
+  private final CombinedAlert velocityAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.WARNING, //im assuming velocity being high isnt THAT big of a problem so just warning 
+          "Algae claw error",
+          "The claw velocity is too high. Speed is now limited.");
 
-  // Code stolen from Wrist subsystem
   private enum ControlMode {
     MANUAL,
     MOTIONMAGIC
@@ -44,51 +36,68 @@ public class ClawSubsystem extends SubsystemBase {
 
   private ControlMode controlMode = ControlMode.MANUAL;
 
+  public ClawSubsystem() {
+    clawMotor = new TalonFX(Constants.ClawConstants.kClawMotorId);
+    absEncoder = new CANcoder(Constants.ClawConstants.kAbsoluteEncoderChannel);
+    clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
+  }
+
+  private boolean safetyCheck() {
+    double currentVelocityRPS = Math.abs(absEncoder.getVelocity().getValueAsDouble());
+    if (currentVelocityRPS > ClawConstants.kMaxSafeVelocityRPS) {
+      velocityAlert.set(true);
+      clawMotor.setControl(new DutyCycleOut(0.0));
+
+      return false;
+    } else {
+      velocityAlert.set(false);
+      return true;
+    }
+  }
+
   public void setPower(double power) {
     if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
       return;
     }
-
-    power = Math.max(-1, Math.min(1, power));
+    power = Math.max(-1.0, Math.min(1.0, power));
+    double targetRPS = power * ClawConstants.kMaxSafeVelocityRPS;
 
     clawMotor.setControl(
-        velocityRequest
-            .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
-            .withLimitForwardMotion(getPoseInAngle().lte(ClawConstants.kMaxPosition))
-            .withLimitForwardMotion(getPoseInAngle().gte(ClawConstants.kMinPosition)));
+        velocityRequest.withVelocity(targetRPS)
+    );
+  }
+
+  public void setClosingVoltage(double speed) {
+    if (safetyCheck()) {
+      clawMotor.setControl(new DutyCycleOut(speed));
+    }
+  }
+
+  public void setOpeningVoltage(double speed) {
+    if (safetyCheck()) {
+      clawMotor.setControl(new DutyCycleOut(-speed));
+    }
+  }
+
+  public void brake() {
+    clawMotor.setControl(new DutyCycleOut(0.0));
+    clawMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void coast() {
     clawMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
-  public void setClosingVoltage(double speed) {
-    clawMotor.set(speed);
-  }
-
-  public void setOpeningVoltage(double speed) {
-    clawMotor.set(-speed);
-  }
-
-  public void brake() {
-    clawMotor.setNeutralMode(NeutralModeValue.Brake);
-  }
-
-  public double getPosition() {
-    return absEncoder.getPosition().getValueAsDouble();
-  }
-
-  public Angle getPoseInAngle() {
+  public Angle getPositionDegrees() {
     return absEncoder.getPosition().getValue();
   }
-
-  private boolean safetyCheck() {
-    return true; // Not implemented yet
+  public double getPositionDouble(){
+    return clawMotor.getPosition().getValueAsDouble();
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("AMRIT Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
+    double currentVelocity = absEncoder.getVelocity().getValueAsDouble();
+    SmartDashboard.putNumber("Claw Velocity RPS", currentVelocity);
   }
 }

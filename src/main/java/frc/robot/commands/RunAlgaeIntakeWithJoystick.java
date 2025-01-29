@@ -4,40 +4,36 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.claw.ClawSubsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.algae.AlgaeIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class OpenClaw extends Command {
-  /** Creates a new OpenClaw. */
-  private ClawSubsystem clawSubsystem;
-
-  private PIDController pid = new PIDController(1, 0, 1);//need values later
-
-  public OpenClaw(
-      ClawSubsystem clawSubsystem,
-      double setpoint) { // TODO: figure out the value of setpoint for the desired claw open
-    this.clawSubsystem = clawSubsystem;
-    pid.setSetpoint(setpoint);
-    addRequirements(clawSubsystem);
+public class RunAlgaeIntakeWithJoystick extends Command {
+  private final CommandXboxController joystick;
+  private final AlgaeIntakeSubsystem intake;
+  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, AlgaeIntakeSubsystem intake) {
+   this.joystick = joystick;
+   this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    clawSubsystem.coast();
+    intake.coast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double pidPower = pid.calculate(clawSubsystem.getPositionDouble());
-    clawSubsystem.setOpeningVoltage(pidPower);
+    intake.setSpeed(joystick.getLeftX());
   }
+
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intake.brake();
+  }
 
   // Returns true when the command should end.
   @Override

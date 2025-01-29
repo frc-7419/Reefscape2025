@@ -41,10 +41,8 @@ public class Constants {
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
 
-  public static class GroundIntakeConstants {
-    public static final int kLeftIntakeMotorId = 14; // Arbitrary ID
-    public static final int kRightIntakeMotorId = 15; // Arbitrary ID
-    public static final int kBeambreakId = 16; // Arbitrary ID
+  public static class AlgaeIntakeConstants {
+    public static final int kClawMotorId = 15; // Arbitrary ID
   }
 
   public static class ClawConstants {
@@ -52,6 +50,7 @@ public class Constants {
     public static final int kDutyEncoderChannel = 11; // TODO: change this to the real ID
     public static final int kBeambreakid = 12; // TODO: change this to the real ID
     public static final int kAbsoluteEncoderChannel = 13; // TODO: change this to the real ID
+    public static final double kMaxSafeVelocityRPS = 50.0; // Example only
     public static final double clawOpenSetpoint =
         19; // TODO: figure  out the value of setpoint for the desired claw open
     public static final double clawCloseSetpoint =
