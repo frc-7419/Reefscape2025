@@ -3,15 +3,6 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Reef1 to Algae1.path
-        "x": 5.254114945023148,
-        "y": 5.315364221643518
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 4.758793041087962,
-        "y": 6.228967013888889
-========
         "x": 7.566,
         "y": 7.25225
       },
@@ -19,28 +10,18 @@
       "nextControl": {
         "x": 8.565999999999999,
         "y": 7.25225
->>>>>>>> auton-1:src/main/deploy/pathplanner/paths/goToReef.path
       },
       "isLocked": false,
       "linkedName": "Reef 1"
     },
     {
       "anchor": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Reef1 to Algae1.path
-        "x": 2.0425003616898136,
-        "y": 5.860241608796295
-      },
-      "prevControl": {
-        "x": 1.7187537548307037,
-        "y": 5.88021251882013
-========
         "x": 3.7147500000000004,
         "y": 5.468
       },
       "prevControl": {
         "x": 3.20775,
         "y": 7.418
->>>>>>>> auton-1:src/main/deploy/pathplanner/paths/goToReef.path
       },
       "nextControl": null,
       "isLocked": false,
@@ -60,16 +41,11 @@
     "unlimited": false
   },
   "goalEndState": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Reef1 to Algae1.path
-    "velocity": 0.0,
-    "rotation": -179.37771090446816
-========
     "velocity": 0,
     "rotation": -60.42216131873873
->>>>>>>> auton-1:src/main/deploy/pathplanner/paths/goToReef.path
   },
   "reversed": false,
-  "folder": null,
+  "folder": "From Start",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -121.33795391423628
