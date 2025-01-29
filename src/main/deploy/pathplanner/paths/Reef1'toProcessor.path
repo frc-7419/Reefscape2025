@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.254114945023148,
-        "y": 5.315364221643518
+        "x": 5.27560257523148,
+        "y": 5.294517144097222
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.20407371238426,
-        "y": 5.969717881944444
+        "x": 6.872209201388888,
+        "y": 5.295157696759259
       },
       "isLocked": false,
-      "linkedName": "Reef 1"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -45,10 +45,10 @@
     "rotation": -90.74204731249228
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -121.33795391423628
+    "rotation": 58.68645672981024
   },
   "useDefaultConstraints": true
 }
