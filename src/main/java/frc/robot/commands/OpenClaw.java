@@ -28,13 +28,13 @@ public class OpenClaw extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    clawSubsystem.setOpeningVoltage(1.00);
+    clawSubsystem.coast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double pidPower = pid.calculate(clawSubsystem.getPose());
+    double pidPower = pid.calculate(clawSubsystem.getPosition());
     clawSubsystem.setOpeningVoltage(pidPower);
   }
   // Called once the command ends or is interrupted.

@@ -54,8 +54,8 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor.setControl(
         velocityRequest
             .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
-            .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
-            .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
+            .withLimitForwardMotion(getPoseInAngle().lte(ClawConstants.kMaxPosition))
+            .withLimitForwardMotion(getPoseInAngle().gte(ClawConstants.kMinPosition)));
   }
 
   public void coast() {
@@ -74,7 +74,11 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public Angle getPosition() {
+  public double getPosition() {
+    return absEncoder.getPosition().getValueAsDouble();
+  }
+
+  public Angle getPoseInAngle() {
     return absEncoder.getPosition().getValue();
   }
 

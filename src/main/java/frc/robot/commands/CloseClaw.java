@@ -25,14 +25,11 @@ public class CloseClaw extends Command {
     addRequirements(clawSubsystem);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-
   // Called every time the scheduler runs while the command is scheduled.
-  @Overridepublic
-  void initialize() {
+  @Override
+  public void initialize() {
     // clawSubsystem.setClosingVoltage(1.00);
-    clawSubsystem.request();
+    clawSubsystem.coast();
   }
 
   public void execute() {
