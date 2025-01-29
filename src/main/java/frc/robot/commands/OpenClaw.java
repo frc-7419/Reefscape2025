@@ -13,7 +13,7 @@ public class OpenClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private PIDController pid = new PIDController(1, 0, 1);//need values later
+  private PIDController pid = new PIDController(1, 0, 1); // need values later
 
   public OpenClaw(
       ClawSubsystem clawSubsystem,

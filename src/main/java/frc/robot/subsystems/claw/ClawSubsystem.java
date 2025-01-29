@@ -1,15 +1,13 @@
 package frc.robot.subsystems.claw;
 
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.util.CombinedAlert;
@@ -19,13 +17,13 @@ public class ClawSubsystem extends SubsystemBase {
   private TalonFX clawMotor;
   private CANcoder absEncoder;
 
-
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
-          CombinedAlert.Severity.WARNING, //im assuming velocity being high isnt THAT big of a problem so just warning 
+          CombinedAlert.Severity
+              .WARNING, // im assuming velocity being high isnt THAT big of a problem so just
+          // warning
           "Algae claw error",
           "The claw velocity is too high. Speed is now limited.");
 
@@ -62,9 +60,7 @@ public class ClawSubsystem extends SubsystemBase {
     power = Math.max(-1.0, Math.min(1.0, power));
     double targetRPS = power * ClawConstants.kMaxSafeVelocityRPS;
 
-    clawMotor.setControl(
-        velocityRequest.withVelocity(targetRPS)
-    );
+    clawMotor.setControl(velocityRequest.withVelocity(targetRPS));
   }
 
   public void setClosingVoltage(double speed) {
@@ -91,7 +87,8 @@ public class ClawSubsystem extends SubsystemBase {
   public Angle getPositionDegrees() {
     return absEncoder.getPosition().getValue();
   }
-  public double getPositionDouble(){
+
+  public double getPositionDouble() {
     return clawMotor.getPosition().getValueAsDouble();
   }
 

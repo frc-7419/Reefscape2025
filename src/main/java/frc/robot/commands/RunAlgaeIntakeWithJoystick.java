@@ -6,15 +6,16 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.algae.AlgaeIntakeSubsystem;
+import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunAlgaeIntakeWithJoystick extends Command {
   private final CommandXboxController joystick;
-  private final AlgaeIntakeSubsystem intake;
-  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, AlgaeIntakeSubsystem intake) {
-   this.joystick = joystick;
-   this.intake = intake;
+  private final ClawSubsystem intake;
+
+  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, ClawSubsystem intake) {
+    this.joystick = joystick;
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -26,7 +27,7 @@ public class RunAlgaeIntakeWithJoystick extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.setSpeed(joystick.getLeftX());
+    intake.setPower(joystick.getLeftX());
   }
 
   // Called once the command ends or is interrupted.

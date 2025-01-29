@@ -41,8 +41,10 @@ public class Constants {
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
 
-  public static class AlgaeIntakeConstants {
-    public static final int kClawMotorId = 15; // Arbitrary ID
+  public static class GroundIntakeConstants {
+    public static final int kLeftIntakeMotorId = 14; // Arbitrary ID
+    public static final int kRightIntakeMotorId = 15; // Arbitrary ID
+    public static final int kBeambreakId = 16; // Arbitrary ID
   }
 
   public static class ClawConstants {
