@@ -25,7 +25,7 @@ public class CloseClaw extends Command {
     // pid.setSetpoint(ClawConstants.clawCloseSetpoint);
 
     addRequirements(clawSubsystem);
-    closeClawCommand = clawSubsystem.setPosition(ClawConstants.clawCloseSetpoint);
+    closeClawCommand = clawSubsystem.setPosition(ClawConstants.kClawCloseSetpoint);
   }
 
   // Called when the command is initially scheduled.

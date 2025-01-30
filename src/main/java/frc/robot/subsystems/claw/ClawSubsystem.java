@@ -60,7 +60,7 @@ public class ClawSubsystem extends SubsystemBase {
             .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
             .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
-  private Boolean getBeamBreak(){
+  public Boolean getBeamBreak(){
     return beamBreak.get();
   }
   private void toPosition(Angle angle) {
@@ -98,10 +98,14 @@ public class ClawSubsystem extends SubsystemBase {
 
   public void brake() {
     clawMotor.setNeutralMode(NeutralModeValue.Brake);
+    
   }
 
   public Angle getPosition() {
     return absEncoder.getPosition().getValue();
+  }
+  public double getPositionDouble(){
+    return clawMotor.getPosition().getValueAsDouble();
   }
 
   private boolean safetyCheck() {

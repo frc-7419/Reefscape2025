@@ -24,7 +24,11 @@ public class Constants {
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
   }
-
+  public static class GroundIntakeConstants{
+    public static final int kBeambreakId = 1;
+    public static final int kRightIntakeMotorId = 1;
+    public static final int kLeftIntakeMotorId = 1;
+  }
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(0.75);
@@ -46,9 +50,9 @@ public class Constants {
     public static final int kDutyEncoderChannel = 11; // TODO: change this to the real ID
     public static final int kBeambreakid = 12; // TODO: change this to the real ID
     public static final int kAbsoluteEncoderChannel = 13; // TODO: change this to the real ID
-    public static final Angle clawOpenSetpoint =
+    public static final Angle kClawOpenSetpoint =
         Degrees.of(19); // TODO: figure  out the value of setpoint for the desired claw open
-    public static final Angle clawCloseSetpoint =
+    public static final Angle kClawCloseSetpoint =
         Degrees.of(20); // TODO: figure out the value for setpoint for claw close
 
     public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
