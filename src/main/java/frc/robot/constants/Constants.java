@@ -31,7 +31,7 @@ public class Constants {
 
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
-    public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(0.75);
+    public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(3);
   }
 
   public static class IntakeCoralConstants {

@@ -39,8 +39,8 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDeadband(MaxSpeed * 0.05)
+          .withRotationalDeadband(MaxAngularRate * 0.05) // Add a 5% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -52,7 +52,6 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final ToPose toPose = new ToPose(drivetrain);
-  // private final SendableChooser<Command> autoChooser;
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
@@ -90,10 +89,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     photonvision = new PhotonvisionSubsystem(cameraConfigs);
-
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
-    // antiTip.schedule();
   }
 
   private void configureBindings() {
@@ -122,16 +119,6 @@ public class RobotContainer {
                     point.withModuleDirection(
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-    // driver
-    // .pov(0)
-    // .whileTrue(
-    // drivetrain.applyRequest(() ->
-    // forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    // driver
-    // .pov(180)
-    // .whileTrue(
-    // drivetrain.applyRequest(() ->
-    // forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     driver.x().whileTrue(toPose);
 
     // Run SysId routines when holding back/start and X/Y.
