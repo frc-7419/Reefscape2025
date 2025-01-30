@@ -7,7 +7,6 @@
 // import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import com.ctre.phoenix6.hardware.TalonFX;
 
-
 // public class AlgaeIntakeSubsystem extends SubsystemBase {
 //   private final TalonFX motor1;
 //   private final TalonFX motor2;

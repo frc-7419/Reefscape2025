@@ -46,13 +46,12 @@ public class Constants {
     public static final int kDutyEncoderChannel = 11; // TODO: change this to the real ID
     public static final int kBeambreakid = 12; // TODO: change this to the real ID
     public static final int kAbsoluteEncoderChannel = 13; // TODO: change this to the real ID
-    public static final double clawOpenSetpoint =
-        19; // TODO: figure  out the value of setpoint for the desired claw open
-    public static final double clawCloseSetpoint =
-        20; // TODO: figure out the value for setpoint for claw close
+    public static final Angle clawOpenSetpoint =
+        Degrees.of(19); // TODO: figure  out the value of setpoint for the desired claw open
+    public static final Angle clawCloseSetpoint =
+        Degrees.of(20); // TODO: figure out the value for setpoint for claw close
 
-    public static final TalonFXConfiguration kClawTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
 
     static {
@@ -66,7 +65,8 @@ public class Constants {
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig = kClawTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig =
+        kClawTalonFXConfiguration.MotionMagic;
 
     static {
       kMotionMagicConfig.MotionMagicCruiseVelocity =
@@ -78,16 +78,17 @@ public class Constants {
           0; // voltage required to maintain a given velocity, in V/rps
     }
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig = kClawTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig =
+        kClawTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
+
     public static final Angle kMinPosition = Degrees.of(0);
     public static final Angle kMaxPosition = Degrees.of(0);
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1);
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1);
   }
 
   public static class ElevatorConstants {

@@ -5,16 +5,16 @@
 package frc.robot.subsystems.claw;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import com.ctre.phoenix6.controls.ControlRequest;
+
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.AbsoluteEncoder;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
@@ -22,28 +22,30 @@ import frc.robot.constants.Constants.ClawConstants;
 public class ClawSubsystem extends SubsystemBase {
   /** Creates a new clawsubsystem. */
   private TalonFX clawMotor;
+
   private CANcoder absEncoder;
   private DigitalInput beamBreak;
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0); 
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
+  private final PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
   public ClawSubsystem() {
     this.clawMotor = new TalonFX(Constants.ClawConstants.kClawMotorId);
     this.absEncoder =
-        new CANcoder(Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
+        new CANcoder(
+            Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
     this.beamBreak = new DigitalInput(Constants.ClawConstants.kBeambreakid);
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
     // limitSwitch = new DigitalInput(4);
 
   }
 
-  //Code stolen from Wrist subsystem
+  // Code stolen from Wrist subsystem
   private enum ControlMode {
     MANUAL,
     MOTIONMAGIC
   }
 
   private ControlMode controlMode = ControlMode.MANUAL;
-
 
   public void setPower(double power) {
     if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
@@ -56,10 +58,29 @@ public class ClawSubsystem extends SubsystemBase {
         velocityRequest
             .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
             .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
-            .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition))
-            );
+            .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
-  
+
+  private void toPosition(Angle angle) {
+    controlMode = ControlMode.MOTIONMAGIC;
+
+    if (!safetyCheck()) {
+      return;
+    }
+    clawMotor.setControl(
+        positionRequest
+            .withPosition(angle)
+            .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
+            .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
+  }
+
+  private void switchControlMode(ControlMode control) {
+    controlMode = control;
+  }
+
+  public Command setPosition(Angle angle) {
+    return this.runEnd(() -> toPosition(angle), () -> switchControlMode(ControlMode.MANUAL));
+  }
 
   public void coast() {
     clawMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -80,10 +101,11 @@ public class ClawSubsystem extends SubsystemBase {
   public Angle getPosition() {
     return absEncoder.getPosition().getValue();
   }
-  
+
   private boolean safetyCheck() {
     return true; // Not implemented yet
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
