@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
@@ -13,29 +13,26 @@ public class OpenClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private PIDController pid;
+  private Angle setpoint;
 
   public OpenClaw(
       ClawSubsystem clawSubsystem,
-      double setpoint) { // TODO: figure out the value of setpoint for the desired claw open
+      Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    this.pid = pid;
-    pid.setPID(0.5, 0, 0.1); // Need to be tuned
-    pid.setSetpoint(setpoint);
+    this.setpoint = setpoint;
     addRequirements(clawSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // clawSubsystem.setOpeningVoltage(1.00);
+    clawSubsystem.coast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // double pidPower = pid.calculate(clawSubsystem.getPose());
-    // clawSubsystem.setOpeningVoltage(pidPower);
+    clawSubsystem.setPosition(setpoint);
   }
   // Called once the command ends or is interrupted.
   @Override

@@ -81,7 +81,9 @@ public class RobotContainer {
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
-    clawSubsystem.setDefaultCommand(new ClawControl(clawSubsystem, ClawConstants.kClawOpenSetpoint, ClawConstants.kClawCloseSetpoint));
+    clawSubsystem.setDefaultCommand(
+        new ClawControl(
+            clawSubsystem, ClawConstants.kClawOpenSetpoint, ClawConstants.kClawCloseSetpoint));
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(

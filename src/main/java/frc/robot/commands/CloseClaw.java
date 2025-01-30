@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.subsystems.claw.ClawSubsystem;
@@ -14,15 +13,12 @@ public class CloseClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private PIDController pid;
   private Command closeClawCommand;
 
   public CloseClaw(
       ClawSubsystem
           clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    // this.pid = new PIDController(0.5, 0, 0.1);
-    // pid.setSetpoint(ClawConstants.clawCloseSetpoint);
 
     addRequirements(clawSubsystem);
     closeClawCommand = clawSubsystem.setPosition(ClawConstants.kClawCloseSetpoint);
@@ -33,15 +29,12 @@ public class CloseClaw extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void initialize() {
-    // clawSubsystem.setClosingVoltage(1.00);
-    // clawSubsystem.t();
+    clawSubsystem.coast();
   }
 
   @Override
-  public void execute() {
-    // double pidPower = pid.calculate(clawSubsystem.getPose());
-    // clawSubsystem.setOpeningVoltage(pidPower);
-  }
+  public void execute() {}
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}

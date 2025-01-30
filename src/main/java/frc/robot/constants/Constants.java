@@ -24,11 +24,13 @@ public class Constants {
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
   }
-  public static class GroundIntakeConstants{
+
+  public static class GroundIntakeConstants {
     public static final int kBeambreakId = 1;
     public static final int kRightIntakeMotorId = 1;
     public static final int kLeftIntakeMotorId = 1;
   }
+
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(0.75);

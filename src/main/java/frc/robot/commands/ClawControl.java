@@ -4,13 +4,8 @@
 
 package frc.robot.commands;
 
-import java.util.Timer;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -18,18 +13,16 @@ public class ClawControl extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private PIDController openingPid = new PIDController(1, 0, 1); // need values later
-  private PIDController closingPid = new PIDController(1, 0, 1); // need values later
+  private Angle openingSetpoint;
+  private Angle closingSetpoint;
 
   public ClawControl(
       ClawSubsystem clawSubsystem,
       Angle openingSetpoint,
       Angle closingSetpoint) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    this.openingPid = new PIDController(1, 0, 0.5);
-    this.closingPid = new PIDController(1, 0, 0.5);
-    //openingPid.setSetpoint(openingSetpoint);
-    //closingPid.setSetpoint(closingSetpoint);
+    this.openingSetpoint = openingSetpoint;
+    this.closingSetpoint = closingSetpoint;
     addRequirements(clawSubsystem);
   }
 
@@ -42,14 +35,15 @@ public class ClawControl extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-   
+
     while (clawSubsystem.getBeamBreak()) {
-      //Thread.sleep(100);, a delay so the claw doesnt close prematurely, I dont know how to fix the error.
-      clawSubsystem.setPosition(ClawConstants.kClawCloseSetpoint);
+      // Thread.sleep(100);, a delay so the claw doesnt close prematurely, I dont know how to fix
+      // the error.
+      clawSubsystem.setPosition(closingSetpoint);
     }
     while (!(clawSubsystem.getBeamBreak())) {
-      //Thread.sleep(100);
-      clawSubsystem.setPosition(ClawConstants.kClawOpenSetpoint);
+      // Thread.sleep(100);
+      clawSubsystem.setPosition(openingSetpoint);
     }
   }
   // Called once the command ends or is interrupted.

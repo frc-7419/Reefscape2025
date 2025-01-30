@@ -16,7 +16,6 @@ public class GroundIntakeSubsystem extends SubsystemBase {
   private final TalonFX rightMotor;
   private DigitalInput beamBreak;
   /** Creates a new AlgaeIntakeSubsystem. */
-  
   public GroundIntakeSubsystem() {
     leftMotor = new TalonFX(Constants.GroundIntakeConstants.kLeftIntakeMotorId);
     rightMotor = new TalonFX(Constants.GroundIntakeConstants.kRightIntakeMotorId);

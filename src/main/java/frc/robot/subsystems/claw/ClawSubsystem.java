@@ -36,7 +36,6 @@ public class ClawSubsystem extends SubsystemBase {
     this.beamBreak = new DigitalInput(Constants.ClawConstants.kBeambreakid);
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
     ;
-
   }
 
   // Code stolen from Wrist subsystem
@@ -60,9 +59,11 @@ public class ClawSubsystem extends SubsystemBase {
             .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
             .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
-  public Boolean getBeamBreak(){
+
+  public Boolean getBeamBreak() {
     return beamBreak.get();
   }
+
   private void toPosition(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
 
@@ -98,13 +99,13 @@ public class ClawSubsystem extends SubsystemBase {
 
   public void brake() {
     clawMotor.setNeutralMode(NeutralModeValue.Brake);
-    
   }
 
   public Angle getPosition() {
     return absEncoder.getPosition().getValue();
   }
-  public double getPositionDouble(){
+
+  public double getPositionDouble() {
     return clawMotor.getPosition().getValueAsDouble();
   }
 
