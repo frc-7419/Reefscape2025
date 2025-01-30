@@ -35,7 +35,7 @@ public class ClawSubsystem extends SubsystemBase {
             Constants.ClawConstants.kAbsoluteEncoderChannel); // Unkown Error, check internal issue
     this.beamBreak = new DigitalInput(Constants.ClawConstants.kBeambreakid);
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
-    // limitSwitch = new DigitalInput(4);
+    ;
 
   }
 
@@ -60,7 +60,9 @@ public class ClawSubsystem extends SubsystemBase {
             .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
             .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
-
+  private Boolean getBeamBreak(){
+    return beamBreak.get();
+  }
   private void toPosition(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
 
@@ -109,6 +111,6 @@ public class ClawSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("AMRIT Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
   }
 }
