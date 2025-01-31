@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.subsystems.claw.ClawSubsystem;
@@ -13,15 +14,11 @@ public class CloseClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private Command closeClawCommand;
-
-  public CloseClaw(
-      ClawSubsystem
-          clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
+  private Angle setpoint;
+  public CloseClaw(ClawSubsystem clawSubsystem, Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-
+    this.setpoint = setpoint;
     addRequirements(clawSubsystem);
-    closeClawCommand = clawSubsystem.setPosition(ClawConstants.kClawCloseSetpoint);
   }
 
   // Called when the command is initially scheduled.
@@ -33,11 +30,15 @@ public class CloseClaw extends Command {
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    clawSubsystem.setPosition(ClawConstants.kClawCloseSetpoint);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    clawSubsystem.brake();
+  }
 
   // Returns true when the command should end.
   @Override
