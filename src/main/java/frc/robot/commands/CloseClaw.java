@@ -15,7 +15,10 @@ public class CloseClaw extends Command {
   private ClawSubsystem clawSubsystem;
 
   private Angle setpoint;
-  public CloseClaw(ClawSubsystem clawSubsystem, Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
+
+  public CloseClaw(
+      ClawSubsystem clawSubsystem,
+      Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
     this.setpoint = setpoint;
     addRequirements(clawSubsystem);
