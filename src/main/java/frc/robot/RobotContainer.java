@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AntiTip;
-import frc.robot.commands.ClawControl;
+import frc.robot.commands.ClawControlWithBeamBreak;
+import frc.robot.commands.RunGroundIntake;
+import frc.robot.commands.RunGroundIntakeWithJoystick;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.ClawConstants;
@@ -24,6 +26,7 @@ import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
+import frc.robot.subsystems.algae.GroundIntakeSubsystem;
 import frc.robot.subsystems.claw.ClawSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -34,10 +37,13 @@ public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
   private final ClawSubsystem clawSubsystem = new ClawSubsystem();
+  private final GroundIntakeSubsystem groundIntakeSubsystem = new GroundIntakeSubsystem();
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
+  private final RunGroundIntakeWithJoystick runGroundIntakeWithJoystick =
+      new RunGroundIntakeWithJoystick(groundIntakeSubsystem, operator);
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
@@ -82,8 +88,9 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     clawSubsystem.setDefaultCommand(
-        new ClawControl(
+        new ClawControlWithBeamBreak(
             clawSubsystem, ClawConstants.kClawOpenSetpoint, ClawConstants.kClawCloseSetpoint));
+    groundIntakeSubsystem.setDefaultCommand(runGroundIntakeWithJoystick);
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
@@ -134,6 +141,8 @@ public class RobotContainer {
     operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
 
     elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
+
+    operator.leftBumper().onTrue(new RunGroundIntake(groundIntakeSubsystem));
   }
 
   public Command getAutonomousCommand() {

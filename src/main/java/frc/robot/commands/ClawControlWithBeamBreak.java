@@ -9,14 +9,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ClawControl extends Command {
+public class ClawControlWithBeamBreak extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
   private Angle openingSetpoint;
   private Angle closingSetpoint;
 
-  public ClawControl(
+  public ClawControlWithBeamBreak(
       ClawSubsystem clawSubsystem,
       Angle openingSetpoint,
       Angle closingSetpoint) { // TODO: figure out the value of setpoint for the desired claw open
@@ -36,12 +36,12 @@ public class ClawControl extends Command {
   @Override
   public void execute() {
 
-    while (clawSubsystem.getBeamBreak()) {
+    if (clawSubsystem.getBeamBreak()) {
       // Thread.sleep(100);, a delay so the claw doesnt close prematurely, I dont know how to fix
       // the error.
       clawSubsystem.setPosition(closingSetpoint);
     }
-    while (!(clawSubsystem.getBeamBreak())) {
+    if (!(clawSubsystem.getBeamBreak())) {
       // Thread.sleep(100);
       clawSubsystem.setPosition(openingSetpoint);
     }
