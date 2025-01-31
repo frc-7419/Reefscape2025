@@ -4,8 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.algae.GroundIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,10 +13,10 @@ public class RunGroundIntakeWithJoystick extends Command {
   /** Creates a new RunAlgaeGroundIntake. */
   private GroundIntakeSubsystem algaeIntakeSubsystem;
 
-  private XboxController joystick;
+  private CommandXboxController joystick;
 
   public RunGroundIntakeWithJoystick(
-      GroundIntakeSubsystem algaeIntakeSubsystem, XboxController joystick) {
+      GroundIntakeSubsystem algaeIntakeSubsystem, CommandXboxController joystick) {
     this.algaeIntakeSubsystem = algaeIntakeSubsystem;
     this.joystick = joystick;
     addRequirements(algaeIntakeSubsystem);
