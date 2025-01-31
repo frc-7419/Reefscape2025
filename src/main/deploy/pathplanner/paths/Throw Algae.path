@@ -1,0 +1,105 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.0,
+        "y": 7.0
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.3136270491803277,
+        "y": 7.369569672131148
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.474487704918033,
+        "y": 5.8830942622950815
+      },
+      "prevControl": {
+        "x": 1.4385245901639343,
+        "y": 7.849077868852459
+      },
+      "nextControl": {
+        "x": 1.5293533891811455,
+        "y": 2.883770189244962
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.9350409836065574,
+        "y": 2.1908811475409844
+      },
+      "prevControl": {
+        "x": 1.0848872950819701,
+        "y": 3.2158299180327874
+      },
+      "nextControl": {
+        "x": 0.7851946721311447,
+        "y": 1.1659323770491814
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.849999999999999,
+        "y": 0.8122950819672121
+      },
+      "prevControl": {
+        "x": 5.82902151639344,
+        "y": 0.32379610655737623
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Throw Algae",
+      "waypointRelativePos": 0.9885212694125445,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Throw Algae",
+      "waypointRelativePos": 1.2883187035786752,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "Throw Algae",
+      "waypointRelativePos": 1.9770425388251032,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -7.495857639729923
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 31.32269443512231
+  },
+  "useDefaultConstraints": true
+}
