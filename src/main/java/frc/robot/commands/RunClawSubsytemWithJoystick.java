@@ -9,11 +9,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RunAlgaeIntakeWithJoystick extends Command {
+public class RunClawSubsytemWithJoystick extends Command {
   private final CommandXboxController joystick;
   private final ClawSubsystem intake;
 
-  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, ClawSubsystem intake) {
+  public RunClawSubsytemWithJoystick(CommandXboxController joystick, ClawSubsystem intake) {
     this.joystick = joystick;
     this.intake = intake;
     addRequirements(intake);
