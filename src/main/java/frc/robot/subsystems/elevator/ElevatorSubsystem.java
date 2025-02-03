@@ -251,8 +251,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             ElevatorConstants.UNSAFE_ACCELERATION.in(MetersPerSecondPerSecond)
                 / ElevatorConstants.kMetersPerRotation);
 
-    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond)
-        >= maxAngularVelocity.in(RotationsPerSecond)) {
+    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond) >= maxAngularVelocity.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;

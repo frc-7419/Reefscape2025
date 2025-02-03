@@ -19,9 +19,7 @@ import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.util.CombinedAlert;
 
 public class ClawSubsystem extends SubsystemBase {
-  /** Creates a new clawsubsystem. */
   private TalonFX clawMotor;
-
   private CANcoder absEncoder;
   private DigitalInput beamBreak;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
@@ -36,7 +34,8 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
     ;
   }
-   private final CombinedAlert positionAlert =
+
+  private final CombinedAlert positionAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Out of Range",
@@ -79,10 +78,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   private void toPosition(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
-
-    if (!safetyCheck()) {
-      return;
-    }
+  
+    if (!safetyCheck()) return;
+    
     clawMotor.setControl(
         positionRequest
             .withPosition(angle)
@@ -90,7 +88,7 @@ public class ClawSubsystem extends SubsystemBase {
             .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
 
-  private void switchControlMode(ControlMode control) {
+  private void switchControlMode(ControlMode control) { 
     controlMode = control;
   }
 
@@ -102,12 +100,12 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
-  public void setClosingVoltage(double speed) {
-    clawMotor.set(speed);
+  public void setClosingVoltage(double voltage) {
+    clawMotor.setVoltage(voltage);
   }
 
-  public void setOpeningVoltage(double speed) {
-    clawMotor.set(-speed);
+  public void setOpeningVoltage(double voltage) {
+    clawMotor.setVoltage(-voltage);
   }
 
   public void brake() {
@@ -122,22 +120,18 @@ public class ClawSubsystem extends SubsystemBase {
     return clawMotor.getPosition().getValueAsDouble();
   }
 
-  private boolean safetyCheck() {
-    return true; // Not implemented yet
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Claw Velocity: ", absEncoder.getVelocity().getValueAsDouble());
+    SmartDashboard.putBoolean("Passing Safety Checks: " , safetyCheck());
   }
 
 }
 private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+    if (!RobotConstants.runSafetyCheck) return false;
 
-    if (getVelocity().abs(RotationsPerSecond)
-        >= ClawConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+    if (getVelocity().abs(RotationsPerSecond) >= ClawConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
@@ -152,8 +146,7 @@ private boolean safetyCheck() {
     }
 
     Angle currentAngle = getPosition();
-    if (currentAngle.gt(ClawConstants.kMaxAngle.plus(ClawConstants.kAngleTolerance))
-        || currentAngle.lt(ClawConstants.kMinAngle.minus(ClawConstants.kAngleTolerance))) {
+    if (currentAngle.gt(ClawConstants.kMaxAngle.plus(ClawConstants.kAngleTolerance)) || currentAngle.lt(ClawConstants.kMinAngle.minus(ClawConstants.kAngleTolerance))) {
       brake();
       positionAlert.set(true);
       return false;
