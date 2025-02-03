@@ -10,35 +10,36 @@ import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunAlgaeIntakeWithJoystick extends Command {
-  private final CommandXboxController joystick;
-  private final ClawSubsystem intake;
+    private final CommandXboxController joystick;
+    private final ClawSubsystem intake;
 
-  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, ClawSubsystem intake) {
-    this.joystick = joystick;
-    this.intake = intake;
-  }
+    public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, ClawSubsystem intake) {
+        this.joystick = joystick;
+        this.intake = intake;
+        addRequirements(intake);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    intake.coast();
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        intake.coast();
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    intake.setPower(joystick.getLeftX());
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        intake.setPower(joystick.getLeftX());
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    intake.brake();
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        intake.brake();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
