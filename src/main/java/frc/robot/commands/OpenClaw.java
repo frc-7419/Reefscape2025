@@ -4,8 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,13 +13,10 @@ public class OpenClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private Angle setpoint;
-
   public OpenClaw(
-      ClawSubsystem clawSubsystem,
-      Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
+      ClawSubsystem
+          clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    this.setpoint = setpoint;
     addRequirements(clawSubsystem);
   }
 
@@ -32,7 +29,7 @@ public class OpenClaw extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    clawSubsystem.setPosition(setpoint);
+    clawSubsystem.setPosition(ClawConstants.kClawOpenSetpoint);
   }
   // Called once the command ends or is interrupted.
   @Override

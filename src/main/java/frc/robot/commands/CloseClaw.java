@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.subsystems.claw.ClawSubsystem;
@@ -14,13 +13,10 @@ public class CloseClaw extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private Angle setpoint;
-
   public CloseClaw(
-      ClawSubsystem clawSubsystem,
-      Angle setpoint) { // TODO: figure out the value of setpoint for the desired claw open
+      ClawSubsystem
+          clawSubsystem) { // TODO: figure out the value of setpoint for the desired claw open
     this.clawSubsystem = clawSubsystem;
-    this.setpoint = setpoint;
     addRequirements(clawSubsystem);
   }
 
