@@ -59,6 +59,7 @@ public class Constants {
 
     public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
+    public static final double UNSAFE_SPEED = 12; //arbitrary num
 
     static {
       kClawSlot0Configs.kG = 0; // output to overcome gravity (output)

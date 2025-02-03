@@ -41,7 +41,7 @@ public class RunGroundIntakeWithJoystick extends Command {
     algaeIntakeSubsystem.brake();
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end. 
   @Override
   public boolean isFinished() {
     return false;

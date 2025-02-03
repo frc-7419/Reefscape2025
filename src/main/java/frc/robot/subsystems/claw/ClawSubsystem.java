@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
+import frc.robot.util.CombinedAlert;
 
 public class ClawSubsystem extends SubsystemBase {
   /** Creates a new clawsubsystem. */
@@ -35,7 +36,24 @@ public class ClawSubsystem extends SubsystemBase {
     clawMotor.getConfigurator().apply(Constants.ClawConstants.kMotionMagicConfig);
     ;
   }
+   private final CombinedAlert positionAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Wrist Out of Range",
+          "The claw angle is outside the safe range. Subsystem disabled.");
 
+  private final CombinedAlert velocityAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Wrist Velocity Error",
+          "The claw velocity is outside the safe range. Subsystem disabled.");
+
+  private final CombinedAlert overheatingAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Wrist Overheating",
+          "The claw motor is overheating. Subsystem disabled.");
+  
   // Code stolen from Wrist subsystem
   private enum ControlMode {
     MANUAL,
@@ -52,11 +70,7 @@ public class ClawSubsystem extends SubsystemBase {
     power = Math.max(-1, Math.min(1, power));
     clawMotor.setVoltage(power * 12);
 
-  //   clawMotor.setControl(
-  //       velocityRequest shouldnt be using a velocity request/
-  //           .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
-  //           .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
-  //           .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
+  
   }
 
   public Boolean getBeamBreak() {
@@ -117,4 +131,35 @@ public class ClawSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Claw Velocity is", absEncoder.getVelocity().getValueAsDouble());
   }
+
 }
+private boolean safetyCheck() {
+    if (!RobotConstants.runSafetyCheck) return true;
+
+    if (getVelocity().abs(RotationsPerSecond)
+        >= ClawConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+      brake();
+      velocityAlert.set(true);
+      return false;
+    } else velocityAlert.set(false);
+
+    if (clawMotor.getDeviceTemp().getValue().gte(ClawConstants.MAX_TEMPERATURE)) {
+      brake();
+      overheatingAlert.set(true);
+      return false;
+    } else {
+      overheatingAlert.set(false);
+    }
+
+    Angle currentAngle = getPosition();
+    if (currentAngle.gt(ClawConstants.kMaxAngle.plus(ClawConstants.kAngleTolerance))
+        || currentAngle.lt(ClawConstants.kMinAngle.minus(ClawConstants.kAngleTolerance))) {
+      brake();
+      positionAlert.set(true);
+      return false;
+    } else {
+      positionAlert.set(false);
+      coast();
+    }
+    return true;
+  }
