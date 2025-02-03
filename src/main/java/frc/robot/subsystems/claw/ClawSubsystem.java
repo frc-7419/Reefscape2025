@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.claw;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -52,12 +50,13 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     power = Math.max(-1, Math.min(1, power));
+    clawMotor.setVoltage(power * 12);
 
-    clawMotor.setControl(
-        velocityRequest
-            .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
-            .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
-            .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
+  //   clawMotor.setControl(
+  //       velocityRequest shouldnt be using a velocity request/
+  //           .withVelocity(power * ClawConstants.kMaxSpeed.in(RotationsPerSecond))
+  //           .withLimitForwardMotion(getPosition().lte(ClawConstants.kMaxPosition))
+  //           .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
 
   public Boolean getBeamBreak() {
