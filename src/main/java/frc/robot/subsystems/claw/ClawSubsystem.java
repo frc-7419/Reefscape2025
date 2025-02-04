@@ -4,18 +4,22 @@
 
 package frc.robot.subsystems.claw;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
+import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
 
 public class ClawSubsystem extends SubsystemBase {
@@ -52,7 +56,7 @@ public class ClawSubsystem extends SubsystemBase {
           CombinedAlert.Severity.ERROR,
           "Wrist Overheating",
           "The claw motor is overheating. Subsystem disabled.");
-  
+
   // Code stolen from Wrist subsystem
   private enum ControlMode {
     MANUAL,
@@ -68,8 +72,6 @@ public class ClawSubsystem extends SubsystemBase {
 
     power = Math.max(-1, Math.min(1, power));
     clawMotor.setVoltage(power * 12);
-
-  
   }
 
   public Boolean getBeamBreak() {
@@ -78,9 +80,9 @@ public class ClawSubsystem extends SubsystemBase {
 
   private void toPosition(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
-  
+
     if (!safetyCheck()) return;
-    
+
     clawMotor.setControl(
         positionRequest
             .withPosition(angle)
@@ -88,7 +90,7 @@ public class ClawSubsystem extends SubsystemBase {
             .withLimitForwardMotion(getPosition().gte(ClawConstants.kMinPosition)));
   }
 
-  private void switchControlMode(ControlMode control) { 
+  private void switchControlMode(ControlMode control) {
     controlMode = control;
   }
 
@@ -120,18 +122,22 @@ public class ClawSubsystem extends SubsystemBase {
     return clawMotor.getPosition().getValueAsDouble();
   }
 
+  public AngularVelocity getVelocity() {
+    return clawMotor.getVelocity().getValue();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Claw Velocity: ", absEncoder.getVelocity().getValueAsDouble());
-    SmartDashboard.putBoolean("Passing Safety Checks: " , safetyCheck());
+    SmartDashboard.putBoolean("Passing Safety Checks: ", safetyCheck());
   }
 
-}
-private boolean safetyCheck() {
+  private boolean safetyCheck() {
     if (!RobotConstants.runSafetyCheck) return false;
 
-    if (getVelocity().abs(RotationsPerSecond) >= ClawConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+    if (getVelocity().abs(RotationsPerSecond)
+        >= ClawConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
@@ -146,7 +152,8 @@ private boolean safetyCheck() {
     }
 
     Angle currentAngle = getPosition();
-    if (currentAngle.gt(ClawConstants.kMaxAngle.plus(ClawConstants.kAngleTolerance)) || currentAngle.lt(ClawConstants.kMinAngle.minus(ClawConstants.kAngleTolerance))) {
+    if (currentAngle.gt(ClawConstants.kMaxAngle.plus(ClawConstants.kAngleTolerance))
+        || currentAngle.lt(ClawConstants.kMinAngle.minus(ClawConstants.kAngleTolerance))) {
       brake();
       positionAlert.set(true);
       return false;
@@ -156,3 +163,4 @@ private boolean safetyCheck() {
     }
     return true;
   }
+}

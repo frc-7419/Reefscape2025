@@ -23,6 +23,7 @@ public class Constants {
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
+    public static final boolean runSafetyCheck = true;
   }
 
   public static class GroundIntakeConstants {
@@ -52,14 +53,21 @@ public class Constants {
     public static final int kDutyEncoderChannel = 11; // TODO: change this to the real ID
     public static final int kBeambreakid = 12; // TODO: change this to the real ID
     public static final int kAbsoluteEncoderChannel = 13; // TODO: change this to the real ID
+    public static final Temperature MAX_TEMPERATURE =
+        Celsius.of(
+            125); // I believe this sets the max temp to 125 celsius, this unit is not arbritary,
+    // but i set it to 5 degrees below the actual max temp for safety
     public static final Angle kClawOpenSetpoint =
         Degrees.of(19); // TODO: figure  out the value of setpoint for the desired claw open
     public static final Angle kClawCloseSetpoint =
         Degrees.of(20); // TODO: figure out the value for setpoint for claw close
-
+    public static final Angle kAngleTolerance = Degrees.of(5); // Arbitrary guess
+    public static final Angle kMaxAngle =
+        Degrees.of(70); // Non Abritrary, according to mechanisms ref.
+    public static final Angle kMinAngle = Degrees.of(10); // Arbitrary Guess
     public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
-    public static final double UNSAFE_SPEED = 12; //arbitrary num
+    public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(12); // arbitrary num
 
     static {
       kClawSlot0Configs.kG = 0; // output to overcome gravity (output)
