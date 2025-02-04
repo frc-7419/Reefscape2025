@@ -36,6 +36,7 @@ public class Constants {
   public static class ElevatorConstants {
     public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
     public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
+    public static final int kTopElevatorMotorId = 9; // Arbitrary ID (change)
     public static final Distance kMaxHeight = Inches.of(84); // Taken from canvas
     public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
     public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas
