@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.970660445601851,
+        "y": 4.026106409143518
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.302893518518518,
+        "y": 2.2128182870370363
+      },
+      "isLocked": false,
+      "linkedName": "Reef 3"
+    },
+    {
+      "anchor": {
+        "x": 1.2356951678288963,
+        "y": 1.0085792824002373
+      },
+      "prevControl": {
+        "x": 2.49572048611111,
+        "y": 1.4291312210648142
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Coral Station"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -125.16150067611598
+  },
+  "reversed": false,
+  "folder": "To Coral Station",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 179.9504266595902
+  },
+  "useDefaultConstraints": true
+}

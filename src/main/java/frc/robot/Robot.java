@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -84,19 +83,19 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-        est -> {
-          var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
+    // var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
+    // visionEst.ifPresent(
+    //     est -> {
+    //       var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
 
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              est.estimatedPose.toPose2d(),
-              Utils.fpgaToCurrentTime(est.timestampSeconds),
-              estStdDevs);
+    //       m_robotContainer.drivetrain.addVisionMeasurement(
+    //           est.estimatedPose.toPose2d(),
+    //           Utils.fpgaToCurrentTime(est.timestampSeconds),
+    //           estStdDevs);
 
-          vision.setRobotPose(est.estimatedPose.toPose2d());
-        });
-    SmartDashboard.putData("Vision Field", vision);
+    //       vision.setRobotPose(est.estimatedPose.toPose2d());
+    //     });
+    // SmartDashboard.putData("Vision Field", vision);
     updateRobotStatus();
   }
 
