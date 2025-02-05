@@ -16,10 +16,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AntiTip;
-import frc.robot.commands.ClawControlWithBeamBreak;
+import frc.robot.commands.RunClawWithBeamBreak;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
-import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
@@ -81,9 +80,7 @@ public class RobotContainer {
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
-    clawSubsystem.setDefaultCommand(
-        new ClawControlWithBeamBreak(
-            clawSubsystem, ClawConstants.kClawOpenSetpoint, ClawConstants.kClawCloseSetpoint));
+    clawSubsystem.setDefaultCommand(new RunClawWithBeamBreak(clawSubsystem));
 
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically

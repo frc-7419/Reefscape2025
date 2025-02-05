@@ -4,25 +4,16 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.claw.ClawSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ClawControlWithBeamBreak extends Command {
+public class RunClawWithBeamBreak extends Command {
   /** Creates a new OpenClaw. */
   private ClawSubsystem clawSubsystem;
 
-  private Angle openingSetpoint;
-  private Angle closingSetpoint;
-
-  public ClawControlWithBeamBreak(
-      ClawSubsystem clawSubsystem,
-      Angle openingSetpoint,
-      Angle closingSetpoint) { // TODO: figure out the value of setpoint for the desired claw open
+  public RunClawWithBeamBreak(ClawSubsystem clawSubsystem) {
     this.clawSubsystem = clawSubsystem;
-    this.openingSetpoint = openingSetpoint;
-    this.closingSetpoint = closingSetpoint;
     addRequirements(clawSubsystem);
   }
 
@@ -37,18 +28,19 @@ public class ClawControlWithBeamBreak extends Command {
   public void execute() {
 
     if (clawSubsystem.getBeamBreak()) {
-      // Thread.sleep(100);, a delay so the claw doesnt close prematurely, I dont know how to fix
-      // the error.
-      clawSubsystem.setPosition(closingSetpoint);
+      // if algae is there, apply a small power so it doesn't fall off. tested with hardware, algae
+      // doesn't stay there by itself
+      clawSubsystem.setPower(0.1f);
     }
     if (!(clawSubsystem.getBeamBreak())) {
-      // Thread.sleep(100);
-      clawSubsystem.setPosition(openingSetpoint);
+      clawSubsystem.setPower(0.6f);
     }
   }
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    clawSubsystem.brake();
+  }
 
   // Returns true when the command should end.
   @Override
