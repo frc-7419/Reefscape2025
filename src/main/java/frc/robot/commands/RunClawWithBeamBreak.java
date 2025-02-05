@@ -30,10 +30,10 @@ public class RunClawWithBeamBreak extends Command {
     if (clawSubsystem.getBeamBreak()) {
       // if algae is there, apply a small power so it doesn't fall off. tested with hardware, algae
       // doesn't stay there by itself
-      clawSubsystem.setPower(0.1f);
+      clawSubsystem.setPower(0.1);
     }
     if (!(clawSubsystem.getBeamBreak())) {
-      clawSubsystem.setPower(0.6f);
+      clawSubsystem.setPower(0.6);
     }
   }
   // Called once the command ends or is interrupted.
