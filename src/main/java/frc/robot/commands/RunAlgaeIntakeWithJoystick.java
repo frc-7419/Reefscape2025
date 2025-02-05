@@ -13,7 +13,8 @@ public class RunAlgaeIntakeWithJoystick extends Command {
   private final CommandXboxController joystick;
   private final AlgaeIntakeSubsystem algaeIntakeSubsystem;
 
-  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, AlgaeIntakeSubsystem algaeIntakeSubsystem) {
+  public RunAlgaeIntakeWithJoystick(
+      CommandXboxController joystick, AlgaeIntakeSubsystem algaeIntakeSubsystem) {
     this.joystick = joystick;
     this.algaeIntakeSubsystem = algaeIntakeSubsystem;
     addRequirements(algaeIntakeSubsystem);
