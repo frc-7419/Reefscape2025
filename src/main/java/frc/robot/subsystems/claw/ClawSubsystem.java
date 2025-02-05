@@ -98,6 +98,14 @@ public class ClawSubsystem extends SubsystemBase {
     return this.runEnd(() -> toPosition(angle), () -> switchControlMode(ControlMode.MANUAL));
   }
 
+  public void setSpeed(AngularVelocity speed) {
+    clawMotor.setControl(
+        velocityRequest
+            .withVelocity(speed)
+            .withLimitForwardMotion(getVelocity().lte(ClawConstants.kMaxSpeed))
+            .withLimitForwardMotion(getVelocity().gte(ClawConstants.kMinSpeed)));
+  }
+
   public void coast() {
     clawMotor.setNeutralMode(NeutralModeValue.Coast);
   }
