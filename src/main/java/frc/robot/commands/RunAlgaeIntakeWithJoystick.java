@@ -5,41 +5,36 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.claw.ClawSubsystem;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.claw.AlgaeIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RunClawWithBeamBreak extends Command {
-  /** Creates a new OpenClaw. */
-  private ClawSubsystem clawSubsystem;
+public class RunAlgaeIntakeWithJoystick extends Command {
+  private final CommandXboxController joystick;
+  private final AlgaeIntakeSubsystem algaeIntakeSubsystem;
 
-  public RunClawWithBeamBreak(ClawSubsystem clawSubsystem) {
-    this.clawSubsystem = clawSubsystem;
-    addRequirements(clawSubsystem);
+  public RunAlgaeIntakeWithJoystick(CommandXboxController joystick, AlgaeIntakeSubsystem algaeIntakeSubsystem) {
+    this.joystick = joystick;
+    this.algaeIntakeSubsystem = algaeIntakeSubsystem;
+    addRequirements(algaeIntakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    clawSubsystem.coast();
+    algaeIntakeSubsystem.coast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if (clawSubsystem.getBeamBreak()) {
-      // if algae is there, apply a small power so it doesn't fall off. tested with hardware, algae
-      // doesn't stay there by itself
-      clawSubsystem.setPower(0.1);
-    }
-    if (!(clawSubsystem.getBeamBreak())) {
-      clawSubsystem.setPower(0.6);
-    }
+    algaeIntakeSubsystem.setPower(joystick.getLeftX());
   }
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    clawSubsystem.brake();
+    algaeIntakeSubsystem.brake();
   }
 
   // Returns true when the command should end.

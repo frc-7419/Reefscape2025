@@ -15,14 +15,14 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ClawConstants;
 import frc.robot.util.CombinedAlert;
 
-public class ClawSubsystem extends SubsystemBase {
+public class AlgaeIntakeSubsystem extends SubsystemBase {
   private TalonFX clawMotor;
   private CANcoder absEncoder;
   private DigitalInput beamBreak;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
-  public ClawSubsystem() {
+  public AlgaeIntakeSubsystem() {
     this.clawMotor = new TalonFX(ClawConstants.kClawMotorId);
     this.absEncoder = new CANcoder(ClawConstants.kAbsoluteEncoderChannel);
     this.beamBreak = new DigitalInput(ClawConstants.kBeambreakid);
