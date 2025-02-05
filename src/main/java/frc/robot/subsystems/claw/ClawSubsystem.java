@@ -57,7 +57,6 @@ public class ClawSubsystem extends SubsystemBase {
           "Wrist Overheating",
           "The claw motor is overheating. Subsystem disabled.");
 
-  // Code stolen from Wrist subsystem
   private enum ControlMode {
     MANUAL,
     MOTIONMAGIC
