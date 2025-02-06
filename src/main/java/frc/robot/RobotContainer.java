@@ -13,18 +13,22 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlgaeClampWithJoystick;
 import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
+import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
+import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.AlgaeClampSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +42,8 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDeadband(MaxSpeed * 0.05)
+          .withRotationalDeadband(MaxAngularRate * 0.05) // Add a 5% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -54,10 +58,12 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-
+  private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
-  private final CameraConfig photonCamOne = new CameraConfig();
-  private final CameraConfig photonCamTwo = new CameraConfig();
+  private final CameraConfig photonCamOne =
+      new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
+  private final CameraConfig photonCamTwo =
+      new CameraConfig("Photon_Vision_Cam_2", VisionConstants.kRobotToCamOne);
   private final List<CameraConfig> cameraConfigs =
       new ArrayList<CameraConfig>() {
         {
@@ -78,6 +84,27 @@ public class RobotContainer {
 
     algaeClampSubsystem.setDefaultCommand(algaeClampWithJoystick);
     // antiTip.schedule();
+    
+    private final Command elevatorToL1 =
+        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
+    private final Command elevatorToL2 =
+        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
+    private final Command elevatorToL3 =
+        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
+    private final Command elevatorToL4 =
+        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
+    private final Command wristL1 =
+        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
+    private final Command wristL2 =
+        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
+    private final Command wristL3 =
+        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
+    private final Command wristL4 =
+        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
+    private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
+    private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
+    private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
+    private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
   }
 
   private void configureBindings() {
@@ -120,8 +147,19 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    operator.a().whileTrue(elevator.setPosition(Inches.of(0)));
-    elevator.setDefaultCommand(elevator.joystickControl(operator.getRightY()));
+    operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
+
+    operator.b().whileTrue(scoreL4);
+
+    operator.x().whileTrue(scoreL2);
+
+    operator.y().whileTrue(scoreL3);
+
+    operator.leftBumper().whileTrue(scoreL1);
+
+    elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
+
+    wrist.setDefaultCommand(wrist.joystickControl(operator.getRightY()));
   }
 
   public Command getAutonomousCommand() {

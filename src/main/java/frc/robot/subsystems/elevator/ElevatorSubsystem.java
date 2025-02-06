@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants.ElevatorConstants;
+import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
 
 /**
@@ -259,7 +260,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!ElevatorConstants.runSafetyCheck) return true;
+    if (!RobotConstants.runSafetyCheck) return true;
 
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(
