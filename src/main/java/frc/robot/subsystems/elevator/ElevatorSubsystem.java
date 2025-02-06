@@ -38,6 +38,7 @@ import frc.robot.util.CombinedAlert;
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
   private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
+  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -78,11 +79,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     leftElevatorMotor.setPosition(0);
     rightElevatorMotor.setPosition(0);
+    topElevatorMotor.setPosition(0);
 
     leftElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
+    topElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
 
-    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), true));
+    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
+    topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
 
     coast();
   }
@@ -156,6 +160,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void coast() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
     rightElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
+    topElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
   /**
@@ -167,9 +172,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Reduncancy to ensure both motors are stopped
     leftElevatorMotor.set(0);
     rightElevatorMotor.set(0);
+    topElevatorMotor.set(0);
 
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     rightElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+    topElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   /**
@@ -187,7 +194,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return The current height of the elevator as a {@link Distance}.
    */
   public Distance getHeight() {
-    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation);
+    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation)
+        .plus(ElevatorConstants.kHeightOffset);
   }
 
   @Override
@@ -205,6 +213,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Temperature Right (Celsius)",
         rightElevatorMotor.getDeviceTemp().getValue().in(Celsius));
+    SmartDashboard.putNumber(
+        "Elevator Temperature Top (Celsius)",
+        topElevatorMotor.getDeviceTemp().getValue().in(Celsius));
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
@@ -226,6 +237,15 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public TalonFX getRightMotor() {
     return rightElevatorMotor;
+  }
+
+  /**
+   * Gets the top elevator motor instance.
+   *
+   * @return The top TalonFX motor instance.
+   */
+  public TalonFX getTopMotor() {
+    return topElevatorMotor;
   }
 
   /**
@@ -267,7 +287,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else accelerationAlert.set(false);
 
     if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
-        || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)) {
+        || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
+        || topElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)) {
       brake();
       overheatingAlert.set(true);
       return false;

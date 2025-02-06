@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CameraConfig;
@@ -52,7 +53,9 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final ToPose toPose = new ToPose(drivetrain);
+
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
@@ -66,6 +69,16 @@ public class RobotContainer {
           add(photonCamTwo);
         }
       };
+
+  public RobotContainer() {
+    photonvision = new PhotonvisionSubsystem(cameraConfigs);
+
+    configureBindings();
+    SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
+
+    // antiTip.schedule();
+  }
+
   private final Command elevatorToL1 =
       elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
   private final Command elevatorToL2 =
@@ -86,12 +99,6 @@ public class RobotContainer {
   private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
   private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
   private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
-
-  public RobotContainer() {
-    photonvision = new PhotonvisionSubsystem(cameraConfigs);
-    configureBindings();
-    SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
-  }
 
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
