@@ -57,6 +57,7 @@ public class Constants {
         Celsius.of(
             125); // I believe this sets the max temp to 125 celsius, this unit is not arbritary,
     // but i set it to 5 degrees below the actual max temp for safety
+    public static final double kMetersPerRotation = 3;
     public static final Angle kClawOpenSetpoint =
         Degrees.of(19); // TODO: figure  out the value of setpoint for the desired claw open
     public static final Angle kClawCloseSetpoint =
@@ -67,7 +68,7 @@ public class Constants {
     public static final Angle kMinAngle = Degrees.of(10); // Arbitrary Guess
     public static final TalonFXConfiguration kClawTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kClawSlot0Configs = kClawTalonFXConfiguration.Slot0;
-    public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(12); // arbitrary num
+    public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(200);
 
     static {
       kClawSlot0Configs.kG = 0; // output to overcome gravity (output)

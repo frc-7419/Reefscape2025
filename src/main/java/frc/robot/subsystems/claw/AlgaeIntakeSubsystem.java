@@ -1,5 +1,8 @@
 package frc.robot.subsystems.claw;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -115,8 +118,11 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   }
 
   private boolean safetyCheck() {
+    AngularVelocity maxAngularVelocity =
+        RotationsPerSecond.of(
+            ClawConstants.UNSAFE_SPEED.in(MetersPerSecond) / ClawConstants.kMetersPerRotation);
     if (!Constants.RobotConstants.runSafetyCheck) return true;
-    if (getVelocity().gte(ClawConstants.UNSAFE_SPEED)) {
+    if (getVelocity().abs(RotationsPerSecond) >= maxAngularVelocity.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
