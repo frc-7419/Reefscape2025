@@ -226,22 +226,6 @@ public class Constants {
     public static final Temperature MAX_TEMPERATURE = Celsius.of(100); // Max rated temperature
   }
 
-  public static class VisionConstants {
-    public static final Transform3d kRobotToCamOne =
-        new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
-    public static final Transform3d kRobotToCamTwo =
-        new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-  }
-
-  public static class WristConstants {
-    public static int pivotId = 69;
-    public static int intakeId = 42;
-  }
-
   public static class CameraConfig {
     public final String name;
     public final Transform3d cameraToRobot;

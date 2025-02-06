@@ -24,9 +24,9 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.constants.Constants.CameraConfig.kMultiTagStdDevs;
-import static frc.robot.constants.Constants.CameraConfig.kSingleTagStdDevs;
-import static frc.robot.constants.Constants.CameraConfig.kTagLayout;
+import static frc.robot.constants.Constants.VisionConstants.kMultiTagStdDevs;
+import static frc.robot.constants.Constants.VisionConstants.kSingleTagStdDevs;
+import static frc.robot.constants.Constants.VisionConstants.kTagLayout;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;

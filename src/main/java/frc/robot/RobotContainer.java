@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AlgaeClampWithJoystick;
 import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants;
@@ -26,7 +25,6 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.AlgaeClampSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
@@ -72,40 +70,35 @@ public class RobotContainer {
         }
       };
 
-  private final AlgaeClampSubsystem algaeClampSubsystem = new AlgaeClampSubsystem();
-  private final AlgaeClampWithJoystick algaeClampWithJoystick =
-      new AlgaeClampWithJoystick(algaeClampSubsystem, operator);
-
   public RobotContainer() {
     photonvision = new PhotonvisionSubsystem(cameraConfigs);
 
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
 
-    algaeClampSubsystem.setDefaultCommand(algaeClampWithJoystick);
     // antiTip.schedule();
-    
-    private final Command elevatorToL1 =
-        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
-    private final Command elevatorToL2 =
-        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
-    private final Command elevatorToL3 =
-        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
-    private final Command elevatorToL4 =
-        elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
-    private final Command wristL1 =
-        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
-    private final Command wristL2 =
-        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
-    private final Command wristL3 =
-        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
-    private final Command wristL4 =
-        wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
-    private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
-    private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
-    private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
-    private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
   }
+
+  private final Command elevatorToL1 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
+  private final Command elevatorToL2 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
+  private final Command elevatorToL3 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
+  private final Command elevatorToL4 =
+      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
+  private final Command wristL1 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
+  private final Command wristL2 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
+  private final Command wristL3 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
+  private final Command wristL4 =
+      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
+  private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
+  private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
+  private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
+  private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
 
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
