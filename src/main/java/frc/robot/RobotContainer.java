@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,7 @@ import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
+import frc.robot.constants.Constants.ScoringConstants;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
@@ -29,6 +31,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
@@ -79,6 +82,18 @@ public class RobotContainer {
     // antiTip.schedule();
   }
 
+  private enum ScoringHeights {
+    L1,
+    L2,
+    L3,
+    L4
+  }
+
+  private enum ScoringPosition {
+    LEFT,
+    RIGHT
+  }
+
   private final Command elevatorToL1 =
       elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
   private final Command elevatorToL2 =
@@ -99,6 +114,35 @@ public class RobotContainer {
   private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
   private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
   private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
+
+  private Command alignToReef(ScoringPosition position) {
+    Pose2d robotPose2d = drivetrain.getState().Pose;
+
+    Map<Integer, Pose2d> reefPoseMap = ScoringConstants.reefPoseMap;
+
+    int closestTagId = -1;
+    double minDistance = Double.MAX_VALUE;
+    Pose2d closestPose = null;
+
+    for (Map.Entry<Integer, Pose2d> entry : reefPoseMap.entrySet()) {
+      int tagId = entry.getKey();
+      Pose2d tagPose = entry.getValue();
+
+      double distance = robotPose2d.getTranslation().getDistance(tagPose.getTranslation());
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestTagId = tagId;
+        closestPose = tagPose;
+      }
+    }
+
+    SmartDashboard.putNumber("Closest Reef Side", closestTagId);
+    SmartDashboard.putNumber("Closest Reef Pose/x", closestPose.getX());
+    SmartDashboard.putNumber("Closest Reef Pose/y", closestPose.getY());
+
+    return null;
+  }
 
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
