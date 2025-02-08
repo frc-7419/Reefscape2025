@@ -13,10 +13,12 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -37,6 +39,9 @@ public class Constants {
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(3);
+    public static final PIDController kPoseVelocityXController = new PIDController(5, 0, 0);
+    public static final PIDController kPoseVelocityYController = new PIDController(5, 0, 0);
+    public static final PIDController kPoseThetaController = new PIDController(10, 0, 0);
   }
 
   public static class IntakeCoralConstants {
@@ -74,6 +79,28 @@ public class Constants {
     }
 
     public static Map<Integer, Pose2d> reefPoseMap = getReefPoseMap();
+
+    public static final Translation2d leftReefOffset =
+        new Translation2d(0.2286, 0.1651); // should probally be robot
+    // bumper
+    // offset to be flush and then the left
+    public static final Translation2d rightReefOffset =
+        new Translation2d(0.2286, -0.1651); // should probally be robot
+    // bumper
+    // offset to be flush and then the
+    // right
+
+    public enum ScoringHeights {
+      L1,
+      L2,
+      L3,
+      L4
+    }
+
+    public enum ScoringPosition {
+      LEFT,
+      RIGHT
+    }
   }
 
   public static class VisionConstants {
