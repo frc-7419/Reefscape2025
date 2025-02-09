@@ -1,13 +1,13 @@
-package frc.robot.subsystems.claw;
+package frc.robot.subsystems.algaeintake;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.ClawConstants;
-import frc.robot.util.CombinedAlert;   
+import frc.robot.constants.Constants.AlgaeIntakeConstants;
+import frc.robot.util.CombinedAlert;
 
 public class AlgaeIntakeSubsystem extends SubsystemBase {
   private TalonFX clawMotor;
@@ -26,23 +26,28 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private final PositionVoltage positionRequest = new PositionVoltage(0).withSlot(0);
 
   public AlgaeIntakeSubsystem() {
-    this.clawMotor = new TalonFX(ClawConstants.kClawMotorId);
-    this.absEncoder = new CANcoder(ClawConstants.kAbsoluteEncoderChannel);
-    this.beamBreak = new DigitalInput(ClawConstants.kBeambreakid);
-    clawMotor.getConfigurator().apply(ClawConstants.kMotionMagicConfig);
+    this.clawMotor = new TalonFX(AlgaeIntakeConstants.kClawMotorId);
+    this.absEncoder = new CANcoder(AlgaeIntakeCCombinedAlertsoluteEncoderChannel);
+    this.beamBreak = new DigitalInput(AlgaeIntakeConstants.kBeambreakid);
+    clawMotor.getConfigurator().apply(AlgaeIntakeConstants.kMotionMagicConfig);
   }
 
+  private final CombinedAlert angleAlert =
+      new CombinedAlert(
+          CombinedAlert.Severity.ERROR,
+          "Wrist Angle Error",
+          "The Algae Intake angle is outside the safe range. Subsystem disabled.");
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Velocity Error",
-          "The claw velocity is outside the safe range. Subsystem disabled.");
+          "The Algae Intake velocity is outside the safe range. Subsystem disabled.");
 
   private final CombinedAlert overheatingAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
           "Wrist Overheating",
-          "The claw motor is overheating. Subsystem disabled.");
+          "The Algae Intake motor is overheating. Subsystem disabled.");
 
   private enum ControlMode {
     MANUAL,
@@ -120,8 +125,16 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private boolean safetyCheck() {
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(
-            ClawConstants.UNSAFE_SPEED.in(MetersPerSecond) / ClawConstants.kMetersPerRotation);
+            AlgaeIntakeConstants.UNSAFE_SPEED.in(MetersPerSecond)
+                / AlgaeIntakeConstants.kMetersPerRotation);
     if (!Constants.RobotConstants.runSafetyCheck) return true;
+    if (getPosition() >= AlgaeIntakeConstants.kMaxPosition.in(Units.degrees)) {
+      brake();
+      angleAlert.set(true);
+      return false;
+    } else {
+      angleAlert.set(false);
+    }
     if (getVelocity().abs(RotationsPerSecond) >= maxAngularVelocity.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
@@ -129,7 +142,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     } else {
       velocityAlert.set(false);
     }
-    if (clawMotor.getDeviceTemp().getValue().gte(ClawConstants.MAX_TEMPERATURE)) {
+    if (clawMotor.getDeviceTemp().getValue().gte(AlgaeIntakeConstants.MAX_TEMPERATURE)) {
       brake();
       overheatingAlert.set(true);
       return false;
