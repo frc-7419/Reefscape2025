@@ -104,13 +104,9 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     return absEncoder.getPosition().getValue();
   }
 
-  
-
   public AngularVelocity getVelocity() {
     return clawMotor.getVelocity().getValue();
   }
-
-  
 
   @Override
   public void periodic() {
