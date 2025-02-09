@@ -1,6 +1,7 @@
 package frc.robot.subsystems.algaeintake;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -27,7 +28,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
 
   public AlgaeIntakeSubsystem() {
     this.clawMotor = new TalonFX(AlgaeIntakeConstants.kClawMotorId);
-    this.absEncoder = new CANcoder(AlgaeIntakeCCombinedAlertsoluteEncoderChannel);
+    this.absEncoder = new CANcoder(AlgaeIntakeConstants.kAbsoluteEncoderChannel);
     this.beamBreak = new DigitalInput(AlgaeIntakeConstants.kBeambreakid);
     clawMotor.getConfigurator().apply(AlgaeIntakeConstants.kMotionMagicConfig);
   }
@@ -128,7 +129,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
             AlgaeIntakeConstants.UNSAFE_SPEED.in(MetersPerSecond)
                 / AlgaeIntakeConstants.kMetersPerRotation);
     if (!Constants.RobotConstants.runSafetyCheck) return true;
-    if (getPosition() >= AlgaeIntakeConstants.kMaxPosition.in(Units.degrees)) {
+    if (getPositionDouble() >= AlgaeIntakeConstants.kMaxPositionDouble) {
       brake();
       angleAlert.set(true);
       return false;

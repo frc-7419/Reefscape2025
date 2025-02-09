@@ -87,6 +87,7 @@ public class Constants {
     public static final Angle kMaxPosition = Degrees.of(0);
     public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1);
     public static final AngularVelocity kMinSpeed = RotationsPerSecond.of(0.5);
+    public static final double kMaxPositionDouble = 75;
   }
 
   public static class DrivetrainConstants {
