@@ -104,17 +104,13 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     return absEncoder.getPosition().getValue();
   }
 
-  public double getPositionDouble() {
-    return clawMotor.getPosition().getValueAsDouble();
-  }
+  
 
   public AngularVelocity getVelocity() {
     return clawMotor.getVelocity().getValue();
   }
 
-  public double getVelocityAsDouble() {
-    return clawMotor.getVelocity().getValueAsDouble();
-  }
+  
 
   @Override
   public void periodic() {
@@ -128,7 +124,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
             AlgaeIntakeConstants.UNSAFE_SPEED.in(MetersPerSecond)
                 / AlgaeIntakeConstants.kMetersPerRotation);
     if (!Constants.RobotConstants.runSafetyCheck) return true;
-    if (getPositionDouble() >= AlgaeIntakeConstants.kMaxPositionDouble) {
+    if (getPosition().gte(AlgaeIntakeConstants.kMaxPosition)) {
       brake();
       angleAlert.set(true);
       return false;
