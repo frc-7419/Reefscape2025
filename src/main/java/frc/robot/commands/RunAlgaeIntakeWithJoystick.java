@@ -7,9 +7,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class AlgaeIntakeWithBeamBreak extends Command {
-  /** Creates a new AlgaeIntakeWithBeamBreak. */
-  public AlgaeIntakeWithBeamBreak() {
+public class RunAlgaeIntakeWithJoystick extends Command {
+  /** Creates a new RunAlgaeIntakeWithJoystick. */
+  public RunAlgaeIntakeWithJoystick() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
