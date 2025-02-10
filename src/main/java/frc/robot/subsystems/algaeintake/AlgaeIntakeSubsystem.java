@@ -35,18 +35,18 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   private final CombinedAlert angleAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
-          "Wrist Angle Error",
+          "Algae Intake Angle Error",
           "The Algae Intake angle is outside the safe range. Subsystem disabled.");
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
-          "Wrist Velocity Error",
+          "Algae Intake Velocity Error",
           "The Algae Intake velocity is outside the safe range. Subsystem disabled.");
 
   private final CombinedAlert overheatingAlert =
       new CombinedAlert(
           CombinedAlert.Severity.ERROR,
-          "Wrist Overheating",
+          "Algae Intake Overheating",
           "The Algae Intake motor is overheating. Subsystem disabled.");
 
   private enum ControlMode {
@@ -62,7 +62,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     clawMotor.setVoltage(power * 12);
   }
 
-  public Boolean getBeamBreak() {
+  public boolean getBeamBreak() { //primative boolean instead of Boolean
     return beamBreak.get();
   }
 
@@ -97,6 +97,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
   }
 
   public void brake() {
+    clawMotor.setVoltage(0);
     clawMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
