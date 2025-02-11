@@ -62,7 +62,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     clawMotor.setVoltage(power * 12);
   }
 
-  public boolean getBeamBreak() { //primative boolean instead of Boolean
+  public boolean getBeamBreak() { // primative boolean instead of Boolean
     return beamBreak.get();
   }
 
