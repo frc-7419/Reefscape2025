@@ -25,7 +25,9 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorPIDTuning;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorToPosition;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,13 +82,13 @@ public class RobotContainer {
   }
 
   private final Command elevatorToL1 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
+      new ElevatorToPosition(elevator, Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
   private final Command elevatorToL2 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
+      new ElevatorToPosition(elevator, Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
   private final Command elevatorToL3 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
+      new ElevatorToPosition(elevator, Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
   private final Command elevatorToL4 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
+      new ElevatorToPosition(elevator, Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
   private final Command wristL1 =
       wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
   private final Command wristL2 =
@@ -126,7 +128,7 @@ public class RobotContainer {
                     point.withModuleDirection(
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-    driver.x().whileTrue(toPose);
+    // driver.x().whileTrue(toPose);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -140,19 +142,19 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
+    // operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
 
-    operator.b().whileTrue(scoreL4);
+    // operator.b().whileTrue(scoreL4);
 
-    operator.x().whileTrue(scoreL2);
+    // operator.x().whileTrue(scoreL2);
 
-    operator.y().whileTrue(scoreL3);
+    // operator.y().whileTrue(scoreL3);
 
-    operator.leftBumper().whileTrue(scoreL1);
+    // operator.leftBumper().whileTrue(scoreL1);
 
-    elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
+    elevator.setDefaultCommand(new ElevatorPIDTuning(elevator, operator));
 
-    wrist.setDefaultCommand(wrist.joystickControl(operator.getRightY()));
+    // wrist.setDefaultCommand(wrist.joystickControl(operator.getRightY()));
   }
 
   public Command getAutonomousCommand() {

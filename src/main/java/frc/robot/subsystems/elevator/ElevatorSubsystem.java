@@ -9,8 +9,6 @@ package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -20,12 +18,10 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.RobotConstants;
@@ -36,20 +32,13 @@ import frc.robot.util.CombinedAlert;
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
-  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
-  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId);
+  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
       new MotionMagicExpoVoltage(0).withSlot(0);
-
-  private enum ControlMode {
-    MANUAL,
-    MOTIONMAGIC
-  }
-
-  private ControlMode controlMode = ControlMode.MANUAL;
 
   private final CombinedAlert positionAlert =
       new CombinedAlert(
@@ -98,8 +87,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
-    power = Math.max(-1, Math.min(1, power));
+    leftElevatorMotor.set(power);
+    /*
     leftElevatorMotor.setControl(
         velocityRequest
             .withVelocity(
@@ -108,6 +97,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                     / ElevatorConstants.kMetersPerRotation)
             .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
             .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
+             */
   }
 
   /**
@@ -115,9 +105,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param position The desired position in meters.
    */
-  private void toPosition(double position) {
-    controlMode = ControlMode.MOTIONMAGIC;
-
+  public void setGoal(double position) {
     if (!safetyCheck()) return;
 
     leftElevatorMotor.setControl(
@@ -127,29 +115,16 @@ public class ElevatorSubsystem extends SubsystemBase {
             .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
   }
 
-  /**
-   * Switches the control mode of the elevator.
-   *
-   * @param controlMode The desired control mode (MANUAL or MOTIONMAGIC).
-   */
-  private void switchControlMode(ControlMode controlMode) {
-    this.controlMode = controlMode;
+  public void setVoltage(double voltage){
+    leftElevatorMotor.setVoltage(voltage);
+    rightElevatorMotor.setVoltage(voltage);
+    topElevatorMotor.setVoltage(voltage);
   }
 
-  /**
-   * Returns a command to set the elevator position.
-   *
-   * @param position The target position as a {@link Distance}.
-   * @return The command to execute.
-   */
-  public Command setPosition(Distance position) {
-    return this.runEnd(
-        () -> toPosition(position.in(Meters) / ElevatorConstants.kMetersPerRotation),
-        () -> switchControlMode(ControlMode.MANUAL));
-  }
-
-  public Command joystickControl(double power) {
-    return this.run(() -> setPower(power));
+  public void stop() {
+    leftElevatorMotor.set(0);
+    rightElevatorMotor.set(0);
+    topElevatorMotor.set(0);
   }
 
   /**
@@ -202,7 +177,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Elevator Height (Meters)", getHeight().in(Meters));
     SmartDashboard.putNumber("Elevator Encoder Position", getPosition().in(Rotations));
-    SmartDashboard.putString("Elevator Control Mode", controlMode.toString());
     SmartDashboard.putBoolean("Disabled", !safetyCheck());
     SmartDashboard.putNumber(
         "Elevator Velocity (RotationsPerSecond)",
@@ -219,6 +193,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
+    SmartDashboard.putNumber("Left Elevator Motor Voltage", leftElevatorMotor.getMotorVoltage().getValueAsDouble());
   }
 
   /**
@@ -260,7 +235,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+    return true;
+    /*if (!RobotConstants.runSafetyCheck) return true;
 
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(
@@ -305,6 +281,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       coast();
       positionAlert.set(false);
     }
-    return true;
+    return true;*/
   }
 }

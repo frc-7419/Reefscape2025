@@ -22,11 +22,11 @@ import edu.wpi.first.units.measure.*;
 
 public class Constants {
   public static class RobotConstants {
-    public static final String kCANivoreBus = "";
+    public static final String kCANivoreBus = "7419";
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
-    public static final boolean runSafetyCheck = true; // Enable safety checks (DISABLE IN COMP)
+    public static final boolean runSafetyCheck = false; // Enable safety checks (DISABLE IN COMP)
   }
 
   public static class DrivetrainConstants {
@@ -135,8 +135,8 @@ public class Constants {
         kWristIntakeTalonFXConfiguration.Slot0;
 
     static {
-      kWristIntakeSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kWristIntakeSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kWristIntakeSlot0Configs.kG = 0.29; // output to overcome gravity (output)
+      kWristIntakeSlot0Configs.kS = 0.44; // output to overcome static friction (output)
       kWristIntakeSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
       kWristIntakeSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
       kWristIntakeSlot0Configs.kP = 0; // output per unit of error in position (output)
@@ -171,9 +171,9 @@ public class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
-    public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
-    public static final int kTopElevatorMotorId = 9; // Arbitrary ID (change)
+    public static final int kLeftElevatorMotorId = 9;
+    public static final int kRightElevatorMotorId = 11;
+    public static final int kTopElevatorMotorId = 10;
     public static final Distance kMaxHeight = Inches.of(84); // Taken from canvas
     public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
     public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas
