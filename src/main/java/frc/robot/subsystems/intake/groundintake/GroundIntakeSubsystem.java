@@ -20,8 +20,7 @@ public class GroundIntakeSubsystem extends SubsystemBase {
   private final TalonFX groundIntakeMotor;
 
   public GroundIntakeSubsystem() {
-    this.groundIntakeMotor =
-        new TalonFX(Constants.GroundIntakeIntakeConstants.kGroundIntakeIntakeMotorID);
+    this.groundIntakeMotor = new TalonFX(Constants.GroundIntakeConstants.kGroundIntakeMotorID);
   }
 
   private final CombinedAlert temperatureAlert =
@@ -71,14 +70,14 @@ public class GroundIntakeSubsystem extends SubsystemBase {
       return true;
     }
     if (getVelocity().abs(RotationsPerSecond)
-        >= Constants.GroundIntakeIntakeConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+        >= Constants.GroundIntakeConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
     } else {
       velocityAlert.set(false);
     }
-    if (getTemperature().gte(Constants.GroundIntakeIntakeConstants.MAX_TEMPERATURE)) {
+    if (getTemperature().gte(Constants.GroundIntakeConstants.MAX_TEMPERATURE)) {
       brake();
       temperatureAlert.set(true);
       return false;

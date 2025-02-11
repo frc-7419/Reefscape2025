@@ -114,8 +114,8 @@ public class Constants {
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
 
-  public static class GroundIntakeIntakeConstants {
-    public static final int kGroundIntakeIntakeMotorID = 0;
+  public static class GroundIntakeConstants {
+    public static final int kGroundIntakeMotorID = 0;
     public static final Temperature MAX_TEMPERATURE =
         Celsius.of(95); // Max rated temperature -5 C for safety
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
