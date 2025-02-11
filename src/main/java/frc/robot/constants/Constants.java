@@ -113,42 +113,47 @@ public class Constants {
     public static final Transform3d kRobotToCamTwo =
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
+
   public static class GroundIntakeWristConstants {
-    public static final int kGroundIntakeWristMotorID = 0; 
-    public static final int kGroundIntakeWristEncoderID = 0; 
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1); 
-    public static final Angle kAngleTolerance = Degrees.of(5); 
-    public static final Angle kMaxAngle = Degrees.of(90); 
-    public static final Angle kMinAngle = Degrees.of(90); 
+    public static final int kGroundIntakeWristMotorID = 0;
+    public static final int kGroundIntakeWristEncoderID = 0;
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1);
+    public static final Angle kAngleTolerance = Degrees.of(5);
+    public static final Angle kMaxAngle = Degrees.of(90);
+    public static final Angle kMinAngle = Degrees.of(90);
     public static final TalonFXConfiguration kGroundIntakeWristTalonFXConfiguration =
         new TalonFXConfiguration();
 
     static {
-      kGroundIntakeWristTalonFXConfiguration.Feedback.FeedbackRemoteSensorID = kGroundIntakeWristEncoderID;
+      kGroundIntakeWristTalonFXConfiguration.Feedback.FeedbackRemoteSensorID =
+          kGroundIntakeWristEncoderID;
       kGroundIntakeWristTalonFXConfiguration.Feedback.FeedbackSensorSource =
           FeedbackSensorSourceValue.FusedCANcoder;
-          kGroundIntakeWristTalonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0;
-          kGroundIntakeWristTalonFXConfiguration.Feedback.RotorToSensorRatio = 1; 
+      kGroundIntakeWristTalonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0;
+      kGroundIntakeWristTalonFXConfiguration.Feedback.RotorToSensorRatio = 1;
     }
 
-    public static final CANcoderConfiguration kGroundIntakeWristCANCoderConfig = new CANcoderConfiguration();
+    public static final CANcoderConfiguration kGroundIntakeWristCANCoderConfig =
+        new CANcoderConfiguration();
 
     static {
       kGroundIntakeWristCANCoderConfig.MagnetSensor.SensorDirection =
           SensorDirectionValue.CounterClockwise_Positive;
-      kGroundIntakeWristCANCoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0)); 
+      kGroundIntakeWristCANCoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0));
     }
 
-    public static final Slot0Configs kGroundIntakeWristSlot0Configs = kGroundIntakeWristTalonFXConfiguration.Slot0;
+    public static final Slot0Configs kGroundIntakeWristSlot0Configs =
+        kGroundIntakeWristTalonFXConfiguration.Slot0;
 
     static {
       kGroundIntakeWristSlot0Configs.kG = 0; // output to overcome gravity (output)
       kGroundIntakeWristSlot0Configs.kS = 0; // output to overcome static friction (output)
       kGroundIntakeWristSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      kGroundIntakeWristSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
+      kGroundIntakeWristSlot0Configs.kA =
+          0; // output per unit of target acceleration (output/(rps/s))
       kGroundIntakeWristSlot0Configs.kP = 0; // output per unit of error in position (output)
-      kGroundIntakeWristSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
+      kGroundIntakeWristSlot0Configs.kI =
+          0; // output per unit of integrated error in position (output)
       kGroundIntakeWristSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
     }
 
@@ -156,9 +161,9 @@ public class Constants {
         kGroundIntakeWristTalonFXConfiguration.MotionMagic;
 
     static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity = 0; 
-      kMotionMagicConfig.MotionMagicExpo_kV = 0; 
-      kMotionMagicConfig.MotionMagicExpo_kA = 0; 
+      kMotionMagicConfig.MotionMagicCruiseVelocity = 0;
+      kMotionMagicConfig.MotionMagicExpo_kV = 0;
+      kMotionMagicConfig.MotionMagicExpo_kA = 0;
     }
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
