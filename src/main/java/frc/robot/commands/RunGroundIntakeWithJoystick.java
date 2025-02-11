@@ -36,7 +36,7 @@ public class RunGroundIntakeWithJoystick extends Command {
   @Override
   public void execute() {
     groundWristSubsystem.joystickControl(joystick.getLeftY());
-    if (joystick.getRightTriggerAxis() > 0.5) {
+    if (joystick.getRightTriggerAxis() > 0.3) {
       groundIntakeSubsystem.setSpeed(0.5);
     }
     if (joystick.getLeftTriggerAxis() > 0.3) {
