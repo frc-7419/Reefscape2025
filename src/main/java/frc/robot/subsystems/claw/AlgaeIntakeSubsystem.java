@@ -51,34 +51,66 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
 
   private ControlMode controlMode = ControlMode.MANUAL;
 
+  /**
+   * Set the power to the motor using MotionMagics
+   *
+   * @param power
+   */
   public void setPower(double power) {
     if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
     power = Math.max(-1, Math.min(1, power));
     clawMotor.setVoltage(power * 12);
   }
 
+  /**
+   * Get the status of the beam break whether it has been broken or not
+   *
+   * @return true if the beam has been broken, false if otherwise
+   */
   public Boolean getBeamBreak() {
     return beamBreak.get();
   }
 
+  /**
+   * Set the algae intake to a specific angle using MotionMagic
+   *
+   * @param angle
+   */
   private void toPosition(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
     if (!safetyCheck()) return;
     clawMotor.setControl(positionRequest.withPosition(angle));
   }
 
+  /**
+   * Change the ControlMode of the algae intake motor
+   *
+   * @param control
+   */
   private void switchControlMode(ControlMode control) {
     controlMode = control;
   }
 
+  /**
+   * Set the angle of the algae intake with the manual control mode
+   *
+   * @param angle
+   * @return a command moving the algae intake to the desired angle using the manual control mode
+   */
   public Command setPosition(Angle angle) {
     return this.runEnd(() -> toPosition(angle), () -> switchControlMode(ControlMode.MANUAL));
   }
 
+  /**
+   * Set the speed of the claw motor to a specific angular velocity
+   *
+   * @param speed
+   */
   public void setSpeed(AngularVelocity speed) {
     clawMotor.setControl(velocityRequest.withVelocity(speed));
   }
 
+  /** Set the control mode of the motor to coast */
   public void coast() {
     clawMotor.setNeutralMode(NeutralModeValue.Coast);
   }
@@ -91,10 +123,11 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     clawMotor.setVoltage(-voltage);
   }
 
+  /** Set the control mode of the motor to brake */
   public void brake() {
     clawMotor.setNeutralMode(NeutralModeValue.Brake);
   }
-
+  
   public Angle getPosition() {
     return absEncoder.getPosition().getValue();
   }
@@ -117,6 +150,15 @@ public class AlgaeIntakeSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Passing Safety Checks", safetyCheck());
   }
 
+  /**
+   * Performs a safety check on the claw motor.
+   *
+   * <p>This method checks if the claw motor's velocity and temperature are within safe limits. If
+   * the velocity exceeds the maximum allowed angular velocity or the temperature exceeds the
+   * maximum allowed temperature, the motor is braked, and an alert is set.
+   *
+   * @return true if all safety checks pass, false otherwise.
+   */
   private boolean safetyCheck() {
     AngularVelocity maxAngularVelocity =
         RotationsPerSecond.of(

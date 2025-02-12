@@ -20,7 +20,10 @@ public class AntiTip extends Command {
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  /** Creates a new AntiTip. */
+  /**
+   * Initialize the instane fields when this class is initialized Initialize the drivetrain and set
+   * the elevator position to 0
+   */
   public AntiTip(CommandSwerveDrivetrain drivetrain, ElevatorSubsystem elevator) {
     this.drivetrain = drivetrain;
 
@@ -34,6 +37,12 @@ public class AntiTip extends Command {
   public void initialize() {}
 
   /** Called every time the scheduler runs while the command is scheduled. */
+  /**
+   * Get the pitch and roll of the robot through the Pigeon2 AHRS(Attitude Heading Reference
+   * System), which is the gyroscope If the robot is tipping, schedule the elevator position command
+   * and calculate the counter vector If the robot is not tipping, cancel the elevator position
+   * command
+   */
   @Override
   public void execute() {
     double pitch = drivetrain.getPigeon2().getPitch().getValue().in(Radians);
@@ -54,6 +63,11 @@ public class AntiTip extends Command {
   }
 
   /** Called once the command ends or is interrupted. */
+  /**
+   * Cancel the elevator position command once the command ends
+   *
+   * @param interrupted
+   */
   @Override
   public void end(boolean interrupted) {
     elevatorPositionCommand.cancel();
@@ -65,6 +79,14 @@ public class AntiTip extends Command {
     return false;
   }
 
+  /**
+   * Returns true if the robot is tipping beyond a certain threshold.
+   *
+   * @param pitchDegrees
+   * @param rollDegrees
+   * @param thresholdDeg
+   * @return true if the robot is tipping beyond a certain threshold, false if otherwise
+   */
   private boolean isTipping(double pitchDegrees, double rollDegrees, double thresholdDeg) {
     return (Math.abs(pitchDegrees) > thresholdDeg) || (Math.abs(rollDegrees) > thresholdDeg);
   }
