@@ -153,9 +153,9 @@ public class RobotContainer {
 
     operator.leftBumper().whileTrue(scoreL1);
 
-    elevator.setDefaultCommand(elevator.joystickControl(operator.getLeftY()));
+    elevator.setDefaultCommand(elevator.joystickControl(operator));
 
-    wrist.setDefaultCommand(wrist.joystickControl(operator.getRightY()));
+    wrist.setDefaultCommand(wrist.joystickControl(operator));
   }
 
   public Command getAutonomousCommand() {
