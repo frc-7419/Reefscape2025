@@ -37,9 +37,9 @@ import frc.robot.util.CombinedAlert;
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId);
-  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId);
-  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId);
+  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -99,8 +99,12 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
+    // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
     power = Math.max(-1, Math.min(1, power));
+    leftElevatorMotor.set(power);
+    rightElevatorMotor.set(power);
+    topElevatorMotor.set(power);
+    /* 
     leftElevatorMotor.setControl(
         velocityRequest
             .withVelocity(
@@ -109,6 +113,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                     / ElevatorConstants.kMetersPerRotation)
             .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
             .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
+            */
   }
 
   /**
