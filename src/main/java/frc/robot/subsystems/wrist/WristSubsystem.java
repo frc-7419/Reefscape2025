@@ -5,11 +5,11 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,15 +29,16 @@ public class WristSubsystem extends SubsystemBase {
   private final CANcoder wristEncoder = new CANcoder(WristConstants.kWristEncoderID);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-  private final MotionMagicExpoVoltage motionMagicRequest =
-      new MotionMagicExpoVoltage(0).withSlot(0);
+  // private final MotionMagicExpoVoltage motionMagicRequest =
+  //     new MotionMagicExpoVoltage(0).withSlot(0);
 
   private enum ControlMode {
     MANUAL,
-    MOTIONMAGIC
+    PID
   }
 
   private ControlMode controlMode = ControlMode.MANUAL;
+  private final PIDController pidController = new PIDController(0, 0, 0); // temporary values
 
   private final CombinedAlert positionAlert =
       new CombinedAlert(
@@ -71,7 +72,7 @@ public class WristSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
+    if (controlMode == ControlMode.PID || !safetyCheck()) {
       return;
     }
 
@@ -90,17 +91,20 @@ public class WristSubsystem extends SubsystemBase {
    * @param angle The desired angle (e.g., 0° is horizontal, 90° is vertical).
    */
   private void toAngle(Angle angle) {
-    controlMode = ControlMode.MOTIONMAGIC;
+    controlMode = ControlMode.PID;
 
     if (!safetyCheck()) {
       return;
     }
 
-    wristMotor.setControl(
-        motionMagicRequest
-            .withPosition(angle.in(Rotations))
-            .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
-            .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    double currentPos = getPosition().in(Rotations);
+    double pidOutput = pidController.calculate(currentPos, angle.in(Rotations));
+    // wristMotor.setControl(
+    //     motionMagicRequest
+    //         .withPosition(angle.in(Rotations))
+    //         .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+    //         .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    wristMotor.setControl(velocityRequest.withVelocity(pidOutput));
   }
 
   /**
