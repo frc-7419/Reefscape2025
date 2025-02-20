@@ -139,10 +139,15 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    driver.back().and(driver.y()).whileTrue(elevator.sysIdDynamic(Direction.kForward));
+    driver.back().and(driver.x()).whileTrue(elevator.sysIdDynamic(Direction.kReverse));
+    driver.start().and(driver.y()).whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+    driver.start().and(driver.x()).whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
