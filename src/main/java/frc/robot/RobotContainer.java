@@ -13,13 +13,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignToReef;
-import frc.robot.commands.AntiTip;
 import frc.robot.commands.ToPose;
-import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
@@ -27,8 +24,8 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorPIDTest;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +54,8 @@ public class RobotContainer {
   private final ToPose toPose = new ToPose(drivetrain);
 
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-  private final WristSubsystem wrist = new WristSubsystem();
+  // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
+  // private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
@@ -81,27 +78,36 @@ public class RobotContainer {
     // antiTip.schedule();
   }
 
-  private final Command elevatorToL1 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1));
-  private final Command elevatorToL2 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2));
-  private final Command elevatorToL3 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3));
-  private final Command elevatorToL4 =
-      elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4));
-  private final Command wristL1 =
-      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
-  private final Command wristL2 =
-      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
-  private final Command wristL3 =
-      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
-  private final Command wristL4 =
-      wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
-  private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
-  private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2, wristL2);
-  private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3, wristL3);
-  private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4, wristL4);
-
+  /*
+   * private final Command elevatorToL1 =
+   * elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL1)
+   * );
+   * private final Command elevatorToL2 =
+   * elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL2)
+   * );
+   * private final Command elevatorToL3 =
+   * elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL3)
+   * );
+   * private final Command elevatorToL4 =
+   * elevator.setPosition(Meters.of(Constants.ScoringConstants.elevatorSetPointL4)
+   * );
+   * private final Command wristL1 =
+   * wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL1));
+   * private final Command wristL2 =
+   * wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL2));
+   * private final Command wristL3 =
+   * wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL3));
+   * private final Command wristL4 =
+   * wrist.setAngle(Degrees.of(Constants.ScoringConstants.wristSetPointL4));
+   * private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1,
+   * wristL1);
+   * private final Command scoreL2 = new ParallelCommandGroup(elevatorToL2,
+   * wristL2);
+   * private final Command scoreL3 = new ParallelCommandGroup(elevatorToL3,
+   * wristL3);
+   * private final Command scoreL4 = new ParallelCommandGroup(elevatorToL4,
+   * wristL4);
+   */
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -142,20 +148,20 @@ public class RobotContainer {
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+    /*
+     * operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
+     *
+     * operator.b().whileTrue(scoreL4);
+     *
+     * operator.x().whileTrue(scoreL2);
+     *
+     * operator.y().whileTrue(scoreL3);
+     *
+     * operator.leftBumper().whileTrue(scoreL1);
+     */
+    elevator.setDefaultCommand(new ElevatorPIDTest(elevator));
 
-    operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
-
-    operator.b().whileTrue(scoreL4);
-
-    operator.x().whileTrue(scoreL2);
-
-    operator.y().whileTrue(scoreL3);
-
-    operator.leftBumper().whileTrue(scoreL1);
-
-    elevator.setDefaultCommand(elevator.joystickControl(operator));
-
-    wrist.setDefaultCommand(wrist.joystickControl(operator));
+    // wrist.setDefaultCommand(wrist.joystickControl(operator));
   }
 
   public Command getAutonomousCommand() {
