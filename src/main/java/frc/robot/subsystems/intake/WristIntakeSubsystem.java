@@ -34,8 +34,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
           "The wrist motor is overheating. Subsystem disabled.");
 
   /** Creates a new WristIntakeSubsystem. */
-  public WristIntakeSubsystem(TalonFX intakeMotor) {
-    this.intakeMotor = intakeMotor;
+  public WristIntakeSubsystem() {
+    intakeMotor = new TalonFX(13);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
 
@@ -48,11 +48,12 @@ public class WristIntakeSubsystem extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    if (!safetyCheck()) return;
-    power = Math.max(-1, Math.min(1, power));
-    intakeMotor.setControl(
-        velocityRequest.withVelocity(
-            power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
+    // if (!safetyCheck()) return;
+    // power = Math.max(-1, Math.min(1, power));
+    // intakeMotor.setControl(
+    //     velocityRequest.withVelocity(
+    //         power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
+    intakeMotor.set(power);
   }
 
   /**

@@ -92,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
     topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
 
-    coast();
+    brake();
   }
 
   /**
@@ -239,6 +239,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
+
   }
 
   /**
@@ -322,7 +323,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       positionAlert.set(true);
       return false;
     } else {
-      coast();
+      brake();
       positionAlert.set(false);
     }
     return true;
