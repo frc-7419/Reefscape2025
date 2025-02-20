@@ -58,7 +58,7 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-  private final WristSubsystem wrist = new WristSubsystem();
+  private final WristSubsystem wrist = new WristSubsystem(elevator::getHeight);
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);

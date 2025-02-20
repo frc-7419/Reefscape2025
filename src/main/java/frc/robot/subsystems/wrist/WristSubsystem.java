@@ -2,19 +2,26 @@ package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
@@ -26,8 +33,10 @@ import frc.robot.util.CombinedAlert;
  */
 public class WristSubsystem extends SubsystemBase {
   private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID);
-  private final CANcoder wristEncoder = new CANcoder(WristConstants.kWristEncoderID);
-
+  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WristConstants.kWristEncoderID);
+  private Supplier<Distance> elevatorHeightSupplier;
+  private boolean safetyLock = false;
+  private int safetyLockTimer = 0;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   // private final MotionMagicExpoVoltage motionMagicRequest =
   //     new MotionMagicExpoVoltage(0).withSlot(0);
@@ -59,9 +68,9 @@ public class WristSubsystem extends SubsystemBase {
           "The wrist motor is overheating. Subsystem disabled.");
 
   /** Creates a new {@code WristSubsystem} with a TalonFX and a CANcoder. */
-  public WristSubsystem() {
+  public WristSubsystem(Supplier<Distance> elevatorHeightSupplier) {
+    this.elevatorHeightSupplier = elevatorHeightSupplier;
     wristMotor.getConfigurator().apply(WristConstants.kWristTalonFXConfiguration);
-    wristEncoder.getConfigurator().apply(WristConstants.kWristCANCoderConfig);
     brake();
   }
 
@@ -125,6 +134,7 @@ public class WristSubsystem extends SubsystemBase {
    * @return A command for scheduling.
    */
   public Command joystickControl(CommandXboxController joystick) {
+    if(safetyLock) return new WaitCommand(0.02);
     return this.run(() -> setPower(joystick.getRightY()));
   }
 
@@ -145,15 +155,24 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return wristEncoder.getAbsolutePosition().getValue();
+    return Radians.of(wristEncoder.get());
   }
 
   public AngularVelocity getVelocity() {
-    return wristEncoder.getVelocity().getValue();
+    return wristMotor.getVelocity().getValue();
   }
 
   @Override
   public void periodic() {
+    if(Math.abs(elevatorHeightSupplier.get().in(Meter)-1)<0.2) {
+      this.setAngle(Degrees.of(1)); //TODO set the angle to a safe angle
+      safetyLockTimer = 0;
+      safetyLock = true;
+    }
+    else {
+      ++safetyLockTimer;
+      safetyLock = safetyLockTimer>=4?false:true;
+    }
     SmartDashboard.putNumber("Wrist Angle (Rotations)", getPosition().in(Rotations));
     SmartDashboard.putNumber("Wrist Angle (Degrees)", getPosition().in(Degrees));
     SmartDashboard.putNumber(

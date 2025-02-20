@@ -223,33 +223,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * Gets the left elevator motor instance.
-   *
-   * @return The left TalonFX motor instance.
-   */
-  public TalonFX getLeftMotor() {
-    return leftElevatorMotor;
-  }
-
-  /**
-   * Gets the right elevator motor instance.
-   *
-   * @return The right TalonFX motor instance.
-   */
-  public TalonFX getRightMotor() {
-    return rightElevatorMotor;
-  }
-
-  /**
-   * Gets the top elevator motor instance.
-   *
-   * @return The top TalonFX motor instance.
-   */
-  public TalonFX getTopMotor() {
-    return topElevatorMotor;
-  }
-
-  /**
    * Performs a safety check to ensure the elevator operates within safe parameters.
    *
    * <p>This method verifies several safety conditions, including velocity, acceleration,
