@@ -15,7 +15,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
@@ -27,6 +27,7 @@ import frc.robot.util.CombinedAlert;
 public class WristSubsystem extends SubsystemBase {
   private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID);
   private final CANcoder wristEncoder = new CANcoder(WristConstants.kWristEncoderID);
+  
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
