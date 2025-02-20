@@ -33,7 +33,7 @@ public class Constants {
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
-    public static final boolean runSafetyCheck = true; // Enable safety checks (DISABLE IN COMP)
+    public static final boolean runSafetyCheck = false; // Enable safety checks (DISABLE IN COMP)
   }
 
   public static class DrivetrainConstants {
@@ -62,7 +62,7 @@ public class Constants {
 
     public static Map<Integer, Pose2d> getReefPoseMap() {
       AprilTagFieldLayout fieldLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+          AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
       Map<Integer, Pose2d> poseMap = new HashMap<>();
 
@@ -109,7 +109,7 @@ public class Constants {
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d kRobotToCamTwo =
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
@@ -239,8 +239,8 @@ public class Constants {
     public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
 
     static {
-      kElevatorSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kElevatorSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kElevatorSlot0Configs.kG = 0.32; // output to overcome gravity (output)
+      kElevatorSlot0Configs.kS = 0.44; // output to overcome static friction (output)
       kElevatorSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
       kElevatorSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
       kElevatorSlot0Configs.kP = 0; // output per unit of error in position (output)

@@ -37,9 +37,12 @@ import frc.robot.util.CombinedAlert;
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX leftElevatorMotor =
+      new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor =
+      new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor =
+      new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -104,16 +107,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.set(power);
     rightElevatorMotor.set(power);
     topElevatorMotor.set(power);
-    /* 
-    leftElevatorMotor.setControl(
-        velocityRequest
-            .withVelocity(
-                power
-                    * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
-                    / ElevatorConstants.kMetersPerRotation)
-            .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
-            .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
-            */
+    /*
+     * leftElevatorMotor.setControl(
+     * velocityRequest
+     * .withVelocity(
+     * power
+     * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
+     * / ElevatorConstants.kMetersPerRotation)
+     * .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
+     * .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
+     */
+  }
+
+  public void setVoltage(double voltage) {
+    leftElevatorMotor.setVoltage(voltage);
+    rightElevatorMotor.setVoltage(voltage);
+    topElevatorMotor.setVoltage(voltage);
   }
 
   /**
@@ -192,6 +201,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Angle getPosition() {
     return leftElevatorMotor.getPosition().getValue();
+  }
+
+  /** Resets the elevator encoder to zero. */
+  public void zeroEncoder() {
+    leftElevatorMotor.setPosition(0);
   }
 
   /**
