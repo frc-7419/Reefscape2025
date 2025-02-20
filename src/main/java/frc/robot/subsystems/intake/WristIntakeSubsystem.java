@@ -65,7 +65,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
   public Command joystickControl(double power) {
     return this.run(() -> setPower(power));
   }
-  public Voltage getVoltage(){
+
+  public Voltage getVoltage() {
     return intakeMotor.getMotorVoltage().getValue();
   }
 
