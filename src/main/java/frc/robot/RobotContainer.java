@@ -30,6 +30,7 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorPIDTest;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
+import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.WristPIDTest;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -39,6 +40,8 @@ import java.util.List;
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
+
+  private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -143,14 +146,14 @@ public class RobotContainer {
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
     // driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
-    // driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
+  // driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -168,13 +171,16 @@ public class RobotContainer {
      * operator.leftBumper().whileTrue(scoreL1);
      */
     elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
-    operator.axisMagnitudeGreaterThan(XboxController.Axis.kLeftY.value, 0.05).whileTrue(elevator.joystickControl(operator)).onFalse(new InstantCommand(() -> elevator.setPower(0)));
+    operator.axisMagnitudeGreaterThan(XboxController.Axis.kLeftY.value, 0.03).whileTrue(elevator.joystickControl(operator)).onFalse(new InstantCommand(() -> elevator.setPower(0)));
 
     operator.x().whileTrue(new ElevatorPIDTest(elevator));
     operator.leftBumper().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.b().whileTrue(new RunCommand(() -> elevator.brake(), elevator));
     operator.a().onTrue(new RunCommand(() -> elevator.coast(), elevator));
     operator.y().whileTrue(new WristPIDTest(wrist));
+
+    operator.leftBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(0.5), wristIntakeSubsystem));
+    operator.rightBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(-0.5), wristIntakeSubsystem));
     wrist.setDefaultCommand(wrist.joystickControl(operator));
   }
 

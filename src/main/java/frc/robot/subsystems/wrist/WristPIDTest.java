@@ -19,7 +19,7 @@ public class WristPIDTest extends Command {
   private final TunableValue kP = new TunableValue("Wrist kP", 0.6);
   private final TunableValue kI = new TunableValue("Wrist kI", 0.0);
   private final TunableValue kD = new TunableValue("Wrist kD", 0.0);
-  private final TunableValue setpoint = new TunableValue("Wrist Setpoint", 6);
+  private final TunableValue setpoint = new TunableValue("Wrist Setpoint", 0.8);
 
   /** Creates a new WristPIDTest. */
   public WristPIDTest(WristSubsystem wrist) {

@@ -18,11 +18,11 @@ public class ElevatorPIDTest extends Command {
   private final ElevatorSubsystem elevator;
   private final ProfiledPIDController pidController;
   private final ElevatorFeedforward feedforward;
-  private final TunableValue kP = new TunableValue("Elevator kP", 0.6);
+  private final TunableValue kP = new TunableValue("Elevator kP", 0.8);
   private final TunableValue kI = new TunableValue("Elevator kI", 0.0);
-  private final TunableValue kD = new TunableValue("Elevator kD", 0.0);
+  private final TunableValue kD = new TunableValue("Elevator kD", 0.2);
   private final TunableValue kS = new TunableValue("Elevator kS", 0.52);
-  private final TunableValue kG = new TunableValue("Elevator kG", 0.42);
+  private final TunableValue kG = new TunableValue("Elevator kG", 0.0032);
   private final TunableValue kV = new TunableValue("Elevator kV", 0.0);
   private final TunableValue kA = new TunableValue("Elevator kA", 0.0);
   private final TunableValue setpoint = new TunableValue("Elevator Setpoint", 6);
