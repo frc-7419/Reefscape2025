@@ -4,22 +4,27 @@
 
 package frc.robot.commands;
 
+
+
+
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.intake.LightSensorSubsystem;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
+import edu.wpi.first.wpilibj.Timer;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeCoral extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
   private final LightSensorSubsystem lightSensorSubsystem;
   private Voltage power;
-
+  
   public IntakeCoral(
       WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.lightSensorSubsystem = lightSensorSubsystem;
+    Timer timer = new Timer();
 
     addRequirements(wristIntakeSubsystem, lightSensorSubsystem);
   }
@@ -39,7 +44,7 @@ public class IntakeCoral extends Command {
     if (power.gte(wristIntakeSubsystem.getVoltage())) {
       wristIntakeSubsystem.setPower(Constants.IntakeCoralConstants.intakeCoralPower);
     }
-    wait(500);
+    Timer.delay(0.5);
     // Fix for 2025 version. Dnt know how to make it wait for 5 seconds
     wristIntakeSubsystem.brake();
     ;
