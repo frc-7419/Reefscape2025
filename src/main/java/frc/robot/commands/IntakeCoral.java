@@ -16,14 +16,14 @@ public class IntakeCoral extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
   private final LightSensorSubsystem lightSensorSubsystem;
   private Voltage power;
+  private double startTime;
 
   public IntakeCoral(
       WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.lightSensorSubsystem = lightSensorSubsystem;
-    Timer timer = new Timer();
 
-    addRequirements(wristIntakeSubsystem, lightSensorSubsystem);
+    startTime = Timer.getFPGATimestamp();
   }
 
   // Called when the command is initially scheduled.
@@ -35,16 +35,15 @@ public class IntakeCoral extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Voltage power = wristIntakeSubsystem.getVoltage();
 
-    power = wristIntakeSubsystem.getVoltage();
-
-    if (power.gte(wristIntakeSubsystem.getVoltage())) {
+    if (power.magnitude() >= wristIntakeSubsystem.getVoltage().magnitude()) {
       wristIntakeSubsystem.setPower(Constants.IntakeCoralConstants.intakeCoralPower);
     }
-    Timer.delay(0.5);
-    // Fix for 2025 version. Dnt know how to make it wait for 5 seconds
-    wristIntakeSubsystem.brake();
-    ;
+
+    if (Timer.getFPGATimestamp() - startTime >= 5.0) {
+      wristIntakeSubsystem.brake();
+    }
   }
 
   // Called once the command ends or is interrupted.
