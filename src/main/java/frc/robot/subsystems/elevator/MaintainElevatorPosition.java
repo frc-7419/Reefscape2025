@@ -5,13 +5,12 @@
 package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.constants.Constants.ElevatorConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class MaintainElevatorPosition extends Command {
   /** Creates a new MaintainElevatorPosition. */
   private ElevatorSubsystem elevatorSubsystem;
+
   public MaintainElevatorPosition(ElevatorSubsystem elevatorSubsystem) {
     addRequirements(elevatorSubsystem);
     this.elevatorSubsystem = elevatorSubsystem;

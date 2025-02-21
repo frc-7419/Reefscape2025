@@ -12,7 +12,8 @@ public class RunIntakeWithJoystick extends Command {
   private WristIntakeSubsystem wristIntakeSubsystem;
   private CommandXboxController commandXboxController;
   /** Creates a new RunIntakeWithJoystick. */
-  public RunIntakeWithJoystick(WristIntakeSubsystem wristIntakeSubsystem, CommandXboxController commandXboxController) {
+  public RunIntakeWithJoystick(
+      WristIntakeSubsystem wristIntakeSubsystem, CommandXboxController commandXboxController) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.commandXboxController = commandXboxController;
     addRequirements(wristIntakeSubsystem);
