@@ -21,17 +21,25 @@ public class RunIntakeWithJoystick extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    wristIntakeSubsystem.coast();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (commandXboxController.getRightTriggerAxis() >= 0.05) {
+      wristIntakeSubsystem.setPower(commandXboxController.getRightTriggerAxis());
+    } else if (commandXboxController.getLeftTriggerAxis() >= 0.05) {
+      wristIntakeSubsystem.setPower(-commandXboxController.getLeftTriggerAxis());
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     wristIntakeSubsystem.setPower(0);
+    wristIntakeSubsystem.brake();
   }
 
   // Returns true when the command should end.

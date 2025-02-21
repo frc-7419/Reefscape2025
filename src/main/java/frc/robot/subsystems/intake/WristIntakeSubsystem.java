@@ -35,7 +35,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
 
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem() {
-    intakeMotor = new TalonFX(13);
+    intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
 

@@ -30,6 +30,7 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorPIDTest;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
+import frc.robot.subsystems.intake.RunIntakeWithJoystick;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.WristPIDTest;
 import frc.robot.subsystems.wrist.WristSubsystem;
@@ -43,9 +44,11 @@ public class RobotContainer {
 
   private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
 
+
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
+  private RunIntakeWithJoystick runIntakeWithJoystick = new RunIntakeWithJoystick(wristIntakeSubsystem, operator);
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
@@ -179,8 +182,9 @@ public class RobotContainer {
     operator.a().onTrue(new RunCommand(() -> elevator.coast(), elevator));
     operator.y().whileTrue(new WristPIDTest(wrist));
 
-    operator.leftBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(0.5), wristIntakeSubsystem));
-    operator.rightBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(-0.5), wristIntakeSubsystem));
+    // operator.leftBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(0.5), wristIntakeSubsystem));
+    // operator.rightBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(-0.5), wristIntakeSubsystem));
+    wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wrist.setDefaultCommand(wrist.joystickControl(operator));
   }
 
