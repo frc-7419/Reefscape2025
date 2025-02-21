@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,8 +27,9 @@ import frc.robot.util.CombinedAlert;
  * and angle of the elevator using TalonFX motors with a fused CANCoder.
  */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID);
-  private final CANcoder wristEncoder = new CANcoder(WristConstants.kWristEncoderID);
+  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, "7419");
+  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(0);
+
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -60,7 +63,6 @@ public class WristSubsystem extends SubsystemBase {
   /** Creates a new {@code WristSubsystem} with a TalonFX and a CANcoder. */
   public WristSubsystem() {
     wristMotor.getConfigurator().apply(WristConstants.kWristTalonFXConfiguration);
-    wristEncoder.getConfigurator().apply(WristConstants.kWristCANCoderConfig);
     brake();
   }
 
@@ -71,17 +73,17 @@ public class WristSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
-      return;
-    }
+    // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
+    //   return;
+    // }
 
-    power = Math.max(-1, Math.min(1, power));
+    wristMotor.setControl(new DutyCycleOut(power));
 
-    wristMotor.setControl(
-        velocityRequest
-            .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
-            .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
-            .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    // wristMotor.setControl(
+    //     velocityRequest
+    //         .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
+    //         .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+    //         .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
   }
 
   /**
@@ -92,15 +94,15 @@ public class WristSubsystem extends SubsystemBase {
   private void toAngle(Angle angle) {
     controlMode = ControlMode.MOTIONMAGIC;
 
-    if (!safetyCheck()) {
-      return;
-    }
+    // if (!safetyCheck()) {
+    //   return;
+    // }
 
-    wristMotor.setControl(
-        motionMagicRequest
-            .withPosition(angle.in(Rotations))
-            .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
-            .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    // wristMotor.setControl(
+    //     motionMagicRequest
+    //         .withPosition(angle.in(Rotations))
+    //         .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+    //         .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
   }
 
   /**
@@ -141,19 +143,20 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return wristEncoder.getAbsolutePosition().getValue();
+    double reading = wristEncoder.get();
+    if (reading > 0.99) return Rotations.of(0);
+    return Rotations.of(wristEncoder.get());
   }
 
-  public AngularVelocity getVelocity() {
-    return wristEncoder.getVelocity().getValue();
-  }
+  // public AngularVelocity getVelocity() {
+  //   return wristEncoder.getVelocity().getValue();
+  // }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Wrist Angle (Rotations)", getPosition().in(Rotations));
     SmartDashboard.putNumber("Wrist Angle (Degrees)", getPosition().in(Degrees));
-    SmartDashboard.putNumber(
-        "Wrist Velocity (RotationsPerSecond)", getVelocity().in(RotationsPerSecond));
+
     SmartDashboard.putNumber(
         "Wrist Temperature (Celsius)", wristMotor.getDeviceTemp().getValue().in(Celsius));
   }
@@ -169,34 +172,34 @@ public class WristSubsystem extends SubsystemBase {
    * @return {@code true} if the wrist passes all safety checks and is operating safely, {@code
    *     false} otherwise.
    */
-  private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+  // private boolean safetyCheck() {
+  //   if (!RobotConstants.runSafetyCheck) return true;
 
-    if (getVelocity().abs(RotationsPerSecond)
-        >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
-      brake();
-      velocityAlert.set(true);
-      return false;
-    } else velocityAlert.set(false);
+  //   if (getVelocity().abs(RotationsPerSecond)
+  //       >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+  //     brake();
+  //     velocityAlert.set(true);
+  //     return false;
+  //   } else velocityAlert.set(false);
 
-    if (wristMotor.getDeviceTemp().getValue().gte(WristConstants.MAX_TEMPERATURE)) {
-      brake();
-      overheatingAlert.set(true);
-      return false;
-    } else {
-      overheatingAlert.set(false);
-    }
+  //   if (wristMotor.getDeviceTemp().getValue().gte(WristConstants.MAX_TEMPERATURE)) {
+  //     brake();
+  //     overheatingAlert.set(true);
+  //     return false;
+  //   } else {
+  //     overheatingAlert.set(false);
+  //   }
 
-    Angle currentAngle = getPosition();
-    if (currentAngle.gt(WristConstants.kMaxAngle.plus(WristConstants.kAngleTolerance))
-        || currentAngle.lt(WristConstants.kMinAngle.minus(WristConstants.kAngleTolerance))) {
-      brake();
-      positionAlert.set(true);
-      return false;
-    } else {
-      positionAlert.set(false);
-      coast();
-    }
-    return true;
-  }
+  //   Angle currentAngle = getPosition();
+  //   if (currentAngle.gt(WristConstants.kMaxAngle.plus(WristConstants.kAngleTolerance))
+  //       || currentAngle.lt(WristConstants.kMinAngle.minus(WristConstants.kAngleTolerance))) {
+  //     brake();
+  //     positionAlert.set(true);
+  //     return false;
+  //   } else {
+  //     positionAlert.set(false);
+  //     coast();
+  //   }
+  //   return true;
+  // }
 }

@@ -11,8 +11,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignToReef;
@@ -65,7 +68,7 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-  // private final WristSubsystem wrist = new WristSubsystem();
+  private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
       new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
@@ -134,6 +137,7 @@ public class RobotContainer {
                         -driver.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
+    
 
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
     driver
@@ -144,8 +148,8 @@ public class RobotContainer {
                     point.withModuleDirection(
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-    driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
-    driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
+    // driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
+  // driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -153,11 +157,6 @@ public class RobotContainer {
     // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    driver.back().and(driver.y()).whileTrue(elevator.sysIdDynamic(Direction.kForward));
-    driver.back().and(driver.x()).whileTrue(elevator.sysIdDynamic(Direction.kReverse));
-    driver.start().and(driver.y()).whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
-    driver.start().and(driver.x()).whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -174,7 +173,8 @@ public class RobotContainer {
      *
      * operator.leftBumper().whileTrue(scoreL1);
      */
-    elevator.setDefaultCommand(new ElevatorPIDTest(elevator));
+    elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
+    operator.axisMagnitudeGreaterThan(XboxController.Axis.kLeftY.value, 0.03).whileTrue(elevator.joystickControl(operator)).onFalse(new InstantCommand(() -> elevator.setPower(0)));
 
     operator.x().whileTrue(new ElevatorPIDTest(elevator));
     operator.leftBumper().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));

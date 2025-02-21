@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "wpilibsuite.vscode-wpilib",
+    "vscjava.vscode-java-pack",
+    "ms-vscode.live-server",
+    "vscjava.vscode-gradle",
+    "madhavd1.javadoc-tools",
+    "mortorqrobotics.wpilib-java-snippets"
+  ]
+}
