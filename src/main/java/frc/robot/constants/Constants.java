@@ -29,7 +29,7 @@ import java.util.Optional;
 
 public class Constants {
   public static class RobotConstants {
-    public static final String kCANivoreBus = "7419";
+    public static final String kCANivoreBus = "";
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
@@ -115,7 +115,7 @@ public class Constants {
   }
 
   public static class WristConstants {
-    public static final int kWristMotorID = 12; // Arbitrary ID (change)
+    public static final int kWristMotorID = 0; // Arbitrary ID (change)
     public static final int kWristEncoderID = 0; // Arbitrary ID (change)
     public static final AngularVelocity kMaxSpeed =
         RotationsPerSecond.of(1); // Arbitrary velocity (change)
@@ -225,9 +225,9 @@ public class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final int kLeftElevatorMotorId = 9; // Arbitrary ID (change)
-    public static final int kRightElevatorMotorId = 11; // Arbitrary ID (change)
-    public static final int kTopElevatorMotorId = 10; // Arbitrary ID (change)
+    public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
+    public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
+    public static final int kTopElevatorMotorId = 9; // Arbitrary ID (change)
     public static final Distance kMaxHeight = Inches.of(84); // Taken from canvas
     public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
     public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas

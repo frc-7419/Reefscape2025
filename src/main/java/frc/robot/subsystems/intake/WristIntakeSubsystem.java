@@ -48,12 +48,11 @@ public class WristIntakeSubsystem extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    // if (!safetyCheck()) return;
-    // power = Math.max(-1, Math.min(1, power));
-    // intakeMotor.setControl(
-    //     velocityRequest.withVelocity(
-    //         power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
-    intakeMotor.set(power);
+    if (!safetyCheck()) return;
+    power = Math.max(-1, Math.min(1, power));
+    intakeMotor.setControl(
+        velocityRequest.withVelocity(
+            power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
   }
 
   /**
