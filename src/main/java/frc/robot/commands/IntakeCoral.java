@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.sql.Time;
+
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -20,6 +22,7 @@ public class IntakeCoral extends Command {
   private boolean coralPhase1;
   private boolean done;
   private boolean init;
+  private double startTime;
 
 
   public IntakeCoral(
@@ -31,7 +34,7 @@ public class IntakeCoral extends Command {
     Timer timeoutTimer = new Timer();
     
 
-    addRequirements(wristIntakeSubsystem, lightSensorSubsystem);
+    startTime = Timer.getFPGATimestamp();
   }
 
   // Called when the command is initially scheduled.
