@@ -148,37 +148,12 @@ public class Constants {
   }
 
   public static class WristIntakeConstants {
+    public static final int kWristIntakeBeamBreakChannel = 1; // Arbritary ID
     public static final int kWristIntakeMotorID = 13; // Arbitrary ID (change)
     public static final AngularVelocity kMaxSpeed =
         RotationsPerSecond.of(1); // Arbitrary velocity (change)
     public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration =
         new TalonFXConfiguration();
-    public static final Slot0Configs kWristIntakeSlot0Configs =
-        kWristIntakeTalonFXConfiguration.Slot0;
-
-    static {
-      kWristIntakeSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kWristIntakeSlot0Configs.kS = 0; // output to overcome static friction (output)
-      kWristIntakeSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      kWristIntakeSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
-      kWristIntakeSlot0Configs.kP = 0; // output per unit of error in position (output)
-      kWristIntakeSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
-      kWristIntakeSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
-    }
-
-    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kWristIntakeTalonFXConfiguration.MotionMagic;
-
-    static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
-      // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
-    }
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kWristIntakeTalonFXConfiguration.CurrentLimits;

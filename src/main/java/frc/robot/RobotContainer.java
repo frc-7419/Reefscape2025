@@ -150,10 +150,6 @@ public class RobotContainer {
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     driver.back().and(driver.y()).whileTrue(elevator.sysIdDynamic(Direction.kForward));
     driver.back().and(driver.x()).whileTrue(elevator.sysIdDynamic(Direction.kReverse));
@@ -179,14 +175,8 @@ public class RobotContainer {
 
     operator.x().whileTrue(new ElevatorPIDTest(elevator));
     operator.leftBumper().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
-    operator.b().whileTrue(new RunCommand(() -> elevator.brake(), elevator));
-    operator.a().onTrue(new RunCommand(() -> elevator.coast(), elevator));
     operator.y().whileTrue(new WristPIDTest(wristSubsystem));
 
-    // operator.leftBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(0.5),
-    // wristIntakeSubsystem));
-    // operator.rightBumper().whileTrue(new RunCommand(() -> wristIntakeSubsystem.setPower(-0.5),
-    // wristIntakeSubsystem));
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wristSubsystem.setDefaultCommand(wristSubsystem.joystickControl(operator));
   }
