@@ -18,20 +18,23 @@ import frc.robot.subsystems.intake.WristIntakeSubsystem;
 public class IntakeCoral extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
   private final LightSensorSubsystem lightSensorSubsystem;
-  private Voltage power;
+  
   private boolean coralPhase1;
-  private boolean done;
-  private boolean init;
+  
   private double startTime;
+  private final Timer thresholdTimer;
+  private final Timer timeoutTimer;
+  private final Timer endTimer;
 
 
   public IntakeCoral(
       WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.lightSensorSubsystem = lightSensorSubsystem;
-    Timer timer = new Timer();
-    Timer endTimer = new Timer();
-    Timer timeoutTimer = new Timer();
+    this.timeoutTimer = new Timer();
+    this.thresholdTimer = new Timer();
+    this.endTimer = new Timer();
+    
     
 
     startTime = Timer.getFPGATimestamp();
@@ -45,7 +48,7 @@ public class IntakeCoral extends Command {
         wristIntakeSubsystem.updateBaselineCurrentDraw();
         coralPhase1 = false;
         done = false;
-        endTimer.reset;
+        endTimer.reset();
         thresholdTimer.reset();
         thresholdTimer.start();
         timeoutTimer.reset();
@@ -55,17 +58,17 @@ public class IntakeCoral extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    power
+    
     wristIntakeSubsystem.setPower(0.85);
         
        
-        if(wristIntakeSubsystem.noteDetectedByCurrent() && thresholdTimer.hasElapsed(1)){
-            notePhaseOne = true;
+        if(wristIntakeSubsystem.coralDetectedByCurrent() && thresholdTimer.hasElapsed(1)){
+            coralPhase1 = true;
             timeoutTimer.start();
         }
-        if(notePhaseOne && !wristIntakeSubsystem.noteDetectedByCurrent()) {
-            wristIntakeSubsystem.setSpeed(0);
-            wristIntakeSubsystem.setSerializerSpeed(0.3);
+        if(coralPhase1 && !wristIntakeSubsystem.coralDetectedByCurrent()) {
+            wristIntakeSubsystem.setSpeed(startTime);
+            
             endTimer.start();
         }
         if(endTimer.hasElapsed(0.2)){
@@ -76,8 +79,13 @@ public class IntakeCoral extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    wristIntakeSubsystem.setPower(0);
+    
+    wristIntakeSubsystem.setSpeed(0);
+    
     wristIntakeSubsystem.brake();
+    thresholdTimer.stop();
+    timeoutTimer.stop();
+    endTimer.stop();
   }
 
   // Returns true when the command should end.
