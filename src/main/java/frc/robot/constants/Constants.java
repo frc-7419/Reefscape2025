@@ -125,47 +125,15 @@ public class Constants {
     public static final TalonFXConfiguration kWristTalonFXConfiguration =
         new TalonFXConfiguration();
 
-    static {
-      kWristTalonFXConfiguration.Feedback.FeedbackRemoteSensorID = kWristEncoderID;
-      kWristTalonFXConfiguration.Feedback.FeedbackSensorSource =
-          FeedbackSensorSourceValue.FusedCANcoder;
-      kWristTalonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0;
-      kWristTalonFXConfiguration.Feedback.RotorToSensorRatio = 1; // Don't know yet
-    }
+    public static final double pidKp = 0.0;
+    public static final double pidKi = 0.0;
+    public static final double pidKd = 0.0;
 
-    public static final CANcoderConfiguration kWristCANCoderConfig = new CANcoderConfiguration();
+    public static final double feedforwardKv = 0.0;
+    public static final double feedforwardKg = 0.0;
+    public static final double feedforwardKs = 0.0;
 
-    static {
-      kWristCANCoderConfig.MagnetSensor.SensorDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
-      kWristCANCoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0)); // Change offset
-    }
-
-    public static final Slot0Configs kWristSlot0Configs = kWristTalonFXConfiguration.Slot0;
-
-    static {
-      kWristSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kWristSlot0Configs.kS = 0; // output to overcome static friction (output)
-      kWristSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      kWristSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
-      kWristSlot0Configs.kP = 0; // output per unit of error in position (output)
-      kWristSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
-      kWristSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
-    }
-
-    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kWristTalonFXConfiguration.MotionMagic;
-
-    static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
-      // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
-    }
+    public static final Angle wristAngleOffset = Rotations.of(0.0);
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kWristTalonFXConfiguration.CurrentLimits;

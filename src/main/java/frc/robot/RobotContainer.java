@@ -39,7 +39,7 @@ public class RobotContainer {
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
 
   private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
-  private WristSubsystem wristSubsystem = new WristSubsystem();
+  
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -64,6 +64,7 @@ public class RobotContainer {
   private final ToPose toPose = new ToPose(drivetrain);
 
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private WristSubsystem wristSubsystem = new WristSubsystem(elevator::getHeight);
   // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   // private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
