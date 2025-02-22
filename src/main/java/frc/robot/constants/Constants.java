@@ -29,11 +29,11 @@ import java.util.Optional;
 
 public class Constants {
   public static class RobotConstants {
-    public static final String kCANivoreBus = "";
+    public static final String kCANivoreBus = "7419";
     public static final double kLowBatteryVoltage = 11.8;
     public static final double kTippingThresholdDeg = 10;
     public static final double kComHeight = 0.5; // meters
-    public static final boolean runSafetyCheck = true; // Enable safety checks (DISABLE IN COMP)
+    public static final boolean runSafetyCheck = false; // Enable safety checks (DISABLE IN COMP)
   }
 
   public static class DrivetrainConstants {
@@ -62,7 +62,7 @@ public class Constants {
 
     public static Map<Integer, Pose2d> getReefPoseMap() {
       AprilTagFieldLayout fieldLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+          AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
       Map<Integer, Pose2d> poseMap = new HashMap<>();
 
@@ -109,13 +109,13 @@ public class Constants {
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d kRobotToCamTwo =
         new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
   }
 
   public static class WristConstants {
-    public static final int kWristMotorID = 0; // Arbitrary ID (change)
+    public static final int kWristMotorID = 12; // Arbitrary ID (change)
     public static final int kWristEncoderID = 0; // Arbitrary ID (change)
     public static final AngularVelocity kMaxSpeed =
         RotationsPerSecond.of(1); // Arbitrary velocity (change)
@@ -226,9 +226,9 @@ public class Constants {
   }
 
   public static class ElevatorConstants {
-    public static final int kLeftElevatorMotorId = 7; // Arbitrary ID (change)
-    public static final int kRightElevatorMotorId = 8; // Arbitrary ID (change)
-    public static final int kTopElevatorMotorId = 9; // Arbitrary ID (change)
+    public static final int kLeftElevatorMotorId = 9; // Arbitrary ID (change)
+    public static final int kRightElevatorMotorId = 11; // Arbitrary ID (change)
+    public static final int kTopElevatorMotorId = 10; // Arbitrary ID (change)
     public static final Distance kMaxHeight = Inches.of(84); // Taken from canvas
     public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
     public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas
@@ -240,8 +240,8 @@ public class Constants {
     public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
 
     static {
-      kElevatorSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kElevatorSlot0Configs.kS = 0; // output to overcome static friction (output)
+      kElevatorSlot0Configs.kG = 0.32; // output to overcome gravity (output)
+      kElevatorSlot0Configs.kS = 0.44; // output to overcome static friction (output)
       kElevatorSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
       kElevatorSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
       kElevatorSlot0Configs.kP = 0; // output per unit of error in position (output)

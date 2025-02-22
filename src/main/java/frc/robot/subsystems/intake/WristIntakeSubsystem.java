@@ -38,6 +38,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem(TalonFX intakeMotor) {
     this.intakeMotor = intakeMotor;
+    intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID);
     this.beamBreak = new DigitalInput(0);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
@@ -55,11 +56,12 @@ public class WristIntakeSubsystem extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    if (!safetyCheck()) return;
-    power = Math.max(-1, Math.min(1, power));
-    intakeMotor.setControl(
-        velocityRequest.withVelocity(
-            power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
+    // if (!safetyCheck()) return;
+    // power = Math.max(-1, Math.min(1, power));
+    // intakeMotor.setControl(
+    //     velocityRequest.withVelocity(
+    //         power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
+    intakeMotor.set(power);
   }
 
   /**
