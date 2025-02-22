@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -24,7 +21,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
 
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem() {
-    this.intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
+    this.intakeMotor =
+        new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
     this.beamBreak = new DigitalInput(0);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
@@ -52,14 +50,17 @@ public class WristIntakeSubsystem extends SubsystemBase {
    * @return A command for scheduling.
    */
   public Command joystickControl(CommandXboxController commandXboxController) {
-    return this.run(() -> {
-      double power = commandXboxController.getRightTriggerAxis() - commandXboxController.getLeftTriggerAxis();
-      if (Math.abs(power) > 0.05) {
-        setPower(power);
-      } else {
-        setPower(0);
-      }
-    });
+    return this.run(
+        () -> {
+          double power =
+              commandXboxController.getRightTriggerAxis()
+                  - commandXboxController.getLeftTriggerAxis();
+          if (Math.abs(power) > 0.05) {
+            setPower(power);
+          } else {
+            setPower(0);
+          }
+        });
   }
 
   public AngularVelocity getVelocity() {
