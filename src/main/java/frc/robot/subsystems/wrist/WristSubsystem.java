@@ -22,16 +22,16 @@ import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
 
 /**
- * The {@code WristSubsystem} class controls the wrist subsystem of the robot. It manages the motion
+ * The {@code WristSubsystem} class controls the wrist subsystem of the robot.
+ * It manages the motion
  * and angle of the elevator using TalonFX motors with a fused CANCoder.
  */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, "7419");
+  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, RobotConstants.kCANivoreBus);
   private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(0);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-  private final MotionMagicExpoVoltage motionMagicRequest =
-      new MotionMagicExpoVoltage(0).withSlot(0);
+  private final MotionMagicExpoVoltage motionMagicRequest = new MotionMagicExpoVoltage(0).withSlot(0);
 
   private enum ControlMode {
     MANUAL,
@@ -40,23 +40,20 @@ public class WristSubsystem extends SubsystemBase {
 
   private ControlMode controlMode = ControlMode.MANUAL;
 
-  private final CombinedAlert positionAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Out of Range",
-          "The wrist angle is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert positionAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Wrist Out of Range",
+      "The wrist angle is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert velocityAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Velocity Error",
-          "The wrist velocity is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert velocityAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Wrist Velocity Error",
+      "The wrist velocity is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert overheatingAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Overheating",
-          "The wrist motor is overheating. Subsystem disabled.");
+  private final CombinedAlert overheatingAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Wrist Overheating",
+      "The wrist motor is overheating. Subsystem disabled.");
 
   /** Creates a new {@code WristSubsystem} with a TalonFX and a CANcoder. */
   public WristSubsystem() {
@@ -67,21 +64,22 @@ public class WristSubsystem extends SubsystemBase {
   /**
    * Sets the wrist power in manual mode.
    *
-   * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
-   *     negative values move it down.
+   * @param power The power to set, ranging from -1 to 1. Positive values move the
+   *              elevator up, and
+   *              negative values move it down.
    */
   public void setPower(double power) {
     // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) {
-    //   return;
+    // return;
     // }
 
-    wristMotor.setControl(new DutyCycleOut(power));
+    wristMotor.set(power);
 
     // wristMotor.setControl(
-    //     velocityRequest
-    //         .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
-    //         .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
-    //         .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    // velocityRequest
+    // .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
+    // .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+    // .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
   }
 
   /**
@@ -93,18 +91,19 @@ public class WristSubsystem extends SubsystemBase {
     controlMode = ControlMode.MOTIONMAGIC;
 
     // if (!safetyCheck()) {
-    //   return;
+    // return;
     // }
 
     // wristMotor.setControl(
-    //     motionMagicRequest
-    //         .withPosition(angle.in(Rotations))
-    //         .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
-    //         .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+    // motionMagicRequest
+    // .withPosition(angle.in(Rotations))
+    // .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
+    // .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
   }
 
   /**
-   * Returns a Command that drives the wrist to a specific angle and then ends, returning the
+   * Returns a Command that drives the wrist to a specific angle and then ends,
+   * returning the
    * control mode to MANUAL.
    *
    * @param angle The target angle
@@ -142,7 +141,8 @@ public class WristSubsystem extends SubsystemBase {
 
   public Angle getPosition() {
     double reading = wristEncoder.get();
-    if (reading > 0.99) return Rotations.of(0);
+    if (reading > 0.99)
+      return Rotations.of(0);
     return Rotations.of(wristEncoder.get());
   }
 
@@ -162,23 +162,29 @@ public class WristSubsystem extends SubsystemBase {
   /**
    * Performs a safety check to ensure the wrist operates within safe parameters.
    *
-   * <p>This method verifies several safety conditions, including velocity, acceleration,
-   * temperature, and angle limits. If any of these conditions are violated, the subsystem is
-   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
+   * <p>
+   * This method verifies several safety conditions, including velocity,
+   * acceleration,
+   * temperature, and angle limits. If any of these conditions are violated, the
+   * subsystem is
+   * disabled (motors are set to brake mode), and an appropriate alert is raised.
+   * If all conditions
    * are safe, the subsystem remains operational.
    *
-   * @return {@code true} if the wrist passes all safety checks and is operating safely, {@code
+   * @return {@code true} if the wrist passes all safety checks and is operating
+   *         safely, {@code
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+    if (!RobotConstants.runSafetyCheck)
+      return true;
 
-    if (getVelocity().abs(RotationsPerSecond)
-        >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
+    if (getVelocity().abs(RotationsPerSecond) >= WristConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
-    } else velocityAlert.set(false);
+    } else
+      velocityAlert.set(false);
 
     if (wristMotor.getDeviceTemp().getValue().gte(WristConstants.MAX_TEMPERATURE)) {
       brake();

@@ -58,11 +58,10 @@ public class Constants {
     public static final double wristSetPointL2 = 0; // replace
     public static final double wristSetPointL1 = 0; // replace
 
-    public static int[] reefIds = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+    public static int[] reefIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
 
     public static Map<Integer, Pose2d> getReefPoseMap() {
-      AprilTagFieldLayout fieldLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+      AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
       Map<Integer, Pose2d> poseMap = new HashMap<>();
 
@@ -80,12 +79,10 @@ public class Constants {
 
     public static Map<Integer, Pose2d> reefPoseMap = getReefPoseMap();
 
-    public static final Translation2d leftReefOffset =
-        new Translation2d(0.2286, 0.1651); // should probally be robot
+    public static final Translation2d leftReefOffset = new Translation2d(0.2286, 0.1651); // should probally be robot
     // bumper
     // offset to be flush and then the left
-    public static final Translation2d rightReefOffset =
-        new Translation2d(0.2286, -0.1651); // should probally be robot
+    public static final Translation2d rightReefOffset = new Translation2d(0.2286, -0.1651); // should probally be robot
     // bumper
     // offset to be flush and then the
     // right
@@ -104,31 +101,28 @@ public class Constants {
   }
 
   public static class VisionConstants {
-    public static final Transform3d kRobotToCamOne =
-        new Transform3d(new Translation3d(0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
+    public static final Transform3d kRobotToCamOne = new Transform3d(new Translation3d(0.5, 0.1, 0.4),
+        new Rotation3d(0, 0.34, 0));
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    public static final Transform3d kRobotToCamTwo =
-        new Transform3d(new Translation3d(-0.5, 0.1, 0.4), new Rotation3d(0, 0.34, 0));
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
+        .loadField(AprilTagFields.k2025ReefscapeWelded);
+    public static final Transform3d kRobotToCamTwo = new Transform3d(new Translation3d(-0.5, 0.1, 0.4),
+        new Rotation3d(0, 0.34, 0));
   }
 
   public static class WristConstants {
     public static final int kWristMotorID = 12; // Arbitrary ID (change)
     public static final int kWristEncoderID = 0; // Arbitrary ID (change)
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1); // Arbitrary velocity (change)
     public static final Angle kAngleTolerance = Degrees.of(5); // Arbitrary angle (change)
     public static final Angle kMaxAngle = Degrees.of(90); // Arbitrary angle (change)
     public static final Angle kMinAngle = Degrees.of(90); // Arbitrary angle (change)
-    public static final TalonFXConfiguration kWristTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final TalonFXConfiguration kWristTalonFXConfiguration = new TalonFXConfiguration();
 
     static {
       kWristTalonFXConfiguration.Feedback.FeedbackRemoteSensorID = kWristEncoderID;
-      kWristTalonFXConfiguration.Feedback.FeedbackSensorSource =
-          FeedbackSensorSourceValue.FusedCANcoder;
+      kWristTalonFXConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
       kWristTalonFXConfiguration.Feedback.SensorToMechanismRatio = 1.0;
       kWristTalonFXConfiguration.Feedback.RotorToSensorRatio = 1; // Don't know yet
     }
@@ -136,8 +130,7 @@ public class Constants {
     public static final CANcoderConfiguration kWristCANCoderConfig = new CANcoderConfiguration();
 
     static {
-      kWristCANCoderConfig.MagnetSensor.SensorDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+      kWristCANCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
       kWristCANCoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0)); // Change offset
     }
 
@@ -154,21 +147,16 @@ public class Constants {
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kWristTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig = kWristTalonFXConfiguration.MotionMagic;
 
     static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
+      kMotionMagicConfig.MotionMagicCruiseVelocity = 0; // peak velocity of the profile; set to 0 to target the
       // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kV = 0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kA = 0; // voltage required to maintain a given velocity, in V/rps
     }
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kWristTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kWristTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
@@ -181,40 +169,11 @@ public class Constants {
 
   public static class WristIntakeConstants {
     public static final int kWristIntakeBeamBreakChannel = 1; // Arbritary ID
-    public static final int kWristIntakeMotorID = 0; // Arbitrary ID (change)
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1); // Arbitrary velocity (change)
-    public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration =
-        new TalonFXConfiguration();
-    public static final Slot0Configs kWristIntakeSlot0Configs =
-        kWristIntakeTalonFXConfiguration.Slot0;
+    public static final int kWristIntakeMotorID = 13; // Arbitrary ID (change)
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration = new TalonFXConfiguration();
 
-    static {
-      kWristIntakeSlot0Configs.kG = 0; // output to overcome gravity (output)
-      kWristIntakeSlot0Configs.kS = 0; // output to overcome static friction (output)
-      kWristIntakeSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      kWristIntakeSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
-      kWristIntakeSlot0Configs.kP = 0; // output per unit of error in position (output)
-      kWristIntakeSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
-      kWristIntakeSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
-    }
-
-    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kWristIntakeTalonFXConfiguration.MotionMagic;
-
-    static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
-      // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
-    }
-
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kWristIntakeTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kWristIntakeTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
@@ -233,10 +192,8 @@ public class Constants {
     public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
     public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas
     public static final double kMetersPerRotation = 1; // meters per rotation (change)
-    public static final LinearVelocity kMaxSpeed =
-        MetersPerSecond.of(1.27); // Arbitrary velocity (change)
-    public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final LinearVelocity kMaxSpeed = MetersPerSecond.of(1.27); // Arbitrary velocity (change)
+    public static final TalonFXConfiguration kElevatorTalonFXConfiguration = new TalonFXConfiguration();
     public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
 
     static {
@@ -250,21 +207,16 @@ public class Constants {
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kElevatorTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig = kElevatorTalonFXConfiguration.MotionMagic;
 
     static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
+      kMotionMagicConfig.MotionMagicCruiseVelocity = 0; // peak velocity of the profile; set to 0 to target the
       // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kV = 0; // voltage required to maintain a given velocity, in V/rps
+      kMotionMagicConfig.MotionMagicExpo_kA = 0; // voltage required to maintain a given velocity, in V/rps
     }
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kElevatorTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kElevatorTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
@@ -273,8 +225,7 @@ public class Constants {
 
     public static final Distance OVEREXTENSION_TOLERANCE = Inches.of(1); // 1 inch
     public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(50); // 50 in/s
-    public static final LinearAcceleration UNSAFE_ACCELERATION =
-        MetersPerSecondPerSecond.of(4 * 9.81); // 4g im not
+    public static final LinearAcceleration UNSAFE_ACCELERATION = MetersPerSecondPerSecond.of(4 * 9.81); // 4g im not
     // mechanical i
     // wouldnt know
     // :(

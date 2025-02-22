@@ -36,36 +36,29 @@ import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.util.CombinedAlert;
 
 /**
- * The {@code ElevatorSubsystem} class controls the elevator subsystem of the robot. It manages the
+ * The {@code ElevatorSubsystem} class controls the elevator subsystem of the
+ * robot. It manages the
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor =
-      new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX rightElevatorMotor =
-      new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX topElevatorMotor =
-      new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX leftElevatorMotor =
-      new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX rightElevatorMotor =
-      new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX topElevatorMotor =
-      new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId,
+      RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId,
+      RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId,
+      RobotConstants.kCANivoreBus);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-  private final MotionMagicExpoVoltage motionMagicRequest =
-      new MotionMagicExpoVoltage(0).withSlot(0);
-  private final SysIdRoutine routine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-              null, // Use default timeout (10 s)
-              // Log state with SignalLogger class
-              state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-          new SysIdRoutine.Mechanism(
-              output -> leftElevatorMotor.setVoltage(output.in(Volts)), null, this));
+  private final MotionMagicExpoVoltage motionMagicRequest = new MotionMagicExpoVoltage(0).withSlot(0);
+  private final SysIdRoutine routine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null, // Use default ramp rate (1 V/s)
+          Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+          null, // Use default timeout (10 s)
+          // Log state with SignalLogger class
+          state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+      new SysIdRoutine.Mechanism(
+          output -> leftElevatorMotor.setVoltage(output.in(Volts)), null, this));
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return routine.quasistatic(direction);
@@ -82,29 +75,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private ControlMode controlMode = ControlMode.MANUAL;
 
-  private final CombinedAlert positionAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Out of Range",
-          "The encoder value is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert positionAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Out of Range",
+      "The encoder value is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert velocityAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Velocity Error",
-          "The elevator velocity is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert velocityAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Velocity Error",
+      "The elevator velocity is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert accelerationAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Acceleration Error",
-          "The elevator acceleration is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert accelerationAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Acceleration Error",
+      "The elevator acceleration is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert overheatingAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Overheating",
-          "The elevator motors are overheating. Subsystem disabled.");
+  private final CombinedAlert overheatingAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Overheating",
+      "The elevator motors are overheating. Subsystem disabled.");
 
   /** Creates a new {@code ElevatorSubsystem}. */
   public ElevatorSubsystem() {
@@ -125,8 +114,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the elevator power in manual mode.
    *
-   * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
-   *     negative values move it down.
+   * @param power The power to set, ranging from -1 to 1. Positive values move the
+   *              elevator up, and
+   *              negative values move it down.
    */
   public void setPower(double power) {
     // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
@@ -135,15 +125,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.set(power);
     topElevatorMotor.set(power);
     /*
-    leftElevatorMotor.setControl(
-        velocityRequest
-            .withVelocity(
-                power
-                    * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
-                    / ElevatorConstants.kMetersPerRotation)
-            .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
-            .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
-            */
+     * leftElevatorMotor.setControl(
+     * velocityRequest
+     * .withVelocity(
+     * power
+     * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
+     * / ElevatorConstants.kMetersPerRotation)
+     * .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
+     * .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
+     */
+  }
+
+  public void setVoltage(double voltage) {
+    leftElevatorMotor.setVoltage(voltage);
+    rightElevatorMotor.setVoltage(voltage);
+    topElevatorMotor.setVoltage(voltage);
   }
 
   /**
@@ -154,7 +150,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void toPosition(double position) {
     controlMode = ControlMode.MOTIONMAGIC;
 
-    if (!safetyCheck()) return;
+    if (!safetyCheck())
+      return;
 
     leftElevatorMotor.setControl(
         motionMagicRequest
@@ -191,7 +188,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to coast mode.
    *
-   * <p>In coast mode, the motors will spin freely when no power is applied.
+   * <p>
+   * In coast mode, the motors will spin freely when no power is applied.
    */
   public void coast() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -202,7 +200,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to brake mode.
    *
-   * <p>In brake mode, the motors resist motion when no power is applied.
+   * <p>
+   * In brake mode, the motors resist motion when no power is applied.
    */
   public void brake() {
     // Reduncancy to ensure both motors are stopped
@@ -290,42 +289,49 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * Performs a safety check to ensure the elevator operates within safe parameters.
+   * Performs a safety check to ensure the elevator operates within safe
+   * parameters.
    *
-   * <p>This method verifies several safety conditions, including velocity, acceleration,
-   * temperature, and position limits. If any of these conditions are violated, the subsystem is
-   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
+   * <p>
+   * This method verifies several safety conditions, including velocity,
+   * acceleration,
+   * temperature, and position limits. If any of these conditions are violated,
+   * the subsystem is
+   * disabled (motors are set to brake mode), and an appropriate alert is raised.
+   * If all conditions
    * are safe, the subsystem remains operational.
    *
-   * @return {@code true} if the elevator passes all safety checks and is operating safely, {@code
+   * @return {@code true} if the elevator passes all safety checks and is
+   *         operating safely, {@code
    *     false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+    if (!RobotConstants.runSafetyCheck)
+      return true;
 
-    AngularVelocity maxAngularVelocity =
-        RotationsPerSecond.of(
-            ElevatorConstants.UNSAFE_SPEED.in(MetersPerSecond)
-                / ElevatorConstants.kMetersPerRotation);
+    AngularVelocity maxAngularVelocity = RotationsPerSecond.of(
+        ElevatorConstants.UNSAFE_SPEED.in(MetersPerSecond)
+            / ElevatorConstants.kMetersPerRotation);
 
-    AngularAcceleration maxAngularAcceleration =
-        RotationsPerSecondPerSecond.of(
-            ElevatorConstants.UNSAFE_ACCELERATION.in(MetersPerSecondPerSecond)
-                / ElevatorConstants.kMetersPerRotation);
+    AngularAcceleration maxAngularAcceleration = RotationsPerSecondPerSecond.of(
+        ElevatorConstants.UNSAFE_ACCELERATION.in(MetersPerSecondPerSecond)
+            / ElevatorConstants.kMetersPerRotation);
 
-    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond)
-        >= maxAngularVelocity.in(RotationsPerSecond)) {
+    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond) >= maxAngularVelocity
+        .in(RotationsPerSecond)) {
       brake();
       velocityAlert.set(true);
       return false;
-    } else velocityAlert.set(false);
+    } else
+      velocityAlert.set(false);
 
-    if (leftElevatorMotor.getAcceleration().getValue().abs(RotationsPerSecondPerSecond)
-        >= maxAngularAcceleration.in(RotationsPerSecondPerSecond)) {
+    if (leftElevatorMotor.getAcceleration().getValue().abs(RotationsPerSecondPerSecond) >= maxAngularAcceleration
+        .in(RotationsPerSecondPerSecond)) {
       brake();
       accelerationAlert.set(true);
       return false;
-    } else accelerationAlert.set(false);
+    } else
+      accelerationAlert.set(false);
 
     if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
         || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
@@ -333,10 +339,11 @@ public class ElevatorSubsystem extends SubsystemBase {
       brake();
       overheatingAlert.set(true);
       return false;
-    } else overheatingAlert.set(false);
+    } else
+      overheatingAlert.set(false);
 
     if ((getHeight()
-            .gt(ElevatorConstants.kMaxHeight.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
+        .gt(ElevatorConstants.kMaxHeight.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
         || getHeight()
             .lt(ElevatorConstants.kMinHeight.minus(ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
       brake();

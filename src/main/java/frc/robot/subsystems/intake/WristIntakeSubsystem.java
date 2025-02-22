@@ -14,31 +14,17 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristIntakeConstants;
-import frc.robot.util.CombinedAlert;
 
 public class WristIntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final DigitalInput beamBreak;
 
-  private final CombinedAlert velocityAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Velocity Error",
-          "The wrist velocity is outside the safe range. Subsystem disabled.");
-
-  private final CombinedAlert overheatingAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Wrist Overheating",
-          "The wrist motor is overheating. Subsystem disabled.");
-
   /** Creates a new WristIntakeSubsystem. */
-  public WristIntakeSubsystem(TalonFX intakeMotor) {
-    this.intakeMotor = intakeMotor;
-    intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID);
+  public WristIntakeSubsystem() {
+    this.intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
     this.beamBreak = new DigitalInput(0);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
@@ -56,11 +42,6 @@ public class WristIntakeSubsystem extends SubsystemBase {
   }
 
   public void setPower(double power) {
-    // if (!safetyCheck()) return;
-    // power = Math.max(-1, Math.min(1, power));
-    // intakeMotor.setControl(
-    //     velocityRequest.withVelocity(
-    //         power * WristIntakeConstants.kMaxSpeed.in(RotationsPerSecond)));
     intakeMotor.set(power);
   }
 
@@ -70,40 +51,19 @@ public class WristIntakeSubsystem extends SubsystemBase {
    * @param power The power from -1 to 1.
    * @return A command for scheduling.
    */
-  public Command joystickControl(double power) {
-    return this.run(() -> setPower(power));
+  public Command joystickControl(CommandXboxController commandXboxController) {
+    return this.run(() -> {
+      double power = commandXboxController.getRightTriggerAxis() - commandXboxController.getLeftTriggerAxis();
+      if (Math.abs(power) > 0.05) {
+        setPower(power);
+      } else {
+        setPower(0);
+      }
+    });
   }
 
   public AngularVelocity getVelocity() {
     return intakeMotor.getVelocity().getValue();
-  }
-
-  /**
-   * Performs a safety check to ensure the wrist operates within safe parameters.
-   *
-   * <p>This method verifies several safety conditions, including velocity, acceleration,
-   * temperature, and angle limits. If any of these conditions are violated, the subsystem is
-   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
-   * are safe, the subsystem remains operational.
-   *
-   * @return {@code true} if the wrist passes all safety checks and is operating safely, {@code
-   *     false} otherwise.
-   */
-  private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
-
-    if (getVelocity().abs(RotationsPerSecond)
-        >= WristIntakeConstants.UNSAFE_SPEED.in(RotationsPerSecond)) {
-      brake();
-      velocityAlert.set(true);
-      return false;
-    } else velocityAlert.set(false);
-    if (intakeMotor.getDeviceTemp().getValue().gte(WristIntakeConstants.MAX_TEMPERATURE)) {
-      brake();
-      overheatingAlert.set(true);
-      return false;
-    } else overheatingAlert.set(false);
-    return true;
   }
 
   @Override
