@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
@@ -16,12 +17,19 @@ public class IntakeCoral extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
   private final LightSensorSubsystem lightSensorSubsystem;
   private Voltage power;
+  private boolean coralPhase1;
+  private boolean done;
+  private boolean init;
+
 
   public IntakeCoral(
       WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.lightSensorSubsystem = lightSensorSubsystem;
     Timer timer = new Timer();
+    Timer endTimer = new Timer();
+    Timer timeoutTimer = new Timer();
+    
 
     addRequirements(wristIntakeSubsystem, lightSensorSubsystem);
   }
@@ -30,21 +38,36 @@ public class IntakeCoral extends Command {
   @Override
   public void initialize() {
     wristIntakeSubsystem.coast();
+    
+        wristIntakeSubsystem.updateBaselineCurrentDraw();
+        coralPhase1 = false;
+        done = false;
+        endTimer.reset;
+        thresholdTimer.reset();
+        thresholdTimer.start();
+        timeoutTimer.reset();
+        init = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    power = wristIntakeSubsystem.getVoltage();
-
-    if (power.gte(wristIntakeSubsystem.getVoltage())) {
-      wristIntakeSubsystem.setPower(Constants.IntakeCoralConstants.intakeCoralPower);
-    }
-    Timer.delay(0.5);
-    // Fix for 2025 version. Dnt know how to make it wait for 5 seconds
-    wristIntakeSubsystem.brake();
-    ;
+    power
+    wristIntakeSubsystem.setPower(0.85);
+        
+       
+        if(wristIntakeSubsystem.noteDetectedByCurrent() && thresholdTimer.hasElapsed(1)){
+            notePhaseOne = true;
+            timeoutTimer.start();
+        }
+        if(notePhaseOne && !wristIntakeSubsystem.noteDetectedByCurrent()) {
+            wristIntakeSubsystem.setSpeed(0);
+            wristIntakeSubsystem.setSerializerSpeed(0.3);
+            endTimer.start();
+        }
+        if(endTimer.hasElapsed(0.2)){
+            done = true;
+        }
   }
 
   // Called once the command ends or is interrupted.
