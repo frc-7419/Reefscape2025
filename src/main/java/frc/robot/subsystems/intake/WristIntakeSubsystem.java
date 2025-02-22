@@ -21,8 +21,8 @@ import frc.robot.util.CombinedAlert;
 public class WristIntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-  private static final double CURRENT_THRESHOLD = 12.0;//needs to be checked with tuning
-  private double baselineCurrentDraw; 
+  private static final double CURRENT_THRESHOLD = 12.0; // needs to be checked with tuning
+  private double baselineCurrentDraw;
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
@@ -51,9 +51,10 @@ public class WristIntakeSubsystem extends SubsystemBase {
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setSpeed(double speed){
+  public void setSpeed(double speed) {
     intakeMotor.set(speed);
   }
+
   public void setPower(double power) {
     if (!safetyCheck()) return;
     power = Math.max(-1, Math.min(1, power));
@@ -79,11 +80,13 @@ public class WristIntakeSubsystem extends SubsystemBase {
   public AngularVelocity getVelocity() {
     return intakeMotor.getVelocity().getValue();
   }
-  public boolean coralDetectedByCurrent(){
+
+  public boolean coralDetectedByCurrent() {
     double currentDraw = intakeMotor.getMotorVoltage().getValueAsDouble();
     return Math.abs(currentDraw - baselineCurrentDraw) > CURRENT_THRESHOLD;
   }
-  public void updateBaselineCurrentDraw(){
+
+  public void updateBaselineCurrentDraw() {
     baselineCurrentDraw = intakeMotor.getMotorVoltage().getValueAsDouble();
   }
 
