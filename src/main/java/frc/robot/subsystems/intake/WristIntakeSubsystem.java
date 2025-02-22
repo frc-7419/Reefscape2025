@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +21,7 @@ import frc.robot.util.CombinedAlert;
 public class WristIntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
+  private final DigitalInput beamBreak;
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
@@ -36,6 +38,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem(TalonFX intakeMotor) {
     this.intakeMotor = intakeMotor;
+    this.beamBreak = new DigitalInput(0);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
   }
 
@@ -45,6 +48,10 @@ public class WristIntakeSubsystem extends SubsystemBase {
 
   public void brake() {
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+  }
+
+  public boolean beamBreakisTriggered() {
+    return beamBreak.get();
   }
 
   public void setPower(double power) {

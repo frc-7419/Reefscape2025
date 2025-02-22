@@ -180,6 +180,7 @@ public class Constants {
   }
 
   public static class WristIntakeConstants {
+    public static final int kWristIntakeBeamBreakChannel = 1; // Arbritary ID
     public static final int kWristIntakeMotorID = 0; // Arbitrary ID (change)
     public static final AngularVelocity kMaxSpeed =
         RotationsPerSecond.of(1); // Arbitrary velocity (change)
