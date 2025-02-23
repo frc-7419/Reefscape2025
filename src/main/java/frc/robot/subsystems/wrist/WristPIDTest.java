@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems.wrist;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,25 +19,34 @@ import frc.robot.util.TunableValue;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class WristPIDTest extends Command {
   private final WristSubsystem wrist;
-  private final ProfiledPIDController pidController;
-  private final TunableValue kP = new TunableValue("Wrist kP", 0.6);
+  private final PIDController pidController;
+  private final ArmFeedforward feedforward;
+
+  private final TunableValue kP = new TunableValue("Wrist kP", 26);
   private final TunableValue kI = new TunableValue("Wrist kI", 0.0);
-  private final TunableValue kD = new TunableValue("Wrist kD", 0.0);
-  private final TunableValue setpoint = new TunableValue("Wrist Setpoint", 0.8);
+  private final TunableValue kD = new TunableValue("Wrist kD", 0.2);
+  private final TunableValue kS = new TunableValue("Wrist kS", 0);
+  private final TunableValue kG = new TunableValue("Wrist kG", 0.0);
+  private final TunableValue kV = new TunableValue("Wrist kV", 0.0);
+  private final TunableValue kA = new TunableValue("Wrist kA", 0.0);
+  private final TunableValue setpoint = new TunableValue("Wrist Setpoint", 0.32);
 
   /** Creates a new WristPIDTest. */
   public WristPIDTest(WristSubsystem wrist) {
     this.wrist = wrist;
     pidController =
-        new ProfiledPIDController(
-            kP.getValue(), kI.getValue(), kD.getValue(), new TrapezoidProfile.Constraints(5, 0.5));
+        new PIDController(
+            kP.getValue(), kI.getValue(), kD.getValue());
+    feedforward = new ArmFeedforward(kS.getValue(), kG.getValue(), kV.getValue());
     addRequirements(wrist);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    pidController.setTolerance(0.005);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -47,15 +60,26 @@ public class WristPIDTest extends Command {
     if (kD.getValue() != pidController.getD()) {
       pidController.setD(kD.getValue());
     }
-    if (pidController.getGoal().position != setpoint.getValue()) {
-      pidController.setGoal(setpoint.getValue());
+    if (pidController.getSetpoint() != setpoint.getValue()) {
+      pidController.setSetpoint(setpoint.getValue());
+    }
+    if (kS.getValue() != feedforward.getKs()) {
+      feedforward.setKs(kS.getValue());
+    }
+    if (kG.getValue() != feedforward.getKg()) {
+      feedforward.setKg(kG.getValue());
+    }
+    if (kV.getValue() != feedforward.getKv()) {
+      feedforward.setKv(kV.getValue());
     }
 
     double pidCalculation = pidController.calculate(wrist.getPosition().in(Rotations));
+    double feedforwardCalculation = feedforward.calculate(wrist.getPosition().minus(Degrees.of(90)).in(Radians), 0);
 
-    wrist.setPower(pidCalculation);
+    wrist.setVoltage(pidCalculation + feedforwardCalculation);
 
     SmartDashboard.putNumber("Wrist PID Output", pidCalculation);
+    SmartDashboard.putNumber("Wrist Feedforward Output", feedforwardCalculation);
     SmartDashboard.putBoolean("Wrist At Setpoint?", pidController.atSetpoint());
   }
 

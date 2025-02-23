@@ -2,13 +2,13 @@ package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.Supplier;
+
+import org.opencv.core.Mat;
 
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -34,7 +34,7 @@ import frc.robot.util.CombinedAlert;
  * and angle of the elevator using TalonFX motors with a fused CANCoder.
  */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID);
+  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, RobotConstants.kCANivoreBus);
   private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WristConstants.kWristEncoderID);
   private Supplier<Distance> elevatorHeightSupplier;
   private boolean safetyLock = false;
@@ -92,11 +92,14 @@ public class WristSubsystem extends SubsystemBase {
 
     power = Math.max(-1, Math.min(1, power));
 
+    wristMotor.set(power);
+    /*
     wristMotor.setControl(
         velocityRequest
             .withVelocity(power * WristConstants.kMaxSpeed.in(RotationsPerSecond))
             .withLimitForwardMotion(getPosition().gte(WristConstants.kMaxAngle))
             .withLimitReverseMotion(getPosition().lte(WristConstants.kMinAngle)));
+             */
   }
 
   /**
@@ -113,12 +116,17 @@ public class WristSubsystem extends SubsystemBase {
 
     double currentPos = getPosition().in(Rotations);
     double pidOutput = pidController.calculate(currentPos, angle.in(Rotations));
+    pidOutput = Math.max(-5, Math.min(pidOutput, 5));
 
-    wristMotor.setVoltage(pidOutput + calculateFeedForward());
+    wristMotor.setVoltage(pidOutput);
   }
 
   private double calculateFeedForward(){
-    return wristFeedforward.calculate(getPosition().in(Radians), 0);
+    return wristFeedforward.calculate(getPosition().in(Radians), 0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  }
+
+  public void setVoltage(double voltage){
+    wristMotor.setVoltage(voltage);
   }
 
   /**
@@ -128,7 +136,7 @@ public class WristSubsystem extends SubsystemBase {
    * @param angle The target angle
    * @return A command for scheduling.
    */
-  public Command setAngle(Angle angle) {
+  public Command  setAngle(Angle angle) {
     return this.runEnd(() -> toAngle(angle), () -> switchControlMode(ControlMode.MANUAL));
   }
 
@@ -140,7 +148,7 @@ public class WristSubsystem extends SubsystemBase {
    */
   public Command joystickControl(CommandXboxController joystick) {
     if(safetyLock) return new WaitCommand(0.02);
-    return this.run(() -> setPower(joystick.getRightY()));
+    return this.run(() -> setPower(joystick.getRightY()* 0.3));
   }
 
   /** Switches the current control mode. */
@@ -160,7 +168,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return Radians.of(wristEncoder.get());
+    return Rotations.of(1 - wristEncoder.get()).plus(WristConstants.wristAngleOffset);
   }
 
   public AngularVelocity getVelocity() {
@@ -169,6 +177,7 @@ public class WristSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    /*
     if(Math.abs(elevatorHeightSupplier.get().in(Meter)-1)<0.2) {
       this.setAngle(Degrees.of(1)); //TODO set the angle to a safe angle
       safetyLockTimer = 0;
@@ -178,6 +187,7 @@ public class WristSubsystem extends SubsystemBase {
       ++safetyLockTimer;
       safetyLock = safetyLockTimer>=4?false:true;
     }
+    */
     SmartDashboard.putNumber("Wrist Angle (Rotations)", getPosition().in(Rotations));
     SmartDashboard.putNumber("Wrist Angle (Degrees)", getPosition().in(Degrees));
     SmartDashboard.putNumber(

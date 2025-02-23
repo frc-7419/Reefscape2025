@@ -22,6 +22,8 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -46,6 +48,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
   private final TalonFX topElevatorMotor =
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
+
+  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.52, 0.42, 0);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -123,11 +127,16 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
+    power = Math.max(-1, Math.min(1, power)) * 8;
+
+    if (getPosition().gt(Rotations.of(1))) {
+      power += feedforward.calculate(0);
+    }
+
     // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
-    power = Math.max(-1, Math.min(1, power));
-    leftElevatorMotor.set(power);
-    rightElevatorMotor.set(power);
-    topElevatorMotor.set(power);
+    leftElevatorMotor.setVoltage(power);
+    rightElevatorMotor.setVoltage(power);
+    topElevatorMotor.setVoltage(power);
     /*
      * leftElevatorMotor.setControl(
      * velocityRequest
@@ -185,7 +194,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command joystickControl(CommandXboxController joystick) {
-    return this.run(() -> setPower(joystick.getLeftY()));
+    return this.run(() -> setPower(-joystick.getLeftY()));
   }
 
   /**

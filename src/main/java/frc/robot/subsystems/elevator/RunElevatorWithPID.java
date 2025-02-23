@@ -7,6 +7,7 @@ package frc.robot.subsystems.elevator;
 import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,66 +15,46 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.TunableValue;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ElevatorPIDTest extends Command {
+public class RunElevatorWithPID extends Command {
   private final ElevatorSubsystem elevator;
-  private final ProfiledPIDController pidController;
+  private final PIDController pidController;
   private final ElevatorFeedforward feedforward;
-  private final TunableValue kP = new TunableValue("Elevator kP", 0.59);
-  private final TunableValue kI = new TunableValue("Elevator kI", 0.0);
-  private final TunableValue kD = new TunableValue("Elevator kD", 0.0);
-  private final TunableValue kS = new TunableValue("Elevator kS", 0.52);
-  private final TunableValue kG = new TunableValue("Elevator kG", 0.42);
-  private final TunableValue kV = new TunableValue("Elevator kV", 0.0);
-  private final TunableValue kA = new TunableValue("Elevator kA", 0.0);
-  private final TunableValue setpoint = new TunableValue("Elevator Setpoint", 6);
+  private final double kP = 0.59;
+  private final double kI = 0.0;
+  private final double kD = 0.0;
+  private final double kS = 0.52;
+  private final double kG = 0.42;
+  private final double kV = 0;
+  private final double kA = 0;
+  private final double setpoint;
 
-  /** Creates a new ElevatorPIDTest. */
-  public ElevatorPIDTest(ElevatorSubsystem elevator) {
+  /** Creates a new RunElevatorWithPID. */
+  public RunElevatorWithPID(ElevatorSubsystem elevator, double setpoint) {
     // WE NEED TO SET THE LINEAR CONVERSION RATES AND STUFF. THATS WHY I HAVE IT AS
     // DOUBLE FOR NOW..
     this.elevator = elevator;
+    this.setpoint = setpoint;
     pidController =
-        new ProfiledPIDController(
-            kP.getValue(), kI.getValue(), kD.getValue(), new TrapezoidProfile.Constraints(5, 0.5));
+        new PIDController(
+            kP, kI, kD);
     feedforward =
-        new ElevatorFeedforward(kS.getValue(), kG.getValue(), kV.getValue(), kA.getValue());
+        new ElevatorFeedforward(kS, kG, kV, kA);
     addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    pidController.setSetpoint(setpoint);
+    pidController.setTolerance(0.1);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (kP.getValue() != pidController.getP()) {
-      pidController.setP(kP.getValue());
-    }
-    if (kI.getValue() != pidController.getI()) {
-      pidController.setI(kI.getValue());
-    }
-    if (kD.getValue() != pidController.getD()) {
-      pidController.setD(kD.getValue());
-    }
-    if (kS.getValue() != feedforward.getKs()) {
-      feedforward.setKs(kS.getValue());
-    }
-    if (kG.getValue() != feedforward.getKg()) {
-      feedforward.setKg(kG.getValue());
-    }
-    if (kV.getValue() != feedforward.getKv()) {
-      feedforward.setKv(kV.getValue());
-    }
-    if (kA.getValue() != feedforward.getKa()) {
-      feedforward.setKa(kA.getValue());
-    }
-    if (pidController.getGoal().position != setpoint.getValue()) {
-      pidController.setGoal(setpoint.getValue());
-    }
-
     double pidCalculation = pidController.calculate(elevator.getPosition().in(Rotations));
+    pidCalculation = Math.max(-2, Math.min(pidCalculation, 5));
 
     double feedforwardCalculation = feedforward.calculate(0);
 

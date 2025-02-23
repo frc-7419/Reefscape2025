@@ -5,9 +5,11 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -125,19 +127,21 @@ public class Constants {
     public static final TalonFXConfiguration kWristTalonFXConfiguration =
         new TalonFXConfiguration();
 
-    public static final double pidKp = 0.0;
+    public static final double pidKp = 26;
     public static final double pidKi = 0.0;
-    public static final double pidKd = 0.0;
+    public static final double pidKd = 0.2;
 
     public static final double feedforwardKv = 0.0;
     public static final double feedforwardKg = 0.0;
     public static final double feedforwardKs = 0.0;
 
-    public static final Angle wristAngleOffset = Rotations.of(0.0);
-
+    public static final Angle wristAngleOffset = Degrees.of(-146.7);
+    public static final MotorOutputConfigs kMotorOutputConfig = kWristTalonFXConfiguration.MotorOutput;
+    static {
+      kMotorOutputConfig.Inverted = InvertedValue.Clockwise_Positive;
+    }
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kWristTalonFXConfiguration.CurrentLimits;
-
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
