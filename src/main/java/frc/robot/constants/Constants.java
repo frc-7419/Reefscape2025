@@ -2,15 +2,12 @@ package frc.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -136,12 +133,16 @@ public class Constants {
     public static final double feedforwardKs = 0.0;
 
     public static final Angle wristAngleOffset = Degrees.of(-146.7);
-    public static final MotorOutputConfigs kMotorOutputConfig = kWristTalonFXConfiguration.MotorOutput;
+    public static final MotorOutputConfigs kMotorOutputConfig =
+        kWristTalonFXConfiguration.MotorOutput;
+
     static {
       kMotorOutputConfig.Inverted = InvertedValue.Clockwise_Positive;
     }
+
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kWristTalonFXConfiguration.CurrentLimits;
+
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
@@ -149,6 +150,8 @@ public class Constants {
 
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
+
+    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.35);
   }
 
   public static class WristIntakeConstants {
@@ -175,15 +178,14 @@ public class Constants {
     public static final int kLeftElevatorMotorId = 9; // Arbitrary ID (change)
     public static final int kRightElevatorMotorId = 11; // Arbitrary ID (change)
     public static final int kTopElevatorMotorId = 10; // Arbitrary ID (change)
-    public static final Distance kMaxHeight = Inches.of(84); // Taken from canvas
-    public static final Distance kMinHeight = Inches.of(40); // Taken from canvas
-    public static final Distance kHeightOffset = Inches.of(40); // Taken from canvas
-    public static final double kMetersPerRotation = 1; // meters per rotation (change)
-    public static final LinearVelocity kMaxSpeed =
-        MetersPerSecond.of(1.27); // Arbitrary velocity (change)
+    public static final Angle kMaxRotations = Rotations.of(28); // Taken from canvas
+    public static final Angle kMinRotations = Rotations.of(0); // Taken from canvas
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(5);
     public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
         new TalonFXConfiguration();
     public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
+    public static final Angle kElevatorBarUpperLimit = Rotations.of(0.0);
+    public static final Angle kElevatorBarLowerLimit = Rotations.of(0.0);
 
     static {
       kElevatorSlot0Configs.kG = 0.32; // output to overcome gravity (output)
@@ -217,13 +219,7 @@ public class Constants {
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
 
-    public static final Distance OVEREXTENSION_TOLERANCE = Inches.of(1); // 1 inch
-    public static final LinearVelocity UNSAFE_SPEED = InchesPerSecond.of(50); // 50 in/s
-    public static final LinearAcceleration UNSAFE_ACCELERATION =
-        MetersPerSecondPerSecond.of(4 * 9.81); // 4g im not
-    // mechanical i
-    // wouldnt know
-    // :(
+    public static final Angle OVEREXTENSION_TOLERANCE = Rotations.of(1); // 1 rotation
     public static final Temperature MAX_TEMPERATURE = Celsius.of(100); // Max rated temperature
   }
 

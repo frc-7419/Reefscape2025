@@ -10,8 +10,6 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.TunableValue;
@@ -34,9 +32,7 @@ public class WristPIDTest extends Command {
   /** Creates a new WristPIDTest. */
   public WristPIDTest(WristSubsystem wrist) {
     this.wrist = wrist;
-    pidController =
-        new PIDController(
-            kP.getValue(), kI.getValue(), kD.getValue());
+    pidController = new PIDController(kP.getValue(), kI.getValue(), kD.getValue());
     feedforward = new ArmFeedforward(kS.getValue(), kG.getValue(), kV.getValue());
     addRequirements(wrist);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -74,7 +70,8 @@ public class WristPIDTest extends Command {
     }
 
     double pidCalculation = pidController.calculate(wrist.getPosition().in(Rotations));
-    double feedforwardCalculation = feedforward.calculate(wrist.getPosition().minus(Degrees.of(90)).in(Radians), 0);
+    double feedforwardCalculation =
+        feedforward.calculate(wrist.getPosition().minus(Degrees.of(90)).in(Radians), 0);
 
     wrist.setVoltage(pidCalculation + feedforwardCalculation);
 

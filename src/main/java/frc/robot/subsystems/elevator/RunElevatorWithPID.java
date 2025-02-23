@@ -8,11 +8,8 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.util.TunableValue;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunElevatorWithPID extends Command {
@@ -34,11 +31,8 @@ public class RunElevatorWithPID extends Command {
     // DOUBLE FOR NOW..
     this.elevator = elevator;
     this.setpoint = setpoint;
-    pidController =
-        new PIDController(
-            kP, kI, kD);
-    feedforward =
-        new ElevatorFeedforward(kS, kG, kV, kA);
+    pidController = new PIDController(kP, kI, kD);
+    feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
     addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
