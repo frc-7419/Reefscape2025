@@ -25,7 +25,6 @@ public class WristIntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private static final double CURRENT_THRESHOLD = 100; // needs to be checked with tuning
-  private double baselineCurrentDraw;
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(

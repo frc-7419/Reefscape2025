@@ -15,7 +15,6 @@ public class IntakeCoral extends Command {
 
   private boolean coralPhase1;
 
-  private double startTime;
   private final Timer thresholdTimer;
   private final Timer timeoutTimer;
   private final Timer endTimer;
@@ -26,8 +25,6 @@ public class IntakeCoral extends Command {
     this.timeoutTimer = new Timer();
     this.thresholdTimer = new Timer();
     this.endTimer = new Timer();
-
-    startTime = Timer.getFPGATimestamp();
 
     addRequirements(wristIntakeSubsystem);
   }
@@ -44,6 +41,7 @@ public class IntakeCoral extends Command {
     thresholdTimer.reset();
     thresholdTimer.start();
     timeoutTimer.reset();
+    timeoutTimer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -51,7 +49,7 @@ public class IntakeCoral extends Command {
   public void execute() {
     SmartDashboard.putBoolean("Coral Phase 1", coralPhase1);
 
-    if (wristIntakeSubsystem.coralDetectedByCurrent() && thresholdTimer.hasElapsed(0.05)) {
+    if (wristIntakeSubsystem.coralDetectedByCurrent() && thresholdTimer.hasElapsed(0.5)) {
       coralPhase1 = true;
       endTimer.start();
     }
@@ -75,6 +73,6 @@ public class IntakeCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done;
+    return done || timeoutTimer.hasElapsed(10);
   }
 }
