@@ -36,20 +36,21 @@ public class AlignToReef extends Command {
   private final PIDController pidY = DrivetrainConstants.kPoseVelocityYController;
   private final PIDController pidTheta = DrivetrainConstants.kPoseThetaController;
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.05)
-      .withRotationalDeadband(MaxAngularRate * 0.05)
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed * 0.05)
+          .withRotationalDeadband(MaxAngularRate * 0.05)
+          .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   /**
    * Creates a new AlignToReef command.
-   * 
-   * @param drivetrain      The drivetrain subsystem
+   *
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
-   * @param targetReefId    The specific reef ID to target. Use -1 to
-   *                        auto-select closest.
+   * @param targetReefId The specific reef ID to target. Use -1 to auto-select closest.
    */
-  public AlignToReef(CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition, int targetReefId) {
+  public AlignToReef(
+      CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition, int targetReefId) {
     this.drivetrain = drivetrain;
     this.scoringPosition = scoringPosition;
     this.targetReefId = targetReefId;
@@ -58,8 +59,8 @@ public class AlignToReef extends Command {
 
   /**
    * Creates a new AlignToReef command.
-   * 
-   * @param drivetrain      The drivetrain subsystem
+   *
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
    */
   public AlignToReef(CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition) {
@@ -116,15 +117,17 @@ public class AlignToReef extends Command {
     }
 
     if (scoringPosition == ScoringPosition.LEFT) {
-      targetPose = selectedPose.transformBy(
-          new Transform2d(ScoringConstants.leftReefOffset, new Rotation2d()));
+      targetPose =
+          selectedPose.transformBy(
+              new Transform2d(ScoringConstants.leftReefOffset, new Rotation2d()));
     } else {
-      targetPose = selectedPose.transformBy(
-          new Transform2d(ScoringConstants.rightReefOffset, new Rotation2d()));
+      targetPose =
+          selectedPose.transformBy(
+              new Transform2d(ScoringConstants.rightReefOffset, new Rotation2d()));
     }
     SmartDashboard.putNumberArray(
         "Target Robot Reef Pose",
-        new double[] { targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees() });
+        new double[] {targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
 
     pidX.setTolerance(0.01);
     pidY.setTolerance(0.01);
@@ -140,8 +143,9 @@ public class AlignToReef extends Command {
 
     double vx = pidX.calculate(currentPose.getX(), targetPose.getX());
     double vy = pidY.calculate(currentPose.getY(), targetPose.getY());
-    double omega = pidTheta.calculate(
-        currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    double omega =
+        pidTheta.calculate(
+            currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
 
     vx = MathUtil.clamp(vx, -MaxSpeed, MaxSpeed);
     vy = MathUtil.clamp(vy, -MaxSpeed, MaxSpeed);
