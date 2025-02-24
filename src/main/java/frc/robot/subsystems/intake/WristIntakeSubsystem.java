@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private static final double CURRENT_THRESHOLD = 100; // needs to be checked with tuning
   private double baselineCurrentDraw;
+  private DigitalInput beamBreak = new DigitalInput(0);
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
@@ -64,6 +66,9 @@ public class WristIntakeSubsystem extends SubsystemBase {
     intakeMotor.set(power);
   }
 
+  public boolean beamBreakisTriggered() {
+    return beamBreak.get();
+  }
   /**
    * Returns a Command that applies manual wrist control (ex, from a joystick).
    *
@@ -128,5 +133,6 @@ public class WristIntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Motor Coral Speed: ", intakeMotor.get());
     SmartDashboard.putNumber("Wrist Intake Voltage", getVoltage().in(Volts));
     SmartDashboard.putNumber("Wrist Intake Current", getCurrent().in(Amps));
+    SmartDashboard.putBoolean("Beam Break Triggred", beamBreakisTriggered());
   }
 }
