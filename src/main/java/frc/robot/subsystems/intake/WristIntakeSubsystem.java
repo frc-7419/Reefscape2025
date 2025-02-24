@@ -27,7 +27,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private static final double CURRENT_THRESHOLD = 100; // needs to be checked with tuning
   private double baselineCurrentDraw;
-  private DigitalInput beamBreak = new DigitalInput(0);
+  private DigitalInput beamBreak = new DigitalInput(2);
 
   private final CombinedAlert velocityAlert =
       new CombinedAlert(
