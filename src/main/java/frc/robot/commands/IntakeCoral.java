@@ -7,8 +7,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
-import frc.robot.subsystems.intake.LightSensorSubsystem;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -17,20 +15,16 @@ public class IntakeCoral extends Command {
 
   private boolean coralPhase1;
 
-  private double startTime;
   private final Timer thresholdTimer;
   private final Timer timeoutTimer;
   private final Timer endTimer;
   private boolean done = false;
 
-  public IntakeCoral(
-      WristIntakeSubsystem wristIntakeSubsystem) {
+  public IntakeCoral(WristIntakeSubsystem wristIntakeSubsystem) {
     this.wristIntakeSubsystem = wristIntakeSubsystem;
     this.timeoutTimer = new Timer();
     this.thresholdTimer = new Timer();
     this.endTimer = new Timer();
-
-    startTime = Timer.getFPGATimestamp();
 
     addRequirements(wristIntakeSubsystem);
   }
@@ -38,7 +32,7 @@ public class IntakeCoral extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+
     wristIntakeSubsystem.setVoltage(-2);
 
     coralPhase1 = false;
@@ -47,6 +41,7 @@ public class IntakeCoral extends Command {
     thresholdTimer.reset();
     thresholdTimer.start();
     timeoutTimer.reset();
+    timeoutTimer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,7 +49,7 @@ public class IntakeCoral extends Command {
   public void execute() {
     SmartDashboard.putBoolean("Coral Phase 1", coralPhase1);
 
-    if (wristIntakeSubsystem.coralDetectedByCurrent() && thresholdTimer.hasElapsed(0.05)) {
+    if (wristIntakeSubsystem.coralDetectedByCurrent() && thresholdTimer.hasElapsed(0.5)) {
       coralPhase1 = true;
       endTimer.start();
     }
@@ -78,6 +73,6 @@ public class IntakeCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done;
+    return done || timeoutTimer.hasElapsed(10);
   }
 }

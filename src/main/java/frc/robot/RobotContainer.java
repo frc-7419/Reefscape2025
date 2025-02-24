@@ -30,12 +30,10 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.PhotonvisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorPIDTest;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.RunElevatorWithPID;
 import frc.robot.subsystems.intake.RunIntakeWithJoystick;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
-import frc.robot.subsystems.wrist.WristPIDTest;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,6 @@ public class RobotContainer {
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
 
   private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
-  
 
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -69,8 +66,9 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final ToPose toPose = new ToPose(drivetrain);
 
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  private WristSubsystem wristSubsystem = new WristSubsystem(elevator::getHeight);
+  private WristSubsystem wrist = new WristSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
+
   // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   // private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
@@ -95,7 +93,6 @@ public class RobotContainer {
     // antiTip.schedule();
   }
 
-  
   private final Command elevatorToL1 = new RunElevatorWithPID(elevator, 0);
   private final Command elevatorToL2 = new RunElevatorWithPID(elevator, 5);
   private final Command elevatorToL3 = new RunElevatorWithPID(elevator, 13);
@@ -103,30 +100,36 @@ public class RobotContainer {
   private final Command elevatorToHighAlgae = new RunElevatorWithPID(elevator, 11);
   private final Command elevatorToLowAlgae = new RunElevatorWithPID(elevator, 0);
   private final Command elevatorToBarge = new RunElevatorWithPID(elevator, 28.7);
-  private final Command wristL1 = wristSubsystem.setAngle(Rotations.of(0.34));
-  private final Command wristL2 = wristSubsystem.setAngle(Rotations.of(0.34));
-  private final Command wristL3 = wristSubsystem.setAngle(Rotations.of(0.34));
-  private final Command wristL4 = wristSubsystem.setAngle(Rotations.of(0.25));
-  private final Command wristGetHighAlgae = wristSubsystem.setAngle(Rotations.of(0.1));
-  private final Command wristGetLowAlgae = wristSubsystem.setAngle(Rotations.of(0.1));
-  private final Command wristScoreAlgae = wristSubsystem.setAngle(Rotations.of(0.26));
-  private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1,
-  wristL1);
-  private final Command scoreL2 = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL2),
-  wristL2);
-  private final Command scoreL3 = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL3),
-  wristL3);
-  private final Command scoreL4 = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL4),
-  wristL4);
-  private final Command getHighAlgae = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToHighAlgae),
-  wristGetHighAlgae);
-  private final Command getLowAlgae = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToLowAlgae),
-  wristGetLowAlgae);
-  private final Command scoreBarge = new ParallelCommandGroup(new SequentialCommandGroup(new WaitCommand(0.5), elevatorToBarge),
-  new SequentialCommandGroup(new ParallelDeadlineGroup(new WaitCommand(1), wristSubsystem.setAngle(Rotations.of(0.1))), wristScoreAlgae));
-  
+  private final Command wristL1 = wrist.setAngle(Rotations.of(0.34));
+  private final Command wristL2 = wrist.setAngle(Rotations.of(0.34));
+  private final Command wristL3 = wrist.setAngle(Rotations.of(0.34));
+  private final Command wristL4 = wrist.setAngle(Rotations.of(0.25));
+  private final Command wristGetHighAlgae = wrist.setAngle(Rotations.of(0.1));
+  private final Command wristGetLowAlgae = wrist.setAngle(Rotations.of(0.1));
+  private final Command wristScoreAlgae = wrist.setAngle(Rotations.of(0.26));
+  private final Command scoreL1 = new ParallelCommandGroup(elevatorToL1, wristL1);
+  private final Command scoreL2 =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL2), wristL2);
+  private final Command scoreL3 =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL3), wristL3);
+  private final Command scoreL4 =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToL4), wristL4);
+  private final Command getHighAlgae =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToHighAlgae), wristGetHighAlgae);
+  private final Command getLowAlgae =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToLowAlgae), wristGetLowAlgae);
+  private final Command scoreBarge =
+      new ParallelCommandGroup(
+          new SequentialCommandGroup(new WaitCommand(0.5), elevatorToBarge),
+          new SequentialCommandGroup(
+              new ParallelDeadlineGroup(new WaitCommand(1), wrist.setAngle(Rotations.of(0.1))),
+              wristScoreAlgae));
 
-  
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -183,30 +186,28 @@ public class RobotContainer {
     operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.leftBumper().onTrue(new IntakeCoral(wristIntakeSubsystem));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-    operator.a().whileTrue(wristSubsystem.setAngle(Rotations.of(0.42)));
-    operator.b().whileTrue(wristSubsystem.setAngle(Rotations.of(0.34)));
+    operator.a().whileTrue(wrist.setAngle(Rotations.of(0.42)));
+    operator.b().whileTrue(wrist.setAngle(Rotations.of(0.34)));
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
-    wristSubsystem.setDefaultCommand(wristSubsystem.joystickControl(operator));
+    wrist.setDefaultCommand(wrist.joystickControl(operator));
     elevator.setDefaultCommand(elevator.joystickControl(operator));
 
-    
     // L1: 0
-    // L2: 
+    // L2:
     // L3:
     // L4:
-    
+
     operator.povUp().whileTrue(scoreL4);
     operator.povLeft().whileTrue(scoreL3);
     operator.povRight().whileTrue(scoreL2);
     operator.povDown().whileTrue(scoreL1);
-    
+
     /*
     operator.povUp().whileTrue(scoreBarge);
     operator.povLeft().whileTrue(getHighAlgae);
     operator.povRight().whileTrue(getLowAlgae);
     operator.povDown().whileTrue(scoreL1);
     */
-
 
   }
 

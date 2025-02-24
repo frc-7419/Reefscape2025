@@ -8,9 +8,6 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -22,11 +19,8 @@ import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,7 +29,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.RobotConstants;
+import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
+import java.util.function.Supplier;
 
 /**
  * The {@code ElevatorSubsystem} class controls the elevator subsystem of the robot. It manages the
@@ -48,6 +44,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
   private final TalonFX topElevatorMotor =
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
+
+  private final Supplier<Angle> wristAngleSupplier;
+  private Angle setpoint;
 
   private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.52, 0.42, 0);
 
@@ -105,10 +104,12 @@ public class ElevatorSubsystem extends SubsystemBase {
           "The elevator motors are overheating. Subsystem disabled.");
 
   /** Creates a new {@code ElevatorSubsystem}. */
-  public ElevatorSubsystem() {
+  public ElevatorSubsystem(Supplier<Angle> wristAngleSupplier) {
     leftElevatorMotor.setPosition(0);
     rightElevatorMotor.setPosition(0);
     topElevatorMotor.setPosition(0);
+
+    this.wristAngleSupplier = wristAngleSupplier;
 
     leftElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
@@ -134,9 +135,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
-    leftElevatorMotor.setVoltage(power);
-    rightElevatorMotor.setVoltage(power);
-    topElevatorMotor.setVoltage(power);
+    setVoltage(power);
     /*
      * leftElevatorMotor.setControl(
      * velocityRequest
@@ -150,6 +149,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setVoltage(double voltage) {
+    if (!checkMovementSafe(voltage) && voltage != 0) {
+      voltage = feedforward.calculate(0);
+    }
     leftElevatorMotor.setVoltage(voltage);
     rightElevatorMotor.setVoltage(voltage);
     topElevatorMotor.setVoltage(voltage);
@@ -158,18 +160,20 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Moves the elevator to the specified position using Motion Magic.
    *
-   * @param position The desired position in meters.
+   * @param position The desired position as an Angle.
    */
-  private void toPosition(double position) {
+  public void toPosition(Angle position) {
     controlMode = ControlMode.MOTIONMAGIC;
 
     if (!safetyCheck()) return;
 
+    setpoint = position;
+
     leftElevatorMotor.setControl(
         motionMagicRequest
-            .withPosition(position / ElevatorConstants.kMetersPerRotation)
-            .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
-            .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
+            .withPosition(position)
+            .withLimitForwardMotion(getPosition().gt(ElevatorConstants.kMaxRotations))
+            .withLimitReverseMotion(getPosition().lt(ElevatorConstants.kMinRotations)));
   }
 
   /**
@@ -187,10 +191,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param position The target position as a {@link Distance}.
    * @return The command to execute.
    */
-  public Command setPosition(Distance position) {
-    return this.runEnd(
-        () -> toPosition(position.in(Meters) / ElevatorConstants.kMetersPerRotation),
-        () -> switchControlMode(ControlMode.MANUAL));
+  public Command setPosition(Angle position) {
+    return this.runEnd(() -> toPosition(position), () -> switchControlMode(ControlMode.MANUAL));
   }
 
   public Command joystickControl(CommandXboxController joystick) {
@@ -238,19 +240,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.setPosition(0);
   }
 
-  /**
-   * Gets the current elevator height based on the encoder value.
-   *
-   * @return The current height of the elevator as a {@link Distance}.
-   */
-  public Distance getHeight() {
-    return Meters.of(getPosition().in(Rotations) * ElevatorConstants.kMetersPerRotation)
-        .plus(ElevatorConstants.kHeightOffset);
+  private boolean checkMovementSafe(double voltage) {
+    boolean aboveLimit = getPosition().gt(ElevatorConstants.kElevatorBarUpperLimit);
+    boolean belowLimit = getPosition().lt(ElevatorConstants.kElevatorBarLowerLimit);
+    boolean wristUnsafe = wristAngleSupplier.get().gt(WristConstants.kElevatorSafeWristAngle);
+
+    if (wristUnsafe && ((belowLimit && voltage > 0) || (aboveLimit && voltage < 0))) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public boolean atPosition() {
+    return getPosition().isNear(setpoint, Rotations.of(0.1));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator Height (Meters)", getHeight().in(Meters));
     SmartDashboard.putNumber("Elevator Encoder Position", getPosition().in(Rotations));
     SmartDashboard.putString("Elevator Control Mode", controlMode.toString());
     SmartDashboard.putBoolean("Disabled", !safetyCheck());
@@ -312,30 +319,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private boolean safetyCheck() {
     if (!RobotConstants.runSafetyCheck) return true;
 
-    AngularVelocity maxAngularVelocity =
-        RotationsPerSecond.of(
-            ElevatorConstants.UNSAFE_SPEED.in(MetersPerSecond)
-                / ElevatorConstants.kMetersPerRotation);
-
-    AngularAcceleration maxAngularAcceleration =
-        RotationsPerSecondPerSecond.of(
-            ElevatorConstants.UNSAFE_ACCELERATION.in(MetersPerSecondPerSecond)
-                / ElevatorConstants.kMetersPerRotation);
-
-    if (leftElevatorMotor.getVelocity().getValue().abs(RotationsPerSecond)
-        >= maxAngularVelocity.in(RotationsPerSecond)) {
-      brake();
-      velocityAlert.set(true);
-      return false;
-    } else velocityAlert.set(false);
-
-    if (leftElevatorMotor.getAcceleration().getValue().abs(RotationsPerSecondPerSecond)
-        >= maxAngularAcceleration.in(RotationsPerSecondPerSecond)) {
-      brake();
-      accelerationAlert.set(true);
-      return false;
-    } else accelerationAlert.set(false);
-
     if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
         || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
         || topElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)) {
@@ -344,15 +327,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       return false;
     } else overheatingAlert.set(false);
 
-    if ((getHeight()
-            .gt(ElevatorConstants.kMaxHeight.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
-        || getHeight()
-            .lt(ElevatorConstants.kMinHeight.minus(ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
-      brake();
+    if ((getPosition()
+            .gt(ElevatorConstants.kMaxRotations.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
+        || getPosition()
+            .lt(
+                ElevatorConstants.kMaxRotations.minus(
+                    ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
       positionAlert.set(true);
       return false;
     } else {
-      brake();
       positionAlert.set(false);
     }
     return true;

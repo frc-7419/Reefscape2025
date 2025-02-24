@@ -6,14 +6,9 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.function.Supplier;
-
-import org.opencv.core.Mat;
-
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
@@ -28,14 +23,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
+import java.util.function.Supplier;
 
 /**
  * The {@code WristSubsystem} class controls the wrist subsystem of the robot. It manages the motion
  * and angle of the elevator using TalonFX motors with a fused CANCoder.
  */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, RobotConstants.kCANivoreBus);
-  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(WristConstants.kWristEncoderID);
+  private final TalonFX wristMotor =
+      new TalonFX(WristConstants.kWristMotorID, RobotConstants.kCANivoreBus);
+  private final DutyCycleEncoder wristEncoder =
+      new DutyCycleEncoder(WristConstants.kWristEncoderID);
   private Supplier<Distance> elevatorHeightSupplier;
   private boolean safetyLock = false;
   private int safetyLockTimer = 0;
@@ -71,11 +69,15 @@ public class WristSubsystem extends SubsystemBase {
           "The wrist motor is overheating. Subsystem disabled.");
 
   /** Creates a new {@code WristSubsystem} with a TalonFX and a CANcoder. */
-  public WristSubsystem(Supplier<Distance> elevatorHeightSupplier) {
-    this.elevatorHeightSupplier = elevatorHeightSupplier;
+  public WristSubsystem() {
     wristMotor.getConfigurator().apply(WristConstants.kWristTalonFXConfiguration);
-    wristFeedforward = new ArmFeedforward(WristConstants.feedforwardKs, WristConstants.feedforwardKg, WristConstants.feedforwardKv);
-    pidController = new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
+    wristFeedforward =
+        new ArmFeedforward(
+            WristConstants.feedforwardKs,
+            WristConstants.feedforwardKg,
+            WristConstants.feedforwardKv);
+    pidController =
+        new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
     brake();
   }
 
@@ -107,7 +109,7 @@ public class WristSubsystem extends SubsystemBase {
    *
    * @param angle The desired angle (e.g., 0° is horizontal, 90° is vertical).
    */
-  private void toAngle(Angle angle) {
+  public void toAngle(Angle angle) {
     controlMode = ControlMode.PID;
 
     if (!safetyCheck()) {
@@ -121,11 +123,11 @@ public class WristSubsystem extends SubsystemBase {
     wristMotor.setVoltage(pidOutput);
   }
 
-  private double calculateFeedForward(){
-    return wristFeedforward.calculate(getPosition().in(Radians), 0);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  private double calculateFeedForward() {
+    return wristFeedforward.calculate(getPosition().in(Radians), 0);
   }
 
-  public void setVoltage(double voltage){
+  public void setVoltage(double voltage) {
     wristMotor.setVoltage(voltage);
   }
 
@@ -136,7 +138,7 @@ public class WristSubsystem extends SubsystemBase {
    * @param angle The target angle
    * @return A command for scheduling.
    */
-  public Command  setAngle(Angle angle) {
+  public Command setAngle(Angle angle) {
     return this.runEnd(() -> toAngle(angle), () -> switchControlMode(ControlMode.MANUAL));
   }
 
@@ -147,8 +149,8 @@ public class WristSubsystem extends SubsystemBase {
    * @return A command for scheduling.
    */
   public Command joystickControl(CommandXboxController joystick) {
-    if(safetyLock) return new WaitCommand(0.02);
-    return this.run(() -> setPower(joystick.getRightY()* 0.3));
+    if (safetyLock) return new WaitCommand(0.02);
+    return this.run(() -> setPower(joystick.getRightY() * 0.3));
   }
 
   /** Switches the current control mode. */
@@ -175,19 +177,12 @@ public class WristSubsystem extends SubsystemBase {
     return wristMotor.getVelocity().getValue();
   }
 
+  public boolean atSetpoint() {
+    return pidController.atSetpoint();
+  }
+
   @Override
   public void periodic() {
-    /*
-    if(Math.abs(elevatorHeightSupplier.get().in(Meter)-1)<0.2) {
-      this.setAngle(Degrees.of(1)); //TODO set the angle to a safe angle
-      safetyLockTimer = 0;
-      safetyLock = true;
-    }
-    else {
-      ++safetyLockTimer;
-      safetyLock = safetyLockTimer>=4?false:true;
-    }
-    */
     SmartDashboard.putNumber("Wrist Angle (Rotations)", getPosition().in(Rotations));
     SmartDashboard.putNumber("Wrist Angle (Degrees)", getPosition().in(Degrees));
     SmartDashboard.putNumber(

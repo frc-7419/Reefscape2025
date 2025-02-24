@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -24,7 +24,7 @@ public class AntiTip extends Command {
   public AntiTip(CommandSwerveDrivetrain drivetrain, ElevatorSubsystem elevator) {
     this.drivetrain = drivetrain;
 
-    elevatorPositionCommand = elevator.setPosition(Inches.of(0));
+    elevatorPositionCommand = elevator.setPosition(Rotations.of(0));
 
     addRequirements(drivetrain, elevator);
   }

@@ -43,7 +43,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
 
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem() {
-    this.intakeMotor = new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
+    this.intakeMotor =
+        new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
     baselineCurrentDraw = intakeMotor.getMotorVoltage().getValueAsDouble();
   }
@@ -83,7 +84,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
     return intakeMotor.getMotorVoltage().getValue();
   }
 
-  public Current getCurrent(){
+  public Current getCurrent() {
     return intakeMotor.getTorqueCurrent().getValue();
   }
 
