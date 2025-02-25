@@ -13,6 +13,8 @@ public class RunAlgaeIntakeWithJoystick extends Command {
   private final CommandXboxController joystick;
   private final AlgaeIntakeSubsystem algaeIntakeSubsystem;
 
+  private static final double HOLD_VOLTAGE = 8;
+
   public RunAlgaeIntakeWithJoystick(
       CommandXboxController joystick, AlgaeIntakeSubsystem algaeIntakeSubsystem) {
     this.joystick = joystick;
@@ -29,7 +31,11 @@ public class RunAlgaeIntakeWithJoystick extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    algaeIntakeSubsystem.setPower(joystick.getLeftX());
+    if (joystick.getHID().getAButton()) { 
+      algaeIntakeSubsystem.setPower(HOLD_VOLTAGE);
+    } else {
+      algaeIntakeSubsystem.setPower(joystick.getLeftX());
+    }
   }
 
   // Called once the command ends or is interrupted.
