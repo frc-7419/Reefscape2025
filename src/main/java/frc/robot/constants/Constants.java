@@ -3,9 +3,7 @@ package frc.robot.constants;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -183,33 +181,20 @@ public class Constants {
     public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(5);
     public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
         new TalonFXConfiguration();
-    public static final Slot0Configs kElevatorSlot0Configs = kElevatorTalonFXConfiguration.Slot0;
     public static final Angle kElevatorBarUpperLimit = Rotations.of(0.0);
     public static final Angle kElevatorBarLowerLimit = Rotations.of(0.0);
 
-    static {
-      kElevatorSlot0Configs.kG = 0.32; // output to overcome gravity (output)
-      kElevatorSlot0Configs.kS = 0.44; // output to overcome static friction (output)
-      kElevatorSlot0Configs.kV = 0; // output per unit of target velocity (output/rps)
-      kElevatorSlot0Configs.kA = 0; // output per unit of target acceleration (output/(rps/s))
-      kElevatorSlot0Configs.kP = 0; // output per unit of error in position (output)
-      kElevatorSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
-      kElevatorSlot0Configs.kD = 0; // output per unit of error in velocity (output/rps)
-    }
+    public static final double pidKp = 0.59;
+    public static final double pidKi = 0.0;
+    public static final double pidKd = 0.1;
 
-    // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kElevatorTalonFXConfiguration.MotionMagic;
+    public static final double feedforwardKv = 0.26;
+    public static final double feedforwardKa = 0.01;
+    public static final double feedforwardKg = 0.42;
+    public static final double feedforwardKs = 0.52;
 
-    static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity =
-          0; // peak velocity of the profile; set to 0 to target the
-      // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV =
-          0; // voltage required to maintain a given velocity, in V/rps
-      kMotionMagicConfig.MotionMagicExpo_kA =
-          0; // voltage required to maintain a given velocity, in V/rps
-    }
+    public static final double kMaxVelocity = 5;
+    public static final double kMaxAcceleration = 1;
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kElevatorTalonFXConfiguration.CurrentLimits;

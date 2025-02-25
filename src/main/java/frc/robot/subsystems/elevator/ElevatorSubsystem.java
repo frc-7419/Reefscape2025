@@ -20,8 +20,11 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,10 +48,25 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX topElevatorMotor =
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
+  double lastSpeed = 0;
+  double lastTime = Timer.getFPGATimestamp();
+
   private final Supplier<Angle> wristAngleSupplier;
   private Angle setpoint;
 
-  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.52, 0.42, 0);
+  private final ElevatorFeedforward feedforward =
+      new ElevatorFeedforward(
+          ElevatorConstants.feedforwardKs,
+          ElevatorConstants.feedforwardKg,
+          ElevatorConstants.feedforwardKv,
+          ElevatorConstants.feedforwardKa);
+  private final ProfiledPIDController pidController =
+      new ProfiledPIDController(
+          ElevatorConstants.pidKp,
+          ElevatorConstants.pidKi,
+          ElevatorConstants.pidKd,
+          new TrapezoidProfile.Constraints(
+              ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -74,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private enum ControlMode {
     MANUAL,
-    MOTIONMAGIC
+    PID
   }
 
   private ControlMode controlMode = ControlMode.MANUAL;
@@ -118,6 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
     topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
 
+    pidController.setTolerance(0.01);
     brake();
   }
 
@@ -134,18 +153,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       power += feedforward.calculate(0);
     }
 
-    // if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
+    if (controlMode == ControlMode.PID || !safetyCheck()) return;
     setVoltage(power);
-    /*
-     * leftElevatorMotor.setControl(
-     * velocityRequest
-     * .withVelocity(
-     * power
-     * ElevatorConstants.kMaxSpeed.in(MetersPerSecond)
-     * / ElevatorConstants.kMetersPerRotation)
-     * .withLimitForwardMotion(getHeight().gt(ElevatorConstants.kMaxHeight))
-     * .withLimitReverseMotion(getHeight().lt(ElevatorConstants.kMinHeight)));
-     */
   }
 
   public void setVoltage(double voltage) {
@@ -163,17 +172,30 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param position The desired position as an Angle.
    */
   public void toPosition(Angle position) {
-    controlMode = ControlMode.MOTIONMAGIC;
+    controlMode = ControlMode.PID;
 
     if (!safetyCheck()) return;
 
     setpoint = position;
 
-    leftElevatorMotor.setControl(
-        motionMagicRequest
-            .withPosition(position)
-            .withLimitForwardMotion(getPosition().gt(ElevatorConstants.kMaxRotations))
-            .withLimitReverseMotion(getPosition().lt(ElevatorConstants.kMinRotations)));
+    double currentTime = Timer.getFPGATimestamp();
+    double dt = currentTime - lastTime;
+
+    var profileSetpoint = pidController.getSetpoint();
+    double targetVelocity = profileSetpoint.velocity;
+
+    double acceleration = dt > 0 ? (targetVelocity - lastSpeed) / dt : 0;
+
+    double currentPos = getPosition().in(Rotations);
+    double pidOutput = pidController.calculate(currentPos, position.in(Rotations));
+    pidOutput = Math.max(-2, Math.min(pidOutput, 6));
+
+    double ffOutput = feedforward.calculate(targetVelocity, acceleration);
+
+    setVoltage(pidOutput + ffOutput);
+
+    lastSpeed = targetVelocity;
+    lastTime = currentTime;
   }
 
   /**
@@ -253,7 +275,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atPosition() {
-    return getPosition().isNear(setpoint, Rotations.of(0.1));
+    return pidController.atSetpoint();
   }
 
   @Override
