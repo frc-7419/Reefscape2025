@@ -39,8 +39,9 @@ public class IntakeCoral extends Command {
 
     endTimer.reset();
     thresholdTimer.reset();
-    thresholdTimer.start();
     timeoutTimer.reset();
+
+    thresholdTimer.start();
     timeoutTimer.start();
   }
 
@@ -73,6 +74,6 @@ public class IntakeCoral extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done || timeoutTimer.hasElapsed(10);
+    return false;
   }
 }

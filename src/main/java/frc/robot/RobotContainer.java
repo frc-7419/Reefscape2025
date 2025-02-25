@@ -183,24 +183,24 @@ public class RobotContainer {
      * operator.leftBumper().whileTrue(scoreL1);
      */
     // operator.x().whileTrue(new ElevatorPIDTest(elevator));
-    operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
-    operator.leftBumper().onTrue(new IntakeCoral(wristIntakeSubsystem));
+    // operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
+    operator.leftBumper().whileTrue(new IntakeCoral(wristIntakeSubsystem));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-    operator.a().whileTrue(wrist.setAngle(Rotations.of(0.42)));
-    operator.b().whileTrue(wrist.setAngle(Rotations.of(0.34)));
+    //operator.a().whileTrue(wrist.setAngle(Rotations.of(0.42)));
+    //operator.b().whileTrue(wrist.setAngle(Rotations.of(0.34)));
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
-    wrist.setDefaultCommand(wrist.joystickControl(operator));
-    elevator.setDefaultCommand(elevator.joystickControl(operator));
+    // wrist.setDefaultCommand(wrist.joystickControl(operator));
+    // elevator.setDefaultCommand(elevator.joystickControl(operator));
 
     // L1: 0
     // L2:
     // L3:
     // L4:
 
-    operator.povUp().whileTrue(scoreL4);
-    operator.povLeft().whileTrue(scoreL3);
-    operator.povRight().whileTrue(scoreL2);
-    operator.povDown().whileTrue(scoreL1);
+    // operator.povUp().whileTrue(scoreL4);
+    // operator.povLeft().whileTrue(scoreL3);
+    // operator.povRight().whileTrue(scoreL2);
+    // operator.povDown().whileTrue(scoreL1);
 
     /*
     operator.povUp().whileTrue(scoreBarge);

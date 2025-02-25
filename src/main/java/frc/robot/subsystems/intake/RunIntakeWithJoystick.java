@@ -30,8 +30,8 @@ public class RunIntakeWithJoystick extends Command {
   @Override
   public void execute() {
     if (commandXboxController.getRightTriggerAxis() >= 0.05) {
-      wristIntakeSubsystem.setPower(commandXboxController.getRightTriggerAxis() * 0.7);
-    } else if (commandXboxController.getLeftTriggerAxis() >= 0.05) {
+      wristIntakeSubsystem.setPower(Math.abs(commandXboxController.getRightTriggerAxis()) * 0.7);
+    } else if (Math.abs(commandXboxController.getLeftTriggerAxis()) >= 0.05) {
       wristIntakeSubsystem.setPower(-commandXboxController.getLeftTriggerAxis() * 0.7);
     } else {
       wristIntakeSubsystem.setPower(0);
