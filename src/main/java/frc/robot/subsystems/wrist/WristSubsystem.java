@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  */
 public class WristSubsystem extends SubsystemBase {
   private final TalonFX wristMotor =
-      new TalonFX(WristConstants.kWristMotorID, RobotConstants.kCANivoreBus);
+      new TalonFX(WristConstants.kWristMotorID, "rio");
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.kWristEncoderID);
   private Supplier<Distance> elevatorHeightSupplier;
@@ -42,7 +42,7 @@ public class WristSubsystem extends SubsystemBase {
   // private final MotionMagicExpoVoltage motionMagicRequest =
   //     new MotionMagicExpoVoltage(0).withSlot(0);
 
-  private enum ControlMode {
+  public enum ControlMode {
     MANUAL,
     PID
   }
@@ -154,7 +154,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   /** Switches the current control mode. */
-  private void switchControlMode(ControlMode mode) {
+  public void switchControlMode(ControlMode mode) {
     this.controlMode = mode;
   }
 

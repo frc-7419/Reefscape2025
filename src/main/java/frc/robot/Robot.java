@@ -19,6 +19,7 @@ import frc.robot.util.CombinedAlert;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  
   private final RobotContainer m_robotContainer;
 
   private final Field2d vision = new Field2d();
@@ -82,6 +83,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+
     CommandScheduler.getInstance().run();
     // var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
     // visionEst.ifPresent(

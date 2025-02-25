@@ -20,6 +20,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -60,13 +61,11 @@ public class ElevatorSubsystem extends SubsystemBase {
           ElevatorConstants.feedforwardKg,
           ElevatorConstants.feedforwardKv,
           ElevatorConstants.feedforwardKa);
-  private final ProfiledPIDController pidController =
-      new ProfiledPIDController(
+  private final PIDController pidController =
+      new PIDController(
           ElevatorConstants.pidKp,
           ElevatorConstants.pidKi,
-          ElevatorConstants.pidKd,
-          new TrapezoidProfile.Constraints(
-              ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
+          ElevatorConstants.pidKd);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -90,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     return routine.dynamic(direction);
   }
 
-  private enum ControlMode {
+  public enum ControlMode {
     MANUAL,
     PID
   }
@@ -178,24 +177,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setpoint = position;
 
-    double currentTime = Timer.getFPGATimestamp();
-    double dt = currentTime - lastTime;
-
-    var profileSetpoint = pidController.getSetpoint();
-    double targetVelocity = profileSetpoint.velocity;
-
-    double acceleration = dt > 0 ? (targetVelocity - lastSpeed) / dt : 0;
-
     double currentPos = getPosition().in(Rotations);
     double pidOutput = pidController.calculate(currentPos, position.in(Rotations));
-    pidOutput = Math.max(-2, Math.min(pidOutput, 6));
+    pidOutput = Math.max(-2, Math.min(pidOutput, 5));
 
-    double ffOutput = feedforward.calculate(targetVelocity, acceleration);
+    double ffOutput = feedforward.calculate(0);
 
     setVoltage(pidOutput + ffOutput);
-
-    lastSpeed = targetVelocity;
-    lastTime = currentTime;
   }
 
   /**
@@ -203,7 +191,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param controlMode The desired control mode (MANUAL or MOTIONMAGIC).
    */
-  private void switchControlMode(ControlMode controlMode) {
+  public void switchControlMode(ControlMode controlMode) {
     this.controlMode = controlMode;
   }
 

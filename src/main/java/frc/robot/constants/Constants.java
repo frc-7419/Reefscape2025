@@ -149,7 +149,7 @@ public class Constants {
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
 
-    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.35);
+    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.36);
   }
 
   public static class WristIntakeConstants {
@@ -181,8 +181,8 @@ public class Constants {
     public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(5);
     public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
         new TalonFXConfiguration();
-    public static final Angle kElevatorBarUpperLimit = Rotations.of(0.0);
-    public static final Angle kElevatorBarLowerLimit = Rotations.of(0.0);
+    public static final Angle kElevatorBarUpperLimit = Rotations.of(2.5);
+    public static final Angle kElevatorBarLowerLimit = Rotations.of(9.4);
 
     public static final double pidKp = 0.59;
     public static final double pidKi = 0.0;

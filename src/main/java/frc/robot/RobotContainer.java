@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignToReef;
+import frc.robot.commands.AntiTip;
 import frc.robot.commands.IntakeCoral;
+import frc.robot.commands.ScoringSetpoints;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -69,7 +71,7 @@ public class RobotContainer {
   private WristSubsystem wrist = new WristSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
 
-  // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
+private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   // private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
@@ -90,7 +92,7 @@ public class RobotContainer {
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
 
-    // antiTip.schedule();
+    
   }
 
   private final Command elevatorToL1 = new RunElevatorWithPID(elevator, 0);
@@ -162,10 +164,10 @@ public class RobotContainer {
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
 
-    driver.back().and(driver.y()).whileTrue(elevator.sysIdDynamic(Direction.kForward));
-    driver.back().and(driver.x()).whileTrue(elevator.sysIdDynamic(Direction.kReverse));
-    driver.start().and(driver.y()).whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
-    driver.start().and(driver.x()).whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -183,31 +185,29 @@ public class RobotContainer {
      * operator.leftBumper().whileTrue(scoreL1);
      */
     // operator.x().whileTrue(new ElevatorPIDTest(elevator));
-    // operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
+    operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.leftBumper().whileTrue(new IntakeCoral(wristIntakeSubsystem));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-    //operator.a().whileTrue(wrist.setAngle(Rotations.of(0.42)));
-    //operator.b().whileTrue(wrist.setAngle(Rotations.of(0.34)));
+    operator.a().whileTrue(wrist.setAngle(Rotations.of(0.42)));
+    operator.b().whileTrue(wrist.setAngle(Rotations.of(0.34)));
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
-    // wrist.setDefaultCommand(wrist.joystickControl(operator));
-    // elevator.setDefaultCommand(elevator.joystickControl(operator));
+    wrist.setDefaultCommand(wrist.joystickControl(operator));
+    elevator.setDefaultCommand(elevator.joystickControl(operator));
 
     // L1: 0
     // L2:
     // L3:
     // L4:
 
-    // operator.povUp().whileTrue(scoreL4);
-    // operator.povLeft().whileTrue(scoreL3);
-    // operator.povRight().whileTrue(scoreL2);
-    // operator.povDown().whileTrue(scoreL1);
-
     /*
-    operator.povUp().whileTrue(scoreBarge);
-    operator.povLeft().whileTrue(getHighAlgae);
-    operator.povRight().whileTrue(getLowAlgae);
-    operator.povDown().whileTrue(scoreL1);
-    */
+    operator.povUp().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.L4));
+    operator.povLeft().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.L3));
+    operator.povRight().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.L2));
+    operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.L1));
+
+     */
+    operator.povUp().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.BARGE));
+
 
   }
 

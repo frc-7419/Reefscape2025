@@ -44,7 +44,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
   /** Creates a new WristIntakeSubsystem. */
   public WristIntakeSubsystem() {
     this.intakeMotor =
-        new TalonFX(WristIntakeConstants.kWristIntakeMotorID, RobotConstants.kCANivoreBus);
+        new TalonFX(WristIntakeConstants.kWristIntakeMotorID, "rio");
     intakeMotor.getConfigurator().apply(WristIntakeConstants.kWristIntakeTalonFXConfiguration);
     baselineCurrentDraw = intakeMotor.getMotorVoltage().getValueAsDouble();
   }
