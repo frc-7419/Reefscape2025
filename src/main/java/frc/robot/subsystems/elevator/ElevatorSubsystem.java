@@ -37,9 +37,12 @@ import frc.robot.util.CombinedAlert;
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX leftElevatorMotor =
+      new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor =
+      new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor =
+      new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -104,7 +107,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftElevatorMotor.set(power);
     rightElevatorMotor.set(power);
     topElevatorMotor.set(power);
-    /* 
+    /*
     leftElevatorMotor.setControl(
         velocityRequest
             .withVelocity(
