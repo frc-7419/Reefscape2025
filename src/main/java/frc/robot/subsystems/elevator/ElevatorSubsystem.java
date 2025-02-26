@@ -2,9 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// Explain this code:
-// https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/elevator/Elevator.java
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
@@ -38,48 +35,38 @@ import frc.robot.util.CombinedAlert;
 import java.util.function.Supplier;
 
 /**
- * The {@code ElevatorSubsystem} class controls the elevator subsystem of the robot. It manages the
+ * The {@code ElevatorSubsystem} class controls the elevator subsystem of the
+ * robot. It manages the
  * motion and height of the elevator using TalonFX motors.
  */
 public class ElevatorSubsystem extends SubsystemBase {
-  private final TalonFX leftElevatorMotor =
-      new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX rightElevatorMotor =
-      new TalonFX(ElevatorConstants.kRightElevatorMotorId, RobotConstants.kCANivoreBus);
-  private final TalonFX topElevatorMotor =
-      new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
-
-  double lastSpeed = 0;
-  double lastTime = Timer.getFPGATimestamp();
+  private final TalonFX leftElevatorMotor = new TalonFX(ElevatorConstants.kLeftElevatorMotorId,
+      RobotConstants.kCANivoreBus);
+  private final TalonFX rightElevatorMotor = new TalonFX(ElevatorConstants.kRightElevatorMotorId,
+      RobotConstants.kCANivoreBus);
+  private final TalonFX topElevatorMotor = new TalonFX(ElevatorConstants.kTopElevatorMotorId,
+      RobotConstants.kCANivoreBus);
 
   private final Supplier<Angle> wristAngleSupplier;
   private Angle setpoint;
 
-  private final ElevatorFeedforward feedforward =
-      new ElevatorFeedforward(
-          ElevatorConstants.feedforwardKs,
-          ElevatorConstants.feedforwardKg,
-          ElevatorConstants.feedforwardKv,
-          ElevatorConstants.feedforwardKa);
-  private final PIDController pidController =
-      new PIDController(
-          ElevatorConstants.pidKp,
-          ElevatorConstants.pidKi,
-          ElevatorConstants.pidKd);
+  private final ElevatorFeedforward feedforward = new ElevatorFeedforward(
+      ElevatorConstants.feedforwardKs,
+      ElevatorConstants.feedforwardKg,
+      ElevatorConstants.feedforwardKv,
+      ElevatorConstants.feedforwardKa);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
-  private final MotionMagicExpoVoltage motionMagicRequest =
-      new MotionMagicExpoVoltage(0).withSlot(0);
-  private final SysIdRoutine routine =
-      new SysIdRoutine(
-          new SysIdRoutine.Config(
-              null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-              null, // Use default timeout (10 s)
-              // Log state with SignalLogger class
-              state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-          new SysIdRoutine.Mechanism(
-              output -> leftElevatorMotor.setVoltage(output.in(Volts)), null, this));
+  private final MotionMagicExpoVoltage motionMagicRequest = new MotionMagicExpoVoltage(0).withSlot(0);
+  private final SysIdRoutine routine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null, // Use default ramp rate (1 V/s)
+          Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+          null, // Use default timeout (10 s)
+          // Log state with SignalLogger class
+          state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+      new SysIdRoutine.Mechanism(
+          output -> leftElevatorMotor.setVoltage(output.in(Volts)), null, this));
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return routine.quasistatic(direction);
@@ -91,34 +78,30 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public enum ControlMode {
     MANUAL,
-    PID
+    MOTIONMAGIC
   }
 
   private ControlMode controlMode = ControlMode.MANUAL;
 
-  private final CombinedAlert positionAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Out of Range",
-          "The encoder value is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert positionAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Out of Range",
+      "The encoder value is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert velocityAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Velocity Error",
-          "The elevator velocity is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert velocityAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Velocity Error",
+      "The elevator velocity is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert accelerationAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Acceleration Error",
-          "The elevator acceleration is outside the safe range. Subsystem disabled.");
+  private final CombinedAlert accelerationAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Acceleration Error",
+      "The elevator acceleration is outside the safe range. Subsystem disabled.");
 
-  private final CombinedAlert overheatingAlert =
-      new CombinedAlert(
-          CombinedAlert.Severity.ERROR,
-          "Elevator Overheating",
-          "The elevator motors are overheating. Subsystem disabled.");
+  private final CombinedAlert overheatingAlert = new CombinedAlert(
+      CombinedAlert.Severity.ERROR,
+      "Elevator Overheating",
+      "The elevator motors are overheating. Subsystem disabled.");
 
   /** Creates a new {@code ElevatorSubsystem}. */
   public ElevatorSubsystem(Supplier<Angle> wristAngleSupplier) {
@@ -135,15 +118,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
     topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
 
-    pidController.setTolerance(0.01);
     brake();
   }
 
   /**
    * Sets the elevator power in manual mode.
    *
-   * @param power The power to set, ranging from -1 to 1. Positive values move the elevator up, and
-   *     negative values move it down.
+   * @param power The power to set, ranging from -1 to 1. Positive values move the
+   *              elevator up, and negative values move it down.
    */
   public void setPower(double power) {
     power = Math.max(-1, Math.min(1, power)) * 8;
@@ -152,7 +134,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       power += feedforward.calculate(0);
     }
 
-    if (controlMode == ControlMode.PID || !safetyCheck()) return;
+    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck())
+      return;
     setVoltage(power);
   }
 
@@ -171,19 +154,18 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param position The desired position as an Angle.
    */
   public void toPosition(Angle position) {
-    controlMode = ControlMode.PID;
+    controlMode = ControlMode.MOTIONMAGIC;
 
-    if (!safetyCheck()) return;
+    if (!safetyCheck())
+      return;
 
     setpoint = position;
 
-    double currentPos = getPosition().in(Rotations);
-    double pidOutput = pidController.calculate(currentPos, position.in(Rotations));
-    pidOutput = Math.max(-2, Math.min(pidOutput, 5));
-
-    double ffOutput = feedforward.calculate(0);
-
-    setVoltage(pidOutput + ffOutput);
+    leftElevatorMotor.setControl(
+        motionMagicRequest
+            .withPosition(position)
+            .withLimitForwardMotion(getPosition().gt(ElevatorConstants.kMaxRotations))
+            .withLimitReverseMotion(getPosition().lt(ElevatorConstants.kMinRotations)));
   }
 
   /**
@@ -212,7 +194,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to coast mode.
    *
-   * <p>In coast mode, the motors will spin freely when no power is applied.
+   * <p>
+   * In coast mode, the motors will spin freely when no power is applied.
    */
   public void coast() {
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -223,10 +206,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the motors to brake mode.
    *
-   * <p>In brake mode, the motors resist motion when no power is applied.
+   * <p>
+   * In brake mode, the motors resist motion when no power is applied.
    */
   public void brake() {
-    // Reduncancy to ensure both motors are stopped
+    // Redundancy to ensure all motors are stopped
     leftElevatorMotor.set(0);
     rightElevatorMotor.set(0);
     topElevatorMotor.set(0);
@@ -263,7 +247,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atPosition() {
-    return pidController.atSetpoint();
+    return Math.abs(leftElevatorMotor.getPosition().getValue().minus(setpoint).in(Rotations)) < 0.1;
   }
 
   @Override
@@ -316,18 +300,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * Performs a safety check to ensure the elevator operates within safe parameters.
+   * Performs a safety check to ensure the elevator operates within safe
+   * parameters.
    *
-   * <p>This method verifies several safety conditions, including velocity, acceleration,
-   * temperature, and position limits. If any of these conditions are violated, the subsystem is
-   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
-   * are safe, the subsystem remains operational.
+   * <p>
+   * This method verifies several safety conditions, including temperature and
+   * position
+   * limits. If any of these conditions are violated, the subsystem is disabled
+   * (motors are set to brake mode),
+   * and an appropriate alert is raised. If all conditions are safe, the subsystem
+   * remains operational.
    *
-   * @return {@code true} if the elevator passes all safety checks and is operating safely, {@code
-   *     false} otherwise.
+   * @return {@code true} if the elevator passes all safety checks and is
+   *         operating safely, {@code false} otherwise.
    */
   private boolean safetyCheck() {
-    if (!RobotConstants.runSafetyCheck) return true;
+    if (!RobotConstants.runSafetyCheck)
+      return true;
 
     if (leftElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
         || rightElevatorMotor.getDeviceTemp().getValue().gte(ElevatorConstants.MAX_TEMPERATURE)
@@ -335,14 +324,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       brake();
       overheatingAlert.set(true);
       return false;
-    } else overheatingAlert.set(false);
+    } else {
+      overheatingAlert.set(false);
+    }
 
-    if ((getPosition()
-            .gt(ElevatorConstants.kMaxRotations.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
-        || getPosition()
-            .lt(
-                ElevatorConstants.kMaxRotations.minus(
-                    ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
+    if (getPosition().gt(ElevatorConstants.kMaxRotations.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
+        || getPosition().lt(ElevatorConstants.kMinRotations.minus(ElevatorConstants.OVEREXTENSION_TOLERANCE))) {
       positionAlert.set(true);
       return false;
     } else {
