@@ -30,8 +30,7 @@ import java.util.function.Supplier;
  * and angle of the elevator using TalonFX motors with a fused CANCoder.
  */
 public class WristSubsystem extends SubsystemBase {
-  private final TalonFX wristMotor =
-      new TalonFX(WristConstants.kWristMotorID, "rio");
+  private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, "rio");
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.kWristEncoderID);
   private Supplier<Distance> elevatorHeightSupplier;

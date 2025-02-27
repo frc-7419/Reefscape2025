@@ -5,9 +5,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ElevatorConstants;
-import frc.robot.constants.Constants.WristConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ControlMode;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class ScoringSetpoints extends Command {
@@ -49,7 +47,7 @@ public class ScoringSetpoints extends Command {
 
   @Override
   public void initialize() {
-    elevator.switchControlMode(ElevatorSubsystem.ControlMode.PID);
+    elevator.switchControlMode(ElevatorSubsystem.ControlMode.MOTIONMAGIC);
     wrist.switchControlMode(WristSubsystem.ControlMode.PID);
   }
 
