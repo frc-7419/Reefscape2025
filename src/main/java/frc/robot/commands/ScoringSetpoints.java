@@ -5,9 +5,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ElevatorConstants;
-import frc.robot.constants.Constants.WristConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ControlMode;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class ScoringSetpoints extends Command {
@@ -60,7 +58,7 @@ public class ScoringSetpoints extends Command {
     elevator.toPosition(Rotations.of(targetPosition.elevatorHeight));
 
     if ((targetPosition.elevatorHeight > elevatorRotations
-        && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
+            && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
         || (targetPosition.elevatorHeight < elevatorRotations
             && elevatorRotations > ElevatorConstants.kElevatorBarUpperLimit.in(Rotations))) {
       wrist.toAngle(upAngle);

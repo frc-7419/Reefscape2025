@@ -24,7 +24,6 @@ import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AntiTip;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.ScoringSetpoints;
-import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
@@ -66,12 +65,12 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  private final ToPose toPose = new ToPose(drivetrain);
+  // private final ToPose toPose = new ToPose(drivetrain);
 
   private WristSubsystem wrist = new WristSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
 
-private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
+  private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
   // private final WristSubsystem wrist = new WristSubsystem();
   public final PhotonvisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
@@ -91,8 +90,6 @@ private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
 
     configureBindings();
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
-
-    
   }
 
   private final Command elevatorToL1 = new RunElevatorWithPID(elevator, 0);
@@ -173,6 +170,7 @@ private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+    operator.x().whileTrue(elevator.setPosition(Rotations.of(20)));
     /*
      * operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
      *
@@ -206,9 +204,9 @@ private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
     operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.L1));
 
      */
-    operator.povUp().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.BARGE));
-
-
+    operator
+        .povUp()
+        .whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoints.ScoringPosition.BARGE));
   }
 
   public Command getAutonomousCommand() {
