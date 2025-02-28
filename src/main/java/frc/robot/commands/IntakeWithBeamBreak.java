@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.intake.LightSensorSubsystem;
@@ -13,10 +14,12 @@ import frc.robot.subsystems.intake.WristIntakeSubsystem;
 public class IntakeWithBeamBreak extends Command {
   private final WristIntakeSubsystem wristIntakeSubsystem;
 
-  public IntakeWithBeamBreak(
-      WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem) {
-    this.wristIntakeSubsystem = wristIntakeSubsystem;
+  private XboxController controller;
 
+  public IntakeWithBeamBreak(
+      WristIntakeSubsystem wristIntakeSubsystem, LightSensorSubsystem lightSensorSubsystem, XboxController controller) {
+    this.wristIntakeSubsystem = wristIntakeSubsystem;
+    this.controller = controller;
     addRequirements(wristIntakeSubsystem);
   }
 
@@ -30,6 +33,13 @@ public class IntakeWithBeamBreak extends Command {
   @Override
   public void execute() {
     wristIntakeSubsystem.setPower(Constants.IntakeCoralConstants.intakeCoralPower);
+
+    if (controller.getAButton()) {
+      wristIntakeSubsystem.setPower(8.0); 
+    }
+    else {
+      wristIntakeSubsystem.setPower(3.0);
+    }
   }
 
   // Called once the command ends or is interrupted.
