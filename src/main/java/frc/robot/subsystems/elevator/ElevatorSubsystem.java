@@ -2,6 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Explain this code:
+// https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/elevator/Elevator.java
+
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
@@ -17,8 +20,11 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,6 +48,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX topElevatorMotor =
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
+  double lastSpeed = 0;
+  double lastTime = Timer.getFPGATimestamp();
+
   private final Supplier<Angle> wristAngleSupplier;
   private Angle setpoint;
 
@@ -51,6 +60,13 @@ public class ElevatorSubsystem extends SubsystemBase {
           ElevatorConstants.feedforwardKg,
           ElevatorConstants.feedforwardKv,
           ElevatorConstants.feedforwardKa);
+  private final ProfiledPIDController pidController =
+      new ProfiledPIDController(
+          ElevatorConstants.pidKp,
+          ElevatorConstants.pidKi,
+          ElevatorConstants.pidKd,
+          new TrapezoidProfile.Constraints(
+              ElevatorConstants.kMaxVelocity, ElevatorConstants.kMaxAcceleration));
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
@@ -74,9 +90,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     return routine.dynamic(direction);
   }
 
-  public enum ControlMode {
+  private enum ControlMode {
     MANUAL,
-    MOTIONMAGIC
+    PID
   }
 
   private ControlMode controlMode = ControlMode.MANUAL;
@@ -117,6 +133,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     topElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
 
+    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
+    topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
+
+    pidController.setTolerance(0.01);
     brake();
   }
 
@@ -133,7 +153,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       power += feedforward.calculate(0);
     }
 
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
+    if (controlMode == ControlMode.PID || !safetyCheck()) return;
     setVoltage(power);
   }
 
@@ -152,20 +172,30 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param position The desired position as an Angle.
    */
   public void toPosition(Angle position) {
-    controlMode = ControlMode.MOTIONMAGIC;
+    controlMode = ControlMode.PID;
 
     if (!safetyCheck()) return;
 
     setpoint = position;
 
-    leftElevatorMotor.setControl(
-        motionMagicRequest
-            .withPosition(position)
-            .withLimitForwardMotion(getPosition().gt(ElevatorConstants.kMaxRotations))
-            .withLimitReverseMotion(getPosition().lt(ElevatorConstants.kMinRotations)));
+    double currentTime = Timer.getFPGATimestamp();
+    double dt = currentTime - lastTime;
 
-    rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
-    topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
+    var profileSetpoint = pidController.getSetpoint();
+    double targetVelocity = profileSetpoint.velocity;
+
+    double acceleration = dt > 0 ? (targetVelocity - lastSpeed) / dt : 0;
+
+    double currentPos = getPosition().in(Rotations);
+    double pidOutput = pidController.calculate(currentPos, position.in(Rotations));
+    pidOutput = Math.max(-2, Math.min(pidOutput, 6));
+
+    double ffOutput = feedforward.calculate(targetVelocity, acceleration);
+
+    setVoltage(pidOutput + ffOutput);
+
+    lastSpeed = targetVelocity;
+    lastTime = currentTime;
   }
 
   /**
@@ -173,7 +203,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param controlMode The desired control mode (MANUAL or MOTIONMAGIC).
    */
-  public void switchControlMode(ControlMode controlMode) {
+  private void switchControlMode(ControlMode controlMode) {
     this.controlMode = controlMode;
   }
 
@@ -208,7 +238,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * <p>In brake mode, the motors resist motion when no power is applied.
    */
   public void brake() {
-    // Redundancy to ensure all motors are stopped
+    // Reduncancy to ensure both motors are stopped
     leftElevatorMotor.set(0);
     rightElevatorMotor.set(0);
     topElevatorMotor.set(0);
@@ -245,7 +275,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atPosition() {
-    return Math.abs(leftElevatorMotor.getPosition().getValue().minus(setpoint).in(Rotations)) < 0.1;
+    return pidController.atSetpoint();
   }
 
   @Override
@@ -300,10 +330,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Performs a safety check to ensure the elevator operates within safe parameters.
    *
-   * <p>This method verifies several safety conditions, including temperature and position limits.
-   * If any of these conditions are violated, the subsystem is disabled (motors are set to brake
-   * mode), and an appropriate alert is raised. If all conditions are safe, the subsystem remains
-   * operational.
+   * <p>This method verifies several safety conditions, including velocity, acceleration,
+   * temperature, and position limits. If any of these conditions are violated, the subsystem is
+   * disabled (motors are set to brake mode), and an appropriate alert is raised. If all conditions
+   * are safe, the subsystem remains operational.
    *
    * @return {@code true} if the elevator passes all safety checks and is operating safely, {@code
    *     false} otherwise.
@@ -317,14 +347,14 @@ public class ElevatorSubsystem extends SubsystemBase {
       brake();
       overheatingAlert.set(true);
       return false;
-    } else {
-      overheatingAlert.set(false);
-    }
+    } else overheatingAlert.set(false);
 
-    if (getPosition()
+    if ((getPosition()
             .gt(ElevatorConstants.kMaxRotations.plus(ElevatorConstants.OVEREXTENSION_TOLERANCE))
         || getPosition()
-            .lt(ElevatorConstants.kMinRotations.minus(ElevatorConstants.OVEREXTENSION_TOLERANCE))) {
+            .lt(
+                ElevatorConstants.kMaxRotations.minus(
+                    ElevatorConstants.OVEREXTENSION_TOLERANCE)))) {
       positionAlert.set(true);
       return false;
     } else {

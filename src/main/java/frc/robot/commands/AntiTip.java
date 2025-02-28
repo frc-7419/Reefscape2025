@@ -2,10 +2,10 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.RobotConstants;
@@ -15,7 +15,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 /** A command that attempts to detect and counter robot tipping. */
 public class AntiTip extends Command {
   private final CommandSwerveDrivetrain drivetrain;
-  private final ElevatorSubsystem elevator;
+  private final Command elevatorPositionCommand;
 
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -23,7 +23,8 @@ public class AntiTip extends Command {
   /** Creates a new AntiTip. */
   public AntiTip(CommandSwerveDrivetrain drivetrain, ElevatorSubsystem elevator) {
     this.drivetrain = drivetrain;
-    this.elevator = elevator;
+
+    elevatorPositionCommand = elevator.setPosition(Rotations.of(0));
 
     addRequirements(drivetrain, elevator);
   }
@@ -39,27 +40,24 @@ public class AntiTip extends Command {
     double roll = drivetrain.getPigeon2().getRoll().getValue().in(Radians);
 
     if (isTipping(pitch, roll, RobotConstants.kTippingThresholdDeg)) {
-      // elevator.toPosition(Rotations.of(0));
-
-      SmartDashboard.putBoolean("Is Tipping", true);
+      elevatorPositionCommand.schedule();
 
       double[] counterVec = calculateCounterVector(pitch, roll);
 
       double vx = counterVec[0];
       double vy = counterVec[1];
 
-      SmartDashboard.putNumber("Anti Tip vx", vx);
-      SmartDashboard.putNumber("Anti Tip vy", vy);
-
-      // drivetrain.setControl(drive.withVelocityX(vx).withVelocityY(vy));
+      drivetrain.setControl(drive.withVelocityX(vx).withVelocityY(vy));
     } else {
-      SmartDashboard.putBoolean("Is Tipping", false);
+      elevatorPositionCommand.cancel();
     }
   }
 
   /** Called once the command ends or is interrupted. */
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    elevatorPositionCommand.cancel();
+  }
 
   /** Returns true when the command should end (never, in this example). */
   @Override
