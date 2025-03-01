@@ -7,7 +7,10 @@ package frc.robot.subsystems.intake;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -24,6 +27,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
   private static final Current CURRENT_THRESHOLD = Amps.of(100); // needs to be checked with tuning
   private DigitalInput beamBreak = new DigitalInput(2);
   Debouncer debouncer = new Debouncer(0.2);
+
+  private final TorqueCurrentFOC torqueFOC = new TorqueCurrentFOC(0);
 
   public boolean HOLDING = false;
 
@@ -81,6 +86,13 @@ public class WristIntakeSubsystem extends SubsystemBase {
     this.HOLDING = holding;
   }
 
+  public void applyControlRequest(ControlRequest request){
+    intakeMotor.setControl(request);
+  }
+
+  public void setTorque(Current current){
+    intakeMotor.setControl(torqueFOC.withOutput(current));
+  }
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Motor Coral Speed: ", intakeMotor.get());

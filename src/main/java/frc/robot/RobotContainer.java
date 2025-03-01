@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.IntakeCoral;
-import frc.robot.commands.ScoringSetpoints;
+// import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.ElevatorConstants;
@@ -223,12 +223,14 @@ public class RobotContainer {
                                 .and(wristIntakeSubsystem.isHolding())
                                 .onTrue(Commands.run(() -> wristIntakeSubsystem.setHolding(false),
                                                 wristIntakeSubsystem));
-                wristIntakeSubsystem.isHolding()
-                                .onTrue(
-                                                Commands.runEnd(
-                                                                () -> wristIntakeSubsystem.setPower(0.5),
-                                                                () -> wristIntakeSubsystem.setPower(0),
-                                                                wristIntakeSubsystem));
+                SmartDashboard.putNumber("Wrist Voltage Setpoint", 0);
+                wristIntakeSubsystem.setDefaultCommand(Commands.run(() -> wristIntakeSubsystem.setTorque(Amps.of(SmartDashboard.getNumber("Wrist Voltage Setpoint", 0))), wristIntakeSubsystem));
+                // wristIntakeSubsystem.isHolding()
+                //                 .onTrue(
+                //                                 Commands.runEnd(
+                //                                                 () -> wristIntakeSubsystem.setPower(0.5),
+                //                                                 () -> wristIntakeSubsystem.setPower(0),
+                //                                                 wristIntakeSubsystem));
 
                 // L1: 0
                 // L2:
@@ -249,7 +251,7 @@ public class RobotContainer {
                 operator
                         .povUp()
                         .whileTrue(Commands.defer(() -> {
-                                return new WaitCommand(0);
+                                
                         }, new HashSet<>(Arrays.asList(elevator, wrist))));
                 // .whileTrue(new ScoringSetpoints(elevator, wrist,
                 // ScoringSetpoints.ScoringPosition.BARGE));
