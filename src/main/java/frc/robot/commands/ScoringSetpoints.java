@@ -47,8 +47,6 @@ public class ScoringSetpoints extends Command {
 
   @Override
   public void initialize() {
-    elevator.switchControlMode(ElevatorSubsystem.ControlMode.MOTIONMAGIC);
-    wrist.switchControlMode(WristSubsystem.ControlMode.PID);
   }
 
   @Override
@@ -73,8 +71,7 @@ public class ScoringSetpoints extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.switchControlMode(ElevatorSubsystem.ControlMode.MANUAL);
-    wrist.switchControlMode(WristSubsystem.ControlMode.MANUAL);
+
   }
 
   @Override

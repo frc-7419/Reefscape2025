@@ -13,17 +13,12 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
-import java.util.function.Supplier;
 
 /**
  * The {@code WristSubsystem} class controls the wrist subsystem of the robot. It manages the motion
@@ -33,20 +28,11 @@ public class WristSubsystem extends SubsystemBase {
   private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, "rio");
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.kWristEncoderID);
-  private Supplier<Distance> elevatorHeightSupplier;
-  private boolean safetyLock = false;
-  private int safetyLockTimer = 0;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final ArmFeedforward wristFeedforward;
   // private final MotionMagicExpoVoltage motionMagicRequest =
   //     new MotionMagicExpoVoltage(0).withSlot(0);
 
-  public enum ControlMode {
-    MANUAL,
-    PID
-  }
-
-  private ControlMode controlMode = ControlMode.MANUAL;
   private final PIDController pidController;
 
   private final CombinedAlert positionAlert =
@@ -87,12 +73,6 @@ public class WristSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    if (controlMode == ControlMode.PID || !safetyCheck()) {
-      return;
-    }
-
-    power = Math.max(-1, Math.min(1, power));
-
     wristMotor.set(power);
     /*
     wristMotor.setControl(
@@ -103,58 +83,12 @@ public class WristSubsystem extends SubsystemBase {
              */
   }
 
-  /**
-   * Moves the wrist to a specified angle using Motion Magic.
-   *
-   * @param angle The desired angle (e.g., 0° is horizontal, 90° is vertical).
-   */
-  public void toAngle(Angle angle) {
-    controlMode = ControlMode.PID;
-
-    if (!safetyCheck()) {
-      return;
-    }
-
-    double currentPos = getPosition().in(Rotations);
-    double pidOutput = pidController.calculate(currentPos, angle.in(Rotations));
-    pidOutput = Math.max(-5, Math.min(pidOutput, 5));
-
-    wristMotor.setVoltage(pidOutput);
-  }
-
   private double calculateFeedForward() {
     return wristFeedforward.calculate(getPosition().in(Radians), 0);
   }
 
   public void setVoltage(double voltage) {
     wristMotor.setVoltage(voltage);
-  }
-
-  /**
-   * Returns a Command that drives the wrist to a specific angle and then ends, returning the
-   * control mode to MANUAL.
-   *
-   * @param angle The target angle
-   * @return A command for scheduling.
-   */
-  public Command setAngle(Angle angle) {
-    return this.runEnd(() -> toAngle(angle), () -> switchControlMode(ControlMode.MANUAL));
-  }
-
-  /**
-   * Returns a Command that applies manual wrist control (ex, from a joystick).
-   *
-   * @param power The power from -1 to 1.
-   * @return A command for scheduling.
-   */
-  public Command joystickControl(CommandXboxController joystick) {
-    if (safetyLock) return new WaitCommand(0.02);
-    return this.run(() -> setPower(joystick.getRightY() * 0.3));
-  }
-
-  /** Switches the current control mode. */
-  public void switchControlMode(ControlMode mode) {
-    this.controlMode = mode;
   }
 
   /** Sets the TalonFX to brake mode (resists motion when no power is applied). */

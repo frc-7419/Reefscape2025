@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
@@ -18,11 +14,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.RobotConstants;
@@ -30,10 +24,6 @@ import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
 import java.util.function.Supplier;
 
-/**
- * The {@code ElevatorSubsystem} class controls the elevator subsystem of the robot. It manages the
- * motion and height of the elevator using TalonFX motors.
- */
 public class ElevatorSubsystem extends SubsystemBase {
   private final TalonFX leftElevatorMotor =
       new TalonFX(ElevatorConstants.kLeftElevatorMotorId, RobotConstants.kCANivoreBus);
@@ -43,7 +33,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final Supplier<Angle> wristAngleSupplier;
-  private Angle setpoint;
 
   private final ElevatorFeedforward feedforward =
       new ElevatorFeedforward(
@@ -52,7 +41,6 @@ public class ElevatorSubsystem extends SubsystemBase {
           ElevatorConstants.feedforwardKv,
           ElevatorConstants.feedforwardKa);
 
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =
       new MotionMagicExpoVoltage(0).withSlot(0);
   private final SysIdRoutine routine =
@@ -73,13 +61,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return routine.dynamic(direction);
   }
-
-  public enum ControlMode {
-    MANUAL,
-    MOTIONMAGIC
-  }
-
-  private ControlMode controlMode = ControlMode.MANUAL;
 
   private final CombinedAlert positionAlert =
       new CombinedAlert(
@@ -107,9 +88,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new {@code ElevatorSubsystem}. */
   public ElevatorSubsystem(Supplier<Angle> wristAngleSupplier) {
-    leftElevatorMotor.setPosition(0);
-    rightElevatorMotor.setPosition(0);
-    topElevatorMotor.setPosition(0);
+    // leftElevatorMotor.setPosition(0);
+    // rightElevatorMotor.setPosition(0);
+    // topElevatorMotor.setPosition(0);
 
     this.wristAngleSupplier = wristAngleSupplier;
 
@@ -127,14 +108,14 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    power = Math.max(-1, Math.min(1, power)) * 8;
+    leftElevatorMotor.set(power);
+    rightElevatorMotor.set(power);
+    topElevatorMotor.set(power);
+  }
 
-    if (getPosition().gt(Rotations.of(1))) {
-      power += feedforward.calculate(0);
-    }
-
-    if (controlMode == ControlMode.MOTIONMAGIC || !safetyCheck()) return;
-    setVoltage(power);
+  public void setVelocity(double velocity) {
+    double voltage = feedforward.calculate(velocity);
+    setVoltage(voltage);
   }
 
   public void setVoltage(double voltage) {
@@ -151,44 +132,19 @@ public class ElevatorSubsystem extends SubsystemBase {
    *
    * @param position The desired position as an Angle.
    */
-  public void toPosition(Angle position) {
-    controlMode = ControlMode.MOTIONMAGIC;
+  public void positionMM(Angle setpoint) {
 
     if (!safetyCheck()) return;
 
-    setpoint = position;
 
     leftElevatorMotor.setControl(
         motionMagicRequest
-            .withPosition(position)
+            .withPosition(setpoint)
             .withLimitForwardMotion(getPosition().gt(ElevatorConstants.kMaxRotations))
             .withLimitReverseMotion(getPosition().lt(ElevatorConstants.kMinRotations)));
 
     rightElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
     topElevatorMotor.setControl(new Follower(leftElevatorMotor.getDeviceID(), false));
-  }
-
-  /**
-   * Switches the control mode of the elevator.
-   *
-   * @param controlMode The desired control mode (MANUAL or MOTIONMAGIC).
-   */
-  public void switchControlMode(ControlMode controlMode) {
-    this.controlMode = controlMode;
-  }
-
-  /**
-   * Returns a command to set the elevator position.
-   *
-   * @param position The target position as a {@link Distance}.
-   * @return The command to execute.
-   */
-  public Command setPosition(Angle position) {
-    return this.runEnd(() -> toPosition(position), () -> switchControlMode(ControlMode.MANUAL));
-  }
-
-  public Command joystickControl(CommandXboxController joystick) {
-    return this.run(() -> setPower(-joystick.getLeftY()));
   }
 
   /**
@@ -202,11 +158,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     topElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
   }
 
-  /**
-   * Sets the motors to brake mode.
-   *
-   * <p>In brake mode, the motors resist motion when no power is applied.
-   */
+
   public void brake() {
     // Redundancy to ensure all motors are stopped
     leftElevatorMotor.set(0);
@@ -244,14 +196,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     return true;
   }
 
-  public boolean atPosition() {
-    return Math.abs(leftElevatorMotor.getPosition().getValue().minus(setpoint).in(Rotations)) < 0.1;
-  }
-
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator Encoder Position", getPosition().in(Rotations));
-    SmartDashboard.putString("Elevator Control Mode", controlMode.toString());
     SmartDashboard.putBoolean("Disabled", !safetyCheck());
     SmartDashboard.putNumber(
         "Elevator Velocity (RotationsPerSecond)",
@@ -268,33 +215,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
-  }
-
-  /**
-   * Gets the left elevator motor instance.
-   *
-   * @return The left TalonFX motor instance.
-   */
-  public TalonFX getLeftMotor() {
-    return leftElevatorMotor;
-  }
-
-  /**
-   * Gets the right elevator motor instance.
-   *
-   * @return The right TalonFX motor instance.
-   */
-  public TalonFX getRightMotor() {
-    return rightElevatorMotor;
-  }
-
-  /**
-   * Gets the top elevator motor instance.
-   *
-   * @return The top TalonFX motor instance.
-   */
-  public TalonFX getTopMotor() {
-    return topElevatorMotor;
   }
 
   /**

@@ -4,29 +4,34 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Rotations;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MaintainElevatorPosition extends Command {
-  /** Creates a new MaintainElevatorPosition. */
-  private ElevatorSubsystem elevatorSubsystem;
+public class ElevatorMM extends Command {
+  /** Creates a new ElevatorMM. */
+  ElevatorSubsystem elevatorSubsystem;
+  Angle setpoint;
 
-  // TODO: get position in init and set mm to that pos
-
-  public MaintainElevatorPosition(ElevatorSubsystem elevatorSubsystem) {
-    addRequirements(elevatorSubsystem);
+  public ElevatorMM(ElevatorSubsystem elevatorSubsystem, Angle setpoint) {
     this.elevatorSubsystem = elevatorSubsystem;
+    this.setpoint = setpoint;
+    addRequirements(elevatorSubsystem);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    elevatorSubsystem.setVelocity(0);
+    elevatorSubsystem.positionMM(setpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -37,6 +42,6 @@ public class MaintainElevatorPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.1;
   }
 }

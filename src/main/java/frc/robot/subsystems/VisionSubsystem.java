@@ -53,7 +53,7 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class PhotonvisionSubsystem {
+public class VisionSubsystem {
   private final List<PhotonCamera> cameras = new ArrayList<>();
   private final List<PhotonPoseEstimator> photonEstimators = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class PhotonvisionSubsystem {
   private final List<PhotonCameraSim> cameraSims = new ArrayList<>();
   private VisionSystemSim visionSim;
 
-  public PhotonvisionSubsystem(List<CameraConfig> cameraConfigs) {
+  public VisionSubsystem(List<CameraConfig> cameraConfigs) {
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("main");
       visionSim.addAprilTags(kTagLayout);

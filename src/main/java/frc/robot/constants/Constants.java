@@ -41,6 +41,9 @@ public class Constants {
     public static final PIDController kPoseVelocityXController = new PIDController(5, 0, 0);
     public static final PIDController kPoseVelocityYController = new PIDController(5, 0, 0);
     public static final PIDController kPoseThetaController = new PIDController(10, 0, 0);
+
+    public static final double kTranslationDeadband = 0.01;
+    public static final double kRotationDeadband = 0.01;
   }
 
   public static class IntakeCoralConstants {
@@ -220,6 +223,8 @@ public class Constants {
 
     public static final double kMaxVelocity = 5;
     public static final double kMaxAcceleration = 1;
+
+    public static final double joystickDeadband = 0.01;
 
     public static final CurrentLimitsConfigs kCurrentLimitConfig =
         kElevatorTalonFXConfiguration.CurrentLimits;
