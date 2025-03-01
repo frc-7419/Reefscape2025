@@ -46,8 +46,9 @@ public class RunElevatorWithJoystick extends Command {
   @Override
   public void execute() {
     double targetVelocity = ElevatorConstants.kMaxVelocity * powerSupplier.getAsDouble();
-    if (!checkMovementSafe(targetVelocity)) targetVelocity = 0;
-    elevatorSubsystem.setVelocity(targetVelocity);
+    // if (!checkMovementSafe(targetVelocity)) targetVelocity = 0;
+    // elevatorSubsystem.setVelocity(targetVelocity);
+    elevatorSubsystem.setPower(powerSupplier.getAsDouble());
   }
 
   @Override

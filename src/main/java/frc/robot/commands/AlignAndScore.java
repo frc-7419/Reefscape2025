@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.ScoringSetpoints.ScoringSetpoint;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
+import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristToPosition;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -32,6 +33,7 @@ public class AlignAndScore extends SequentialCommandGroup {
       ScoringPosition scoringPosition, ScoringSetpoint scoringSetpoint) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    /*
     addCommands(
         new ParallelCommandGroup(
             new AlignToReef(drivetrain, scoringPosition, true),
@@ -39,7 +41,8 @@ public class AlignAndScore extends SequentialCommandGroup {
         new ParallelDeadlineGroup(
             new RunCommand(() -> wristIntake.setPower(0.5), wristIntake)
                 .until(() -> !wristIntake.beamBreakisTriggered()),
-            wrist.setAngle(Rotations.of(scoringSetpoint.wristAngle))),
+            new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle))),
         new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+         */
   }
 }

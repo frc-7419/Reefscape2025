@@ -42,6 +42,6 @@ public class ElevatorMM extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.1;
+    return Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.5;
   }
 }

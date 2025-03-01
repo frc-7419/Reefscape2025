@@ -51,6 +51,6 @@ public class WristToPosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(wristSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.2;
   }
 }

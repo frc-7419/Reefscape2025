@@ -115,6 +115,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setVelocity(double velocity) {
     double voltage = feedforward.calculate(velocity);
+    System.out.println(voltage);
     setVoltage(voltage);
   }
 

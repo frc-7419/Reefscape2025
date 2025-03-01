@@ -103,7 +103,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return Rotations.of(1 - wristEncoder.get()).plus(WristConstants.wristAngleOffset);
+    return Rotations.of(wristEncoder.get());
   }
 
   public AngularVelocity getVelocity() {

@@ -40,6 +40,7 @@ public class IntakeWithBeamBreak extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return debouncer.calculate(wristIntakeSubsystem.beamBreakisTriggered());
+    // return debouncer.calculate(!wristIntakeSubsystem.beamBreakisTriggered());
+    return !wristIntakeSubsystem.beamBreakisTriggered();
   }
 }

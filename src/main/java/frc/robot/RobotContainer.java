@@ -30,13 +30,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.IntakeCoral;
-import frc.robot.commands.ScoringSetpoints;
-import frc.robot.commands.ScoringSetpoints.ScoringSetpoint;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
+import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.VisionSubsystem;
@@ -46,6 +45,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
 import frc.robot.subsystems.elevator.RunElevatorWithJoystick;
 import frc.robot.subsystems.elevator.RunElevatorWithPID;
+import frc.robot.subsystems.intake.IntakeWithBeamBreak;
 import frc.robot.subsystems.intake.RunIntakeWithJoystick;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.RunWristWithJoystick;
@@ -219,16 +219,17 @@ public class RobotContainer {
                  */
                 // operator.x().whileTrue(new ElevatorPIDTest(elevator));
                 operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
-                operator.leftBumper().whileTrue(new IntakeCoral(wristIntakeSubsystem));
+                operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
                 // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-                operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.42)));
+                operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.118
+                )));
                 operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.34)));
 
                 wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
                 wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.3));
 
                 elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
-                DoubleSupplier elevatorPowerSupplier = () -> operator.getLeftY() * 0.3;
+                DoubleSupplier elevatorPowerSupplier = () -> operator.getLeftY();
                 new Trigger(
                                 () -> (Math.abs(elevatorPowerSupplier
                                                 .getAsDouble()) > ElevatorConstants.joystickDeadband))
@@ -239,58 +240,60 @@ public class RobotContainer {
                 wristIntakeSubsystem.isHolding()
                                 .negate()
                                 .whileTrue(new RunIntakeWithJoystick(wristIntakeSubsystem, operator));
-                operator.axisGreaterThan(XboxController.Axis.kRightTrigger.value, 0.01)
+                operator.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, 0.01)
                                 .and(wristIntakeSubsystem.isHolding())
                                 .onTrue(Commands.run(() -> wristIntakeSubsystem.setHolding(false),
                                                 wristIntakeSubsystem));
                 wristIntakeSubsystem.isHolding()
                                 .onTrue(
                                                 Commands.runEnd(
-                                                                () -> wristIntakeSubsystem.setPower(0.5),
-                                                                () -> wristIntakeSubsystem.setPower(0),
+                                                                () -> wristIntakeSubsystem.setTorque(Amps.of(10)),
+                                                                () -> wristIntakeSubsystem.setTorque(Amps.of(0)),
                                                                 wristIntakeSubsystem));
 
                 // L1: 0
                 // L2:
                 // L3:
                 // L4:
+                
                 operator.start().onTrue(new InstantCommand(() -> {
                         coral = !coral;
                         SmartDashboard.putBoolean("Coral Mode", coral);
                 }));
 
-                operator.povUp().whileTrue(
-                                new ConditionalCommand(
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4),
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
-                                                () -> coral));
+                // operator.povUp().whileTrue(
+                //                 new ConditionalCommand(
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4),
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
+                //                                 () -> coral));
 
-                operator.povLeft().whileTrue(
-                                new ConditionalCommand(
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3),
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
-                                                () -> coral));
+                // operator.povLeft().whileTrue(
+                //                 new ConditionalCommand(
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3),
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
+                //                                 () -> coral));
 
-                operator.povRight().whileTrue(
-                                new ConditionalCommand(
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2),
-                                                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),
-                                                () -> coral));
+                // operator.povRight().whileTrue(
+                //                 new ConditionalCommand(
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2),
+                //                                 new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),
+                //                                 () -> coral));
 
-                operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+                // operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
                 operator.povUp().whileTrue(
                                 Commands.defer(() -> {
-                                        if (coral)
-                                                return setpointCommand(ScoringSetpoint.L4);
-                                        else
-                                                return setpointCommand(ScoringSetpoint.BARGE);
+                                        // if (coral)
+                                                return setpointCommand(ScoringSetpoint.L3);
+                                        // else
+                                        //         return setpointCommand(ScoringSetpoint.BARGE);
                                 }, new HashSet<>(Arrays.asList(elevator, wrist))));
+                                
         }
 
         public Command setpointCommand(ScoringSetpoint targetPosition) {
                 SequentialCommandGroup commandGroup = new SequentialCommandGroup();
                 double elevatorRotations = elevator.getPosition().in(Rotations);
-                Angle upAngle = targetPosition.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.32);
+                Angle upAngle = targetPosition.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.118);
 
         
                 commandGroup.addCommands(
@@ -306,11 +309,6 @@ public class RobotContainer {
 
                 return(commandGroup);
         }
-
-        operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
-            */
-
-    }
 
     public Command getAutonomousCommand() {
         /* First put the drivetrain into auto run mode, then run the auto */

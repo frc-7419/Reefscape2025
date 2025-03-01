@@ -13,6 +13,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -24,9 +25,9 @@ import frc.robot.constants.Constants.WristIntakeConstants;
 
 public class WristIntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
-  private static final Current CURRENT_THRESHOLD = Amps.of(100); // needs to be checked with tuning
+  private static final Current CURRENT_THRESHOLD = Amps.of(50); // needs to be checked with tuning
   private DigitalInput beamBreak = new DigitalInput(2);
-  Debouncer debouncer = new Debouncer(0.2);
+  Debouncer debouncer = new Debouncer(0.2, DebounceType.kBoth);
 
   private final TorqueCurrentFOC torqueFOC = new TorqueCurrentFOC(0);
 
@@ -71,6 +72,7 @@ public class WristIntakeSubsystem extends SubsystemBase {
 
   public boolean coralDetectedByCurrent() {
     boolean thresholdReached = getCurrent().gt(CURRENT_THRESHOLD);
+    SmartDashboard.putBoolean("CoralDetectedRaw", thresholdReached);
     return debouncer.calculate(thresholdReached);
   }
 
