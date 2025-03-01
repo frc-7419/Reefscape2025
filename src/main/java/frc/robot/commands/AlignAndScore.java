@@ -23,13 +23,17 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 public class AlignAndScore extends SequentialCommandGroup {
   /**
    * Creates a new AlignAndScore.
-   * 
-   * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
-   * THEY'RE GONNA BLAME SOFTWARE
+   *
+   * <p>ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND THEY'RE GONNA
+   * BLAME SOFTWARE
    */
-  public AlignAndScore(CommandSwerveDrivetrain drivetrain, ElevatorSubsystem elevator, WristSubsystem wrist,
+  public AlignAndScore(
+      CommandSwerveDrivetrain drivetrain,
+      ElevatorSubsystem elevator,
+      WristSubsystem wrist,
       WristIntakeSubsystem wristIntake,
-      ScoringPosition scoringPosition, ScoringSetpoint scoringSetpoint) {
+      ScoringPosition scoringPosition,
+      ScoringSetpoint scoringSetpoint) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

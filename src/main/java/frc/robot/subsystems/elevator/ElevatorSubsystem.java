@@ -21,8 +21,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
@@ -62,10 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           ElevatorConstants.feedforwardKv,
           ElevatorConstants.feedforwardKa);
   private final PIDController pidController =
-      new PIDController(
-          ElevatorConstants.pidKp,
-          ElevatorConstants.pidKi,
-          ElevatorConstants.pidKd);
+      new PIDController(ElevatorConstants.pidKp, ElevatorConstants.pidKi, ElevatorConstants.pidKd);
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final MotionMagicExpoVoltage motionMagicRequest =

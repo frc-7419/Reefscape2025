@@ -59,7 +59,7 @@ public class ScoringSetpoints extends Command {
     elevator.toPosition(Rotations.of(targetPosition.elevatorHeight));
 
     if ((targetPosition.elevatorHeight > elevatorRotations
-        && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
+            && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
         || (targetPosition.elevatorHeight < elevatorRotations
             && elevatorRotations > ElevatorConstants.kElevatorBarUpperLimit.in(Rotations))) {
       wrist.toAngle(upAngle);

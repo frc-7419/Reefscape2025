@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "From Start",
+    "From Coral Station",
     "Processor",
     "To Coral Station"
   ],
