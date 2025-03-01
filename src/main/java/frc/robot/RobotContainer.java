@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
-// import frc.robot.commands.AntiTip;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.commands.ScoringSetpoints.ScoringSetpoint;
@@ -90,13 +89,10 @@ public class RobotContainer {
         private WristSubsystem wrist = new WristSubsystem();
         private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
 
-        // private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
-        // private final WristSubsystem wrist = new WristSubsystem();
-        public final VisionSubsystem photonvision;
-        private final CameraConfig photonCamOne = new CameraConfig("Photon_Vision_Cam_1",
-                        VisionConstants.kRobotToCamOne);
-        private final CameraConfig photonCamTwo = new CameraConfig("Photon_Vision_Cam_2",
-                        VisionConstants.kRobotToCamOne);
+    // private final WristSubsystem wrist = new WristSubsystem();
+    public final VisionSubsystem photonvision;
+    private final CameraConfig photonCamOne = new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
+    private final CameraConfig photonCamTwo = new CameraConfig("Photon_Vision_Cam_2", VisionConstants.kRobotToCamOne);
 
         private final List<CameraConfig> cameraConfigs = new ArrayList<CameraConfig>() {
                 {
@@ -311,8 +307,13 @@ public class RobotContainer {
                 return(commandGroup);
         }
 
-        public Command getAutonomousCommand() {
-                /* First put the drivetrain into auto run mode, then run the auto */
-                return new PathPlannerAuto("Example Path");
-        }
+        operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+            */
+
+    }
+
+    public Command getAutonomousCommand() {
+        /* First put the drivetrain into auto run mode, then run the auto */
+        return new PathPlannerAuto("Example Path");
+    }
 }
