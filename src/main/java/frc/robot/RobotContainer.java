@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
-import frc.robot.commands.AntiTip;
 import frc.robot.commands.IntakeCoral;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.commands.ScoringSetpoints.ScoringSetpoint;
@@ -39,7 +38,7 @@ import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
-import frc.robot.subsystems.PhotonvisionSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
@@ -86,9 +85,8 @@ public class RobotContainer {
     private WristSubsystem wrist = new WristSubsystem();
     private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
 
-    private final AntiTip antiTip = new AntiTip(drivetrain, elevator);
     // private final WristSubsystem wrist = new WristSubsystem();
-    public final PhotonvisionSubsystem photonvision;
+    public final VisionSubsystem photonvision;
     private final CameraConfig photonCamOne = new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
     private final CameraConfig photonCamTwo = new CameraConfig("Photon_Vision_Cam_2", VisionConstants.kRobotToCamOne);
 
@@ -102,7 +100,7 @@ public class RobotContainer {
     private boolean coral = true;
 
     public RobotContainer() {
-        photonvision = new PhotonvisionSubsystem(cameraConfigs);
+        photonvision = new VisionSubsystem(cameraConfigs);
 
         configureBindings();
         SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
@@ -235,10 +233,12 @@ public class RobotContainer {
         // L2:
         // L3:
         // L4:
+                /*
         operator.start().onTrue(new InstantCommand(() -> {
             coral = !coral;
             SmartDashboard.putBoolean("Coral Mode", coral);
         }));
+
 
         operator.povUp().whileTrue(
                 new ConditionalCommand(
@@ -259,6 +259,8 @@ public class RobotContainer {
                         () -> coral));
 
         operator.povDown().whileTrue(new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+            */
+
     }
 
     public Command getAutonomousCommand() {
