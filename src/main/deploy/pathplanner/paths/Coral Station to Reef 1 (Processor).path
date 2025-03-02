@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.336372401350635,
-        "y": 5.364237122616526
+        "x": 1.5662034891419492,
+        "y": 0.708134434586865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3172863325401503,
-        "y": 6.5135617909033225
+        "x": 2.512122616525424,
+        "y": 2.4121735136387707
       },
       "isLocked": false,
-      "linkedName": "Reef 5"
+      "linkedName": "Coral Station (Processor)"
     },
     {
       "anchor": {
-        "x": 1.5383854166666655,
-        "y": 7.284830729166666
+        "x": 2.8778444451800844,
+        "y": 3.969662423861229
       },
       "prevControl": {
-        "x": 3.9558355104524208,
-        "y": 6.041850951949156
+        "x": 2.488157792256391,
+        "y": 2.9815273218140304
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station"
+      "linkedName": "Reef 1"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "To Coral Station",
+  "folder": "From Coral Station",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 55.0
   },
   "useDefaultConstraints": true
 }
