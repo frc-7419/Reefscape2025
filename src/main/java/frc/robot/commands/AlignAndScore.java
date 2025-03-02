@@ -4,11 +4,6 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Rotations;
-
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
@@ -16,7 +11,6 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.wrist.WristToPosition;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -24,13 +18,17 @@ import frc.robot.subsystems.wrist.WristToPosition;
 public class AlignAndScore extends SequentialCommandGroup {
   /**
    * Creates a new AlignAndScore.
-   * 
-   * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
-   * THEY'RE GONNA BLAME SOFTWARE
+   *
+   * <p>ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND THEY'RE GONNA
+   * BLAME SOFTWARE
    */
-  public AlignAndScore(CommandSwerveDrivetrain drivetrain, ElevatorSubsystem elevator, WristSubsystem wrist,
+  public AlignAndScore(
+      CommandSwerveDrivetrain drivetrain,
+      ElevatorSubsystem elevator,
+      WristSubsystem wrist,
       WristIntakeSubsystem wristIntake,
-      ScoringPosition scoringPosition, ScoringSetpoint scoringSetpoint) {
+      ScoringPosition scoringPosition,
+      ScoringSetpoint scoringSetpoint) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     /*

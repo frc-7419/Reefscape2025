@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorMM extends Command {
   /** Creates a new ElevatorMM. */
   ElevatorSubsystem elevatorSubsystem;
+
   Angle setpoint;
 
   public ElevatorMM(ElevatorSubsystem elevatorSubsystem, Angle setpoint) {
@@ -30,8 +31,7 @@ public class ElevatorMM extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
