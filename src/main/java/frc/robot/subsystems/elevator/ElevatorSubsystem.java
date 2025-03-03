@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -115,14 +114,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setVelocity(double velocity) {
     double voltage = feedforward.calculate(velocity);
-    System.out.println(voltage);
     setVoltage(voltage);
   }
 
   public void setVoltage(double voltage) {
-    if (!checkMovementSafe(voltage) && voltage != 0) {
-      voltage = feedforward.calculate(0);
-    }
+    // if (!checkMovementSafe(voltage) && voltage != 0) {
+    //   voltage = feedforward.calculate(0);
+    // }
+    // TODO: fix safe angle
     leftElevatorMotor.setVoltage(voltage);
     rightElevatorMotor.setVoltage(voltage);
     topElevatorMotor.setVoltage(voltage);
@@ -136,7 +135,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void positionMM(Angle setpoint) {
 
     if (!safetyCheck()) return;
-
 
     leftElevatorMotor.setControl(
         motionMagicRequest
@@ -158,7 +156,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
     topElevatorMotor.setNeutralMode(NeutralModeValue.Coast);
   }
-
 
   public void brake() {
     // Redundancy to ensure all motors are stopped

@@ -47,7 +47,7 @@ public class Constants {
   }
 
   public static class IntakeCoralConstants {
-    public static final double intakeCoralPower = -0.2; // placeholder, insert actual value
+    public static final double intakeCoralVoltage = -2; // placeholder, insert actual value
   }
 
   public static class ScoringConstants {
@@ -63,20 +63,20 @@ public class Constants {
     public static int[] reefIds = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
 
     public enum ScoringSetpoint {
-      L1("L1", 0, 0.07, false),
-      L2("L2", 5, 0.07, true),
-      L3("L3", 12.7, 0.07, true),
-      L4("L4", 27.5, 0.07, true),
+      L1("L1", 0, 0.49, false),
+      L2("L2", 5, 0.49, true),
+      L3("L3", 12.7, 0.49, true),
+      L4("L4", 27.5, 0.49, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0.1, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0.1, false),
       BARGE("BARGE", 29.5, 0.25, true),
       HOME("HOME", 0, 0.42, true);
-  
+
       public final String name;
       public final double elevatorHeight;
       public final double wristAngle;
       public final boolean lateWrist;
-  
+
       ScoringSetpoint(String name, double elevatorHeight, double wristAngle, boolean lateWrist) {
         this.name = name;
         this.elevatorHeight = elevatorHeight;

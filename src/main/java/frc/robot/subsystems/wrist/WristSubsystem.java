@@ -13,12 +13,14 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants.RobotConstants;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
+import java.util.function.Supplier;
 
 /**
  * The {@code WristSubsystem} class controls the wrist subsystem of the robot. It manages the motion
@@ -28,6 +30,9 @@ public class WristSubsystem extends SubsystemBase {
   private final TalonFX wristMotor = new TalonFX(WristConstants.kWristMotorID, "rio");
   private final DutyCycleEncoder wristEncoder =
       new DutyCycleEncoder(WristConstants.kWristEncoderID);
+  private Supplier<Distance> elevatorHeightSupplier;
+  private boolean safetyLock = false;
+  private int safetyLockTimer = 0;
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
   private final ArmFeedforward wristFeedforward;
   // private final MotionMagicExpoVoltage motionMagicRequest =
@@ -103,7 +108,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public Angle getPosition() {
-    return Rotations.of(wristEncoder.get());
+    return Rotations.of(1 - wristEncoder.get()).plus(WristConstants.wristAngleOffset);
   }
 
   public AngularVelocity getVelocity() {

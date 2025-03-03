@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ControlModeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -88,13 +87,14 @@ public class WristIntakeSubsystem extends SubsystemBase {
     this.HOLDING = holding;
   }
 
-  public void applyControlRequest(ControlRequest request){
+  public void applyControlRequest(ControlRequest request) {
     intakeMotor.setControl(request);
   }
 
-  public void setTorque(Current current){
+  public void setTorque(Current current) {
     intakeMotor.setControl(torqueFOC.withOutput(current));
   }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Motor Coral Speed: ", intakeMotor.get());
@@ -102,7 +102,6 @@ public class WristIntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Intake Current", getCurrent().in(Amps));
     SmartDashboard.putBoolean("Beam Break Triggred", beamBreakisTriggered());
     SmartDashboard.putBoolean("Intake Holding", HOLDING);
-    if (coralDetectedByCurrent())
-      HOLDING = true;
+    if (coralDetectedByCurrent()) HOLDING = true;
   }
 }
