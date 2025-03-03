@@ -91,8 +91,8 @@ public class RobotContainer {
 
     // private final WristSubsystem wrist = new WristSubsystem();
     public final VisionSubsystem photonvision;
-    private final CameraConfig photonCamOne = new CameraConfig("Photon_Vision_Cam_1", VisionConstants.kRobotToCamOne);
-    private final CameraConfig photonCamTwo = new CameraConfig("Photon_Vision_Cam_2", VisionConstants.kRobotToCamOne);
+    private final CameraConfig photonCamOne = new CameraConfig("Cam1", VisionConstants.kRobotToCamOne);
+    private final CameraConfig photonCamTwo = new CameraConfig("Cam2", VisionConstants.kRobotToCamOne);
 
         private final List<CameraConfig> cameraConfigs = new ArrayList<CameraConfig>() {
                 {
