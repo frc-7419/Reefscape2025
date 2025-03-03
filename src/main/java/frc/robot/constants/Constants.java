@@ -64,14 +64,14 @@ public class Constants {
     public static int[] reefIds = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
 
     public enum ScoringSetpoint {
-      L1("L1", 0, 0.49, false),
-      L2("L2", 5, 0.49, true),
-      L3("L3", 12.7, 0.49, true),
-      L4("L4", 27.5, 0.49, true),
-      HIGH_ALGAE("HIGH_ALGAE", 11, 0.1, false),
-      LOW_ALGAE("LOW_ALGAE", 0, 0.1, false),
-      BARGE("BARGE", 29.5, 0.25, true),
-      HOME("HOME", 0, 0.42, true);
+      L1("L1", 0, 0.38, false),
+      L2("L2", 5, 0.38, true),
+      L3("L3", 12.7, 0.38, true),
+      L4("L4", 27.5, 0.38, true),
+      HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
+      LOW_ALGAE("LOW_ALGAE", 0, 0, false),
+      BARGE("BARGE", 29.5, 0.20, true),
+      HOME("HOME", 0, 0.46, true);
 
       public final String name;
       public final double elevatorHeight;
@@ -159,7 +159,7 @@ public class Constants {
     public static final double feedforwardKg = 0.0;
     public static final double feedforwardKs = 0.0;
 
-    public static final Angle wristAngleOffset = Degrees.of(-146.7);
+    public static final Angle wristAngleOffset = Degrees.of(-184);
     public static final MotorOutputConfigs kMotorOutputConfig =
         kWristTalonFXConfiguration.MotorOutput;
 
@@ -178,7 +178,7 @@ public class Constants {
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
 
-    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.36);
+    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.40);
   }
 
   public static class WristIntakeConstants {

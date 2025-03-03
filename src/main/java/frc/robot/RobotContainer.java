@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
+import frc.robot.commands.ScoringSetpoints;
 import frc.robot.commands.ToPose;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -250,8 +251,8 @@ public class RobotContainer {
         operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
         operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
         // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-        operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.491)));
-        operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.34)));
+        operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
+        operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
         wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
         wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.3));
@@ -290,25 +291,25 @@ public class RobotContainer {
 
         operator.povUp().whileTrue(
                 new ConditionalCommand(
-                        Commands.defer(() -> setpointCommand(ScoringSetpoint.L4), scoringDependencies),
-                        Commands.defer(() -> setpointCommand(ScoringSetpoint.BARGE), scoringDependencies),
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,ScoringSetpoint.L4), scoringDependencies),
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,ScoringSetpoint.BARGE), scoringDependencies),
                         () -> coral));
 
         operator.povLeft().whileTrue(
                 new ConditionalCommand(
-                        Commands.defer(() -> setpointCommand(ScoringSetpoint.L3), scoringDependencies),
-                        Commands.defer(() -> setpointCommand(
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,ScoringSetpoint.L3), scoringDependencies),
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,
                                 ScoringSetpoint.HIGH_ALGAE), scoringDependencies),
                         () -> coral));
 
         operator.povRight().whileTrue(
                 new ConditionalCommand(
-                        Commands.defer(() -> setpointCommand(ScoringSetpoint.L2), scoringDependencies),
-                        Commands.defer(() -> setpointCommand(
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,ScoringSetpoint.L2), scoringDependencies),
+                        Commands.defer(() -> new ScoringSetpoints(elevator, wrist,
                                 ScoringSetpoint.LOW_ALGAE), scoringDependencies),
                         () -> coral));
 
-        operator.povDown().whileTrue(Commands.defer(() -> setpointCommand(ScoringSetpoint.HOME), scoringDependencies));
+        operator.povDown().whileTrue(Commands.defer(() -> new ScoringSetpoints(elevator, wrist,ScoringSetpoint.HOME), scoringDependencies));
 
         operator
                 .povUp()
@@ -316,28 +317,11 @@ public class RobotContainer {
                         Commands.defer(
                                 () -> {
                                     if (coral)
-                                        return setpointCommand(ScoringSetpoint.L2);
+                                        return new ScoringSetpoints(elevator, wrist,ScoringSetpoint.L2);
                                     else
-                                        return setpointCommand(ScoringSetpoint.BARGE);
+                                        return new ScoringSetpoints(elevator, wrist,ScoringSetpoint.BARGE);
                                 },
                                 scoringDependencies));
-    }
-
-    public Command setpointCommand(ScoringSetpoint targetPosition) {
-        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
-
-        double elevatorRotations = elevator.getPosition().in(Rotations);
-        Angle upAngle = targetPosition.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.491);
-
-        commandGroup.addCommands(
-                Commands.parallel(
-                        new ElevatorMM(elevator, ElevatorConstants.kElevatorBarLowerLimit),
-                        new WristToPosition(wrist, upAngle)),
-                Commands.parallel(
-                        new ElevatorMM(elevator, Rotations.of(targetPosition.elevatorHeight)),
-                        new WristToPosition(wrist, Rotations.of(targetPosition.wristAngle))));
-
-        return commandGroup;
     }
 
     public Command getAutonomousCommand() {
