@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.WristConstants;
 
-public class WristToPosition extends Command {
+public class MaintainWristPosition extends Command {
   WristSubsystem wristSubsystem;
   Angle setpoint;
 
   private PIDController pidController =
       new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
 
-  public WristToPosition(WristSubsystem wristSubsystem, Angle setpoint) {
+  public MaintainWristPosition(WristSubsystem wristSubsystem, Angle setpoint) {
     this.wristSubsystem = wristSubsystem;
     this.setpoint = setpoint;
     addRequirements(wristSubsystem);
@@ -45,6 +45,6 @@ public class WristToPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return pidController.atSetpoint();
+    return false;
   }
 }

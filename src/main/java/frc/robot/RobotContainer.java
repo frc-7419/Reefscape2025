@@ -83,12 +83,10 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final ToPose toPose = new ToPose(drivetrain);
 
     private WristSubsystem wrist = new WristSubsystem();
     private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
 
-    // private final WristSubsystem wrist = new WristSubsystem();
     public final VisionSubsystem photonvision;
     private final CameraConfig photonCamOne = new CameraConfig("Cam1", VisionConstants.kRobotToCamOne);
     private final CameraConfig photonCamTwo = new CameraConfig("Cam2", VisionConstants.kRobotToCamOne);
@@ -252,7 +250,7 @@ public class RobotContainer {
         operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
         operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
         // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-        operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.118)));
+        operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.491)));
         operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.34)));
 
         wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
@@ -318,7 +316,7 @@ public class RobotContainer {
                         Commands.defer(
                                 () -> {
                                     if (coral)
-                                        return setpointCommand(ScoringSetpoint.L3);
+                                        return setpointCommand(ScoringSetpoint.L2);
                                     else
                                         return setpointCommand(ScoringSetpoint.BARGE);
                                 },
@@ -329,7 +327,7 @@ public class RobotContainer {
         SequentialCommandGroup commandGroup = new SequentialCommandGroup();
 
         double elevatorRotations = elevator.getPosition().in(Rotations);
-        Angle upAngle = targetPosition.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.118);
+        Angle upAngle = targetPosition.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.491);
 
         commandGroup.addCommands(
                 Commands.parallel(
@@ -344,6 +342,6 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         /* First put the drivetrain into auto run mode, then run the auto */
-        return new PathPlannerAuto("Example Path");
+        return new PathPlannerAuto("TestPath");
     }
 }
