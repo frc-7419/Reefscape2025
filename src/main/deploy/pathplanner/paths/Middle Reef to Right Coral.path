@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.080777271412035,
-        "y": 4.05015625
+        "x": 6.186526692708332,
+        "y": 3.853040726273148
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.2032975260416645,
-        "y": 6.6322240306713045
+        "x": 6.940239065911572,
+        "y": 2.0259872236626633
       },
       "isLocked": false,
-      "linkedName": "Reef 4"
+      "linkedName": "Middle Start to Coral"
     },
     {
       "anchor": {
-        "x": 1.3147132573689957,
-        "y": 7.132712711517468
+        "x": 1.2898160309770743,
+        "y": 0.9688280397106973
       },
       "prevControl": {
-        "x": 2.0682943482254776,
-        "y": 5.648319265336912
+        "x": 3.625165887691048,
+        "y": 0.25439239901746646
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station"
+      "linkedName": "Coral Station (Processor)"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 55.0
   },
   "reversed": false,
   "folder": "To Coral Station",
