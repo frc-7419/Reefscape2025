@@ -12,7 +12,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import java.util.HashMap;
@@ -39,9 +40,17 @@ public class Constants {
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(3);
-    public static final PIDController kPoseVelocityXController = new PIDController(5, 0, 0);
-    public static final PIDController kPoseVelocityYController = new PIDController(5, 0, 0);
-    public static final PIDController kPoseThetaController = new PIDController(10, 0, 0);
+    public static final TrapezoidProfile.Constraints kVelocityConstraints =
+        new TrapezoidProfile.Constraints(kMaxVelocity.in(MetersPerSecond), 3);
+
+    public static final TrapezoidProfile.Constraints kThetaConstraints =
+        new TrapezoidProfile.Constraints(kMaxAngularRate.in(RotationsPerSecond), 3);
+    public static final ProfiledPIDController kPoseVelocityXController =
+        new ProfiledPIDController(5, 0, 0, kVelocityConstraints);
+    public static final ProfiledPIDController kPoseVelocityYController =
+        new ProfiledPIDController(5, 0, 0, kVelocityConstraints);
+    public static final ProfiledPIDController kPoseThetaController =
+        new ProfiledPIDController(10, 0, 0, kThetaConstraints);
 
     public static final double kTranslationDeadband = 0.01;
     public static final double kRotationDeadband = 0.01;
@@ -112,6 +121,7 @@ public class Constants {
     // offset to be flush and then the left
     public static final Translation2d rightReefOffset =
         new Translation2d(0.2286, -0.1651); // should probally be robot
+
     // bumper
     // offset to be flush and then the
     // right
