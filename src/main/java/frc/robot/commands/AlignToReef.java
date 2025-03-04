@@ -197,7 +197,7 @@ public class AlignToReef extends Command {
     final double vxf = vx;
     final double vyf = vy;
     final double omegaf = omega;
-    drivetrain.setControl(drive.withVelocityX(-vxf).withVelocityY(-vyf).withRotationalRate(omegaf));
+    drivetrain.setControl(drive.withVelocityX(vxf).withVelocityY(vyf).withRotationalRate(omegaf));
   }
 
   // Called once the command ends or is interrupted.

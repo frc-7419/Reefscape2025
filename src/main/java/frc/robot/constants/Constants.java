@@ -181,7 +181,7 @@ public class Constants {
         kWristTalonFXConfiguration.CurrentLimits;
 
     static {
-      kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
+      kCurrentLimitConfig.StatorCurrentLimit = 57; // current limit in amps
       kCurrentLimitConfig.StatorCurrentLimitEnable = true; // enable current limiting
     }
 
