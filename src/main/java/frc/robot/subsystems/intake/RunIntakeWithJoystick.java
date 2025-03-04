@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RunIntakeWithJoystick extends Command {
   private WristIntakeSubsystem wristIntakeSubsystem;
   private CommandXboxController commandXboxController;
+
   /** Creates a new RunIntakeWithJoystick. */
   public RunIntakeWithJoystick(
       WristIntakeSubsystem wristIntakeSubsystem, CommandXboxController commandXboxController) {

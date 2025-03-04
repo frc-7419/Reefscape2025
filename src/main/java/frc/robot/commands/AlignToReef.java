@@ -96,7 +96,6 @@ public class AlignToReef extends Command {
   public void initialize() {
     Pose2d robotPose = drivetrain.getState().Pose;
     resetPID(robotPose);
-    SmartDashboard.putString("Current Robot Pose", robotPose.toString());
 
     Map<Integer, Pose2d> reefPoseMap = ScoringConstants.reefPoseMap;
 
@@ -112,11 +111,8 @@ public class AlignToReef extends Command {
           break;
         }
       }
-      if (selectedPose != null) {
-        SmartDashboard.putString("Target Selection Mode", "Specific ID");
-      } else {
-        SmartDashboard.putString("Target Selection Mode", "ID Not Found, Defaulting to Closest");
-      }
+      if (selectedPose != null) SmartDashboard.putString("Target Selection Mode", "Specific ID");
+      else SmartDashboard.putString("Target Selection Mode", "ID Not Found, Defaulting to Closest");
     }
 
     if (selectedPose == null) {
