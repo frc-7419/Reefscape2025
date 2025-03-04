@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.819,
-        "y": 2.724
+        "x": 3.7702657408633473,
+        "y": 2.728249999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.819,
-        "y": 2.724
+        "x": 4.1339999999999995,
+        "y": 1.7727499999999998
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef7"
     },
     {
       "anchor": {
-        "x": 6.276158940397351,
-        "y": 0.661734271523178
+        "x": 6.353981731031659,
+        "y": 0.6151277633733616
       },
       "prevControl": {
-        "x": 5.276158940397351,
-        "y": 0.661734271523178
+        "x": 5.353981731031659,
+        "y": 0.6151277633733617
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Processor"
     }
   ],
   "rotationTargets": [],

@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.981,
-        "y": 5.354
+        "x": 3.7702657408633473,
+        "y": 5.33712509931144
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.764128014414133,
-        "y": 3.309522411848244
+        "x": 2.3497500000000002,
+        "y": 5.4777499999999995
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef 11"
     },
     {
       "anchor": {
@@ -20,28 +20,15 @@
         "y": 1.0975786423841043
       },
       "prevControl": {
-        "x": 1.3758307379340167,
-        "y": 1.3040644298374726
+        "x": 2.4960000000000004,
+        "y": 1.7825
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 0,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

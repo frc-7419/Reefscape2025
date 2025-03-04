@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.9960258871822034,
-        "y": 5.834727555614406
+        "x": 1.21875,
+        "y": 5.858
       },
       "prevControl": {
-        "x": 3.2635258871822024,
-        "y": 5.8737275556144075
+        "x": 2.486249999999999,
+        "y": 5.897000000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "TopAlgae"
     }
   ],
   "rotationTargets": [],

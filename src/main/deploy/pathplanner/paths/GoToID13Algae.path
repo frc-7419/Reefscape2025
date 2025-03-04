@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.2850944010416665,
-        "y": 5.289509186921296
+        "x": 5.15496391684322,
+        "y": 5.33712509931144
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.850955222800925,
-        "y": 6.522864221643519
+        "x": 3.720824738602479,
+        "y": 6.570480134033663
       },
       "isLocked": false,
-      "linkedName": "ReefTopRight"
+      "linkedName": "Reef 1"
     },
     {
       "anchor": {
-        "x": 1.272148437499999,
-        "y": 5.84277199074074
+        "x": 1.21875,
+        "y": 5.858
       },
       "prevControl": {
-        "x": 1.8565071614583324,
-        "y": 5.949511357060184
+        "x": 1.8031087239583334,
+        "y": 5.964739366319444
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "TopAlgae"
     }
   ],
   "rotationTargets": [],

@@ -7,6 +7,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Left to Reef1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Reef1to11"
           }
         },
