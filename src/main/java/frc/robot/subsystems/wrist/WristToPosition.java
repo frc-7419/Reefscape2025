@@ -45,6 +45,7 @@ public class WristToPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return pidController.atSetpoint();
+    // return pidController.atSetpoint();
+    return false;
   }
 }
