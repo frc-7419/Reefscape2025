@@ -4,22 +4,15 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -40,17 +33,16 @@ public class AlignToReef extends Command {
   private final ProfiledPIDController pidY = DrivetrainConstants.kPoseVelocityYController;
   private final ProfiledPIDController pidTheta = DrivetrainConstants.kPoseThetaController;
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   /**
    * Creates a new AlignToReef command with a slow mode option.
    *
-   * @param drivetrain      The drivetrain subsystem
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
-   * @param targetReefId    The specific reef ID to target. Use -1 to auto-select
-   * @param slowMode        Whether to enable slow mode (reduced speed when
-   *                        elevator is extended)
+   * @param targetReefId The specific reef ID to target. Use -1 to auto-select
+   * @param slowMode Whether to enable slow mode (reduced speed when elevator is extended)
    */
   public AlignToReef(
       CommandSwerveDrivetrain drivetrain,
@@ -67,10 +59,9 @@ public class AlignToReef extends Command {
   /**
    * Creates a new AlignToReef command.
    *
-   * @param drivetrain      The drivetrain subsystem
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
-   * @param targetReefId    The specific reef ID to target. Use -1 to auto-select
-   *                        closest.
+   * @param targetReefId The specific reef ID to target. Use -1 to auto-select closest.
    */
   public AlignToReef(
       CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition, int targetReefId) {
@@ -80,10 +71,9 @@ public class AlignToReef extends Command {
   /**
    * Creates a new AlignToReef command.
    *
-   * @param drivetrain      The drivetrain subsystem
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
-   * @param slowMode        Whether to enable slow mode (reduced speed when
-   *                        elevator is extended)
+   * @param slowMode Whether to enable slow mode (reduced speed when elevator is extended)
    */
   public AlignToReef(
       CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition, boolean slowMode) {
@@ -94,7 +84,7 @@ public class AlignToReef extends Command {
   /**
    * Creates a new AlignToReef command.
    *
-   * @param drivetrain      The drivetrain subsystem
+   * @param drivetrain The drivetrain subsystem
    * @param scoringPosition The scoring position (LEFT or RIGHT)
    */
   public AlignToReef(CommandSwerveDrivetrain drivetrain, ScoringPosition scoringPosition) {
@@ -152,19 +142,21 @@ public class AlignToReef extends Command {
     }
 
     if (scoringPosition == ScoringPosition.LEFT) {
-      targetPose = selectedPose.transformBy(
-          new Transform2d(ScoringConstants.leftReefOffset, new Rotation2d()));
+      targetPose =
+          selectedPose.transformBy(
+              new Transform2d(ScoringConstants.leftReefOffset, new Rotation2d()));
     } else {
-      targetPose = selectedPose.transformBy(
-          new Transform2d(ScoringConstants.rightReefOffset, new Rotation2d()));
+      targetPose =
+          selectedPose.transformBy(
+              new Transform2d(ScoringConstants.rightReefOffset, new Rotation2d()));
     }
 
-    targetPose = targetPose.transformBy(
-        new Transform2d(new Translation2d(0, 0), new Rotation2d(-Math.PI)));
+    targetPose =
+        targetPose.transformBy(new Transform2d(new Translation2d(0, 0), new Rotation2d(-Math.PI)));
 
     SmartDashboard.putNumberArray(
         "Target Robot Reef Pose",
-        new double[] { targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees() });
+        new double[] {targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees()});
 
     pidX.setTolerance(0.05);
     pidY.setTolerance(0.05);
@@ -208,8 +200,7 @@ public class AlignToReef extends Command {
 
     double vx = pidX.calculate(currentPose.getX());
     double vy = pidY.calculate(currentPose.getY());
-    double omega = pidTheta.calculate(
-        currentPose.getRotation().getRadians());
+    double omega = pidTheta.calculate(currentPose.getRotation().getRadians());
 
     SmartDashboard.putNumber("PID vx", vx);
     SmartDashboard.putNumber("PID vy", vy);
