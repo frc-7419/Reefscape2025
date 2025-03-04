@@ -33,7 +33,9 @@ public class ElevatorMM extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Elevator MM Error", Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)));
+    SmartDashboard.putNumber(
+        "Elevator MM Error",
+        Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)));
   }
 
   // Called once the command ends or is interrupted.
@@ -45,6 +47,6 @@ public class ElevatorMM extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.5;
+    return Math.abs(elevatorSubsystem.getPosition().minus(setpoint).in(Rotations)) < 0.2;
   }
 }

@@ -35,7 +35,7 @@ public class MaintainWristPosition extends Command {
     pidOutput = Math.max(-5, Math.min(pidOutput, 5));
 
     wristSubsystem.setVoltage(pidOutput);
-    SmartDashboard.putNumber("Wrist Error", setpoint.in(Rotations)-currentPos);
+    SmartDashboard.putNumber("Wrist Error", setpoint.in(Rotations) - currentPos);
   }
 
   @Override

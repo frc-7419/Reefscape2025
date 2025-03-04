@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -20,13 +22,17 @@ public class MaintainElevatorPosition extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    elevatorSubsystem.setVelocity(0);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (elevatorSubsystem.getPosition().gt(Rotations.of(0.2))) {
+      elevatorSubsystem.setVelocity(0);
+    } else {
+      elevatorSubsystem.setPower(0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

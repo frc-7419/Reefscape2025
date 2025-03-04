@@ -6,8 +6,6 @@ package frc.robot.subsystems.elevator;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.ElevatorConstants;
-import frc.robot.constants.Constants.WristConstants;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -26,28 +24,11 @@ public class RunElevatorWithJoystick extends Command {
     addRequirements(elevatorSubsystem);
   }
 
-  private boolean checkMovementSafe(double velocity) {
-    boolean aboveLimit =
-        elevatorSubsystem.getPosition().gt(ElevatorConstants.kElevatorBarUpperLimit);
-    boolean belowLimit =
-        elevatorSubsystem.getPosition().lt(ElevatorConstants.kElevatorBarLowerLimit);
-    boolean wristUnsafe = wristAngleSupplier.get().gt(WristConstants.kElevatorSafeWristAngle);
-
-    if (wristUnsafe && ((belowLimit && velocity > 0) || (aboveLimit && velocity < 0))) {
-      return false;
-    }
-
-    return true;
-  }
-
   @Override
   public void initialize() {}
 
   @Override
   public void execute() {
-    double targetVelocity = ElevatorConstants.kMaxVelocity * powerSupplier.getAsDouble();
-    // if (!checkMovementSafe(targetVelocity)) targetVelocity = 0;
-    // elevatorSubsystem.setVelocity(targetVelocity);
     elevatorSubsystem.setPower(powerSupplier.getAsDouble());
   }
 

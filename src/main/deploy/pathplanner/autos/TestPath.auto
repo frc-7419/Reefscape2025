@@ -15,6 +15,12 @@
           "data": {
             "pathName": "Reef5 to Coral Station"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef6"
+          }
         }
       ]
     }

@@ -118,10 +118,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setVoltage(double voltage) {
-    // if (!checkMovementSafe(voltage) && voltage != 0) {
-    //   voltage = feedforward.calculate(0);
-    // }
-    // TODO: fix safe angle
+    if (!checkMovementSafe(voltage) && voltage != 0) {
+      voltage = feedforward.calculate(0);
+    }
     leftElevatorMotor.setVoltage(voltage);
     rightElevatorMotor.setVoltage(voltage);
     topElevatorMotor.setVoltage(voltage);
