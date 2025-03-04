@@ -107,9 +107,9 @@ public class ElevatorSubsystem extends SubsystemBase {
    *     negative values move it down.
    */
   public void setPower(double power) {
-    leftElevatorMotor.set(power);
-    rightElevatorMotor.set(power);
-    topElevatorMotor.set(power);
+    leftElevatorMotor.setVoltage(power * 12);
+    rightElevatorMotor.setVoltage(power * 12);
+    topElevatorMotor.setVoltage(power * 12);
   }
 
   public void setVelocity(double velocity) {
