@@ -11,11 +11,15 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -30,15 +34,11 @@ public class AlignToReef extends Command {
   private Pose2d targetPose;
   private final int targetReefId;
 
-  private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
-  private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
-
-  private static final double SLOW_MODE_FACTOR = 0.2;
   private boolean slowMode = false;
 
-  private final PIDController pidX = DrivetrainConstants.kPoseVelocityXController;
-  private final PIDController pidY = DrivetrainConstants.kPoseVelocityYController;
-  private final PIDController pidTheta = DrivetrainConstants.kPoseThetaController;
+  private final ProfiledPIDController pidX = DrivetrainConstants.kPoseVelocityXController;
+  private final ProfiledPIDController pidY = DrivetrainConstants.kPoseVelocityYController;
+  private final ProfiledPIDController pidTheta = DrivetrainConstants.kPoseThetaController;
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -105,6 +105,7 @@ public class AlignToReef extends Command {
   @Override
   public void initialize() {
     Pose2d robotPose = drivetrain.getState().Pose;
+    resetPID(robotPose);
     SmartDashboard.putString("Current Robot Pose", robotPose.toString());
 
     Map<Integer, Pose2d> reefPoseMap = ScoringConstants.reefPoseMap;
@@ -165,11 +166,39 @@ public class AlignToReef extends Command {
         "Target Robot Reef Pose",
         new double[] { targetPose.getX(), targetPose.getY(), targetPose.getRotation().getDegrees() });
 
-    pidX.setTolerance(0.1);
-    pidY.setTolerance(0.1);
+    pidX.setTolerance(0.05);
+    pidY.setTolerance(0.05);
     pidTheta.setTolerance(Units.degreesToRadians(0.1));
 
+    if (slowMode) {
+      TrapezoidProfile.Constraints velocityConstraints = new TrapezoidProfile.Constraints(1, 1);
+      TrapezoidProfile.Constraints thetaConstraints = new TrapezoidProfile.Constraints(3, 1);
+      pidX.setConstraints(velocityConstraints);
+      pidY.setConstraints(velocityConstraints);
+      pidTheta.setConstraints(thetaConstraints);
+    } else {
+      pidX.setConstraints(DrivetrainConstants.kVelocityConstraints);
+      pidY.setConstraints(DrivetrainConstants.kVelocityConstraints);
+      pidTheta.setConstraints(DrivetrainConstants.kThetaConstraints);
+    }
     pidTheta.enableContinuousInput(-Math.PI, Math.PI);
+
+    pidX.setGoal(targetPose.getX());
+    pidY.setGoal(targetPose.getY());
+    pidTheta.setGoal(targetPose.getRotation().getRadians());
+  }
+
+  public boolean atGoal() {
+    boolean positionReached = pidX.atGoal() && pidY.atGoal();
+    boolean angleReached = pidTheta.atGoal();
+
+    return positionReached && angleReached;
+  }
+
+  private void resetPID(Pose2d robotPose) {
+    pidX.reset(robotPose.getX());
+    pidY.reset(robotPose.getY());
+    pidTheta.reset(robotPose.getRotation().getRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -177,18 +206,10 @@ public class AlignToReef extends Command {
   public void execute() {
     Pose2d currentPose = drivetrain.getState().Pose;
 
-    double vx = pidX.calculate(currentPose.getX(), targetPose.getX());
-    double vy = pidY.calculate(currentPose.getY(), targetPose.getY());
+    double vx = pidX.calculate(currentPose.getX());
+    double vy = pidY.calculate(currentPose.getY());
     double omega = pidTheta.calculate(
-        currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
-
-    double effectiveMaxSpeed = MaxSpeed * (slowMode ? SLOW_MODE_FACTOR : 1.0);
-    double effectiveMaxAngularRate = MaxAngularRate * (slowMode ? SLOW_MODE_FACTOR : 1.0);
-
-    vx = MathUtil.clamp(vx, -effectiveMaxSpeed, effectiveMaxSpeed);
-    vy = MathUtil.clamp(vy, -effectiveMaxSpeed, effectiveMaxSpeed);
-
-    omega = MathUtil.clamp(omega, -effectiveMaxAngularRate, effectiveMaxAngularRate);
+        currentPose.getRotation().getRadians());
 
     SmartDashboard.putNumber("PID vx", vx);
     SmartDashboard.putNumber("PID vy", vy);
@@ -197,7 +218,7 @@ public class AlignToReef extends Command {
     final double vxf = vx;
     final double vyf = vy;
     final double omegaf = omega;
-    drivetrain.setControl(drive.withVelocityX(vxf).withVelocityY(vyf).withRotationalRate(omegaf));
+    drivetrain.setControl(drive.withVelocityX(-vxf).withVelocityY(-vyf).withRotationalRate(omegaf));
   }
 
   // Called once the command ends or is interrupted.
@@ -209,9 +230,6 @@ public class AlignToReef extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean positionReached = pidX.atSetpoint() && pidY.atSetpoint();
-    boolean angleReached = pidTheta.atSetpoint();
-
-    return positionReached && angleReached;
+    return atGoal();
   }
 }
