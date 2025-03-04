@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.49572048611111,
-        "y": 1.4291312210648142
+        "y": 1.4291312210648144
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -125.16150067611598
+    "rotation": -125.43762325923477
   },
   "reversed": false,
   "folder": "To Coral Station",
