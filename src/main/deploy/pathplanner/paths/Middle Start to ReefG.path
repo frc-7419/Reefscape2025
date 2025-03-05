@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.30052538209607,
-        "y": 2.618930386872271
+        "x": 6.633674561947153,
+        "y": 4.138391941197307
       },
       "isLocked": false,
       "linkedName": "Start Mid"
     },
     {
       "anchor": {
-        "x": 5.129013837394068,
-        "y": 2.487070478019068
+        "x": 6.101657673463983,
+        "y": 4.195950989804025
       },
       "prevControl": {
-        "x": 5.349216500357902,
-        "y": 2.654754846495676
+        "x": 6.864471685541429,
+        "y": 4.1164772223649315
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef 3"
+      "linkedName": "ReefG"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 120.8313189268398
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "From Start",

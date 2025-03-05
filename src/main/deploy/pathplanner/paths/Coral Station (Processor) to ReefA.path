@@ -9,23 +9,23 @@
       "prevControl": null,
       "nextControl": {
         "x": 2.2357351583605487,
-        "y": 2.672867118762603
+        "y": 2.6728671187626025
       },
       "isLocked": false,
       "linkedName": "Coral Station (Processor)"
     },
     {
       "anchor": {
-        "x": 2.8778998362445414,
-        "y": 3.8259718715884277
+        "x": 2.8428893008474576,
+        "y": 3.8868255097987285
       },
       "prevControl": {
-        "x": 2.488213183320848,
-        "y": 2.837836769541229
+        "x": 2.453202647923764,
+        "y": 2.89869040775153
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef 1"
+      "linkedName": "ReefA"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.9728335293076923
   },
   "reversed": false,
   "folder": "From Coral Station",

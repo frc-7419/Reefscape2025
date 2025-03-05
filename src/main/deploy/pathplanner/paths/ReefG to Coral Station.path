@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.977506921149169,
-        "y": 1.3891074568179125
+        "x": 6.949440959348517,
+        "y": 7.198123427568856
       },
       "isLocked": false,
-      "linkedName": "Reef 4"
+      "linkedName": "ReefG"
     },
     {
       "anchor": {
-        "x": 1.2898160309770743,
-        "y": 0.9688280397106973
+        "x": 1.3147132573689957,
+        "y": 7.132712711517468
       },
       "prevControl": {
-        "x": 4.251789772296519,
-        "y": 1.6071096514005112
+        "x": 1.2022245762711865,
+        "y": 6.176339049258474
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station (Processor)"
+      "linkedName": "Coral Station"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 55.0
+    "rotation": -55.0
   },
   "reversed": false,
   "folder": "To Coral Station",

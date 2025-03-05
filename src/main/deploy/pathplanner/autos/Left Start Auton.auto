@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Start to Reef5"
+            "pathName": "Left Start to ReefF"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef5 to Coral Station"
+            "pathName": "ReefF to Coral Station"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef6"
+            "pathName": "Coral Station to ReefD"
           }
         },
         {
