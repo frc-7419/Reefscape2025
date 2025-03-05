@@ -135,12 +135,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     if (!safetyCheck()) return;
 
-    if (!checkMovementSafe(setpoint.minus(getPosition()).in(Rotations))){
+    if (!checkMovementSafe(setpoint.minus(getPosition()).in(Rotations))) {
       double voltage = feedforward.calculate(0);
       setVoltage(voltage);
       return;
     }
-    
+
     leftElevatorMotor.setControl(
         motionMagicRequest
             .withPosition(setpoint)

@@ -19,8 +19,8 @@ public class ScoringSetpoints extends Command {
 
   Angle wristSetpoint;
 
-  private PIDController pidController = new PIDController(WristConstants.pidKp, WristConstants.pidKi,
-      WristConstants.pidKd);
+  private PIDController pidController =
+      new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
 
   private void setWristAngle(Angle targetPosition) {
     if (!targetPosition.equals(wristSetpoint)) {
@@ -57,7 +57,7 @@ public class ScoringSetpoints extends Command {
     elevator.positionMM(Rotations.of(targetPosition.elevatorHeight));
 
     if ((targetPosition.elevatorHeight > elevatorRotations
-        && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
+            && elevatorRotations < ElevatorConstants.kElevatorBarLowerLimit.in(Rotations))
         || (targetPosition.elevatorHeight < elevatorRotations
             && elevatorRotations > ElevatorConstants.kElevatorBarUpperLimit.in(Rotations))) {
       setWristAngle(upAngle);
@@ -79,8 +79,8 @@ public class ScoringSetpoints extends Command {
   @Override
   public boolean isFinished() {
     return elevator
-        .getPosition()
-        .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1))
+            .getPosition()
+            .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1))
         && wrist.atSetpoint();
   }
 }

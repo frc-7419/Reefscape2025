@@ -54,6 +54,19 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem {
+  public static class VisionResult {
+    public final EstimatedRobotPose estimatedRobotPose;
+    public final Matrix<N3, N1> stdDevs;
+    public final String cameraName;
+
+    public VisionResult(
+        EstimatedRobotPose estimatedRobotPose, Matrix<N3, N1> stdDevs, String cameraName) {
+      this.estimatedRobotPose = estimatedRobotPose;
+      this.stdDevs = stdDevs;
+      this.cameraName = cameraName;
+    }
+  }
+
   private final List<PhotonCamera> cameras = new ArrayList<>();
   private final List<PhotonPoseEstimator> photonEstimators = new ArrayList<>();
 
@@ -259,5 +272,74 @@ public class VisionSubsystem {
   public Field2d getSimDebugField() {
     if (!Robot.isSimulation()) return null;
     return visionSim.getDebugField();
+  }
+
+  private Matrix<N3, N1> computeStdDevs(
+      Optional<EstimatedRobotPose> estimatedPoseOpt,
+      List<PhotonTrackedTarget> targets,
+      PhotonPoseEstimator estimator) {
+    if (estimatedPoseOpt.isEmpty()) {
+      return kSingleTagStdDevs;
+    } else {
+      var estStdDevs = kSingleTagStdDevs;
+      int numTags = 0;
+      double avgDist = 0;
+
+      EstimatedRobotPose estimatedPose = estimatedPoseOpt.get();
+      for (var tgt : targets) {
+        var tagPoseOpt = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
+        if (tagPoseOpt.isEmpty()) continue;
+        numTags++;
+        avgDist +=
+            tagPoseOpt
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.estimatedPose.toPose2d().getTranslation());
+      }
+      if (numTags == 0) {
+        return kSingleTagStdDevs;
+      } else {
+        avgDist /= numTags;
+        if (numTags > 1) {
+          estStdDevs = kMultiTagStdDevs;
+        }
+        if (numTags == 1 && avgDist > 4) {
+          estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        } else {
+          estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+        }
+        return estStdDevs;
+      }
+    }
+  }
+
+  public List<VisionResult> getIndividualVisionEstimates() {
+    List<VisionResult> visionResults = new ArrayList<>();
+    for (int i = 0; i < cameras.size(); i++) {
+      PhotonCamera camera = cameras.get(i);
+      PhotonPoseEstimator estimator = photonEstimators.get(i);
+
+      var allResults = camera.getAllUnreadResults();
+      for (var pipelineResult : allResults) {
+        Optional<EstimatedRobotPose> visionEst = estimator.update(pipelineResult);
+        if (visionEst.isPresent()) {
+          Matrix<N3, N1> stdDevs =
+              computeStdDevs(visionEst, pipelineResult.getTargets(), estimator);
+          visionResults.add(new VisionResult(visionEst.get(), stdDevs, camera.getName()));
+
+          if (Robot.isSimulation()) {
+            final int index = i;
+            visionEst.ifPresentOrElse(
+                est ->
+                    getSimDebugField()
+                        .getObject("VisionEstimation" + index)
+                        .setPose(est.estimatedPose.toPose2d()),
+                () -> getSimDebugField().getObject("VisionEstimation" + index).setPoses());
+          }
+        }
+      }
+    }
+    return visionResults;
   }
 }

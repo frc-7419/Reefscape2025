@@ -8,6 +8,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.hal.can.CANStatus;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
+import frc.robot.subsystems.VisionSubsystem.VisionResult;
 import frc.robot.util.CombinedAlert;
 
 public class Robot extends TimedRobot {
@@ -92,19 +94,18 @@ public class Robot extends TimedRobot {
     }
 
     CommandScheduler.getInstance().run();
-    var visionEst = m_robotContainer.photonvision.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-        est -> {
-          var estStdDevs = m_robotContainer.photonvision.getEstimationStdDevs();
+    for (VisionResult result : m_robotContainer.photonvision.getIndividualVisionEstimates()) {
+      Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
+      m_robotContainer.drivetrain.addVisionMeasurement(
+          pose,
+          Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
+          result.stdDevs);
 
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              est.estimatedPose.toPose2d(),
-              Utils.fpgaToCurrentTime(est.timestampSeconds),
-              estStdDevs);
+      SmartDashboard.putNumberArray(
+          "Vision Pose " + result.cameraName,
+          new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
+    }
 
-          vision.setRobotPose(est.estimatedPose.toPose2d());
-        });
-    SmartDashboard.putData("Vision Field", vision);
     updateRobotStatus();
   }
 
