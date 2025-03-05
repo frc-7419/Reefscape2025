@@ -91,7 +91,7 @@ public class RobotContainer {
   private final CameraConfig photonCamOne =
       new CameraConfig("Cam1", VisionConstants.kRobotToCamOne);
   private final CameraConfig photonCamTwo =
-      new CameraConfig("Cam2", VisionConstants.kRobotToCamOne);
+      new CameraConfig("Cam2", VisionConstants.kRobotToCamTwo);
 
   private final List<CameraConfig> cameraConfigs =
       new ArrayList<CameraConfig>() {
