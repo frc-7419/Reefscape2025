@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right to Reef3"
+            "pathName": "Middle Start to Reef3"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station (Processor) to Reef2"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef2 To Coral Station"
+            "pathName": "Reef2 To Coral Station (Processor)"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station (Processor) to Reef2"
           }
         },
         {
@@ -68,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "StartFromMiddle",
   "choreoAuto": false
 }

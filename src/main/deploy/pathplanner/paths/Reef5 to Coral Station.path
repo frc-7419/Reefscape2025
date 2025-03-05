@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.414136646412036,
-        "y": 5.388678385416666
+        "x": 5.336372401350635,
+        "y": 5.364237122616526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.283898678058126,
-        "y": 7.037308006795773
+        "x": 4.206134432996725,
+        "y": 7.012866743995633
       },
       "isLocked": false,
-      "linkedName": "Left Start to Coral"
+      "linkedName": "Reef 5"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": "To Coral Station",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.2837480679582
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
