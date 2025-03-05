@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.927279575342161,
-        "y": 6.397931224273471
+        "x": 1.7697487377183405,
+        "y": 6.341489833515284
       },
       "isLocked": false,
       "linkedName": "Coral Station"
@@ -20,8 +20,8 @@
         "y": 5.537743500955241
       },
       "prevControl": {
-        "x": 2.8768808097915586,
-        "y": 6.3005112280474025
+        "x": 3.716322666484716,
+        "y": 6.449860125545851
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "From Coral Station",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -55.0

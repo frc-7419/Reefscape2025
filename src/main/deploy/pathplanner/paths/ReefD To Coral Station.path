@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6226886689866475,
-        "y": 6.304265183176107
+        "x": 3.608451316866812,
+        "y": 5.9490716259552405
       },
       "isLocked": false,
       "linkedName": "ReefD"
     },
     {
       "anchor": {
-        "x": 1.3147132573689957,
-        "y": 7.132712711517468
+        "x": 1.312917064683406,
+        "y": 7.15950591907751
       },
       "prevControl": {
-        "x": 2.242393189334803,
-        "y": 6.563678017112727
+        "x": 1.8203414983624466,
+        "y": 6.721983317412663
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
