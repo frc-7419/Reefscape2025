@@ -43,7 +43,7 @@ public class AlignAndScore extends SequentialCommandGroup {
         // new AlignToReef(drivetrain, scoringPosition, true),
         
          new ParallelCommandGroup(
-        //  new AlignToReef(drivetrain, scoringPosition, true),
+         new AlignToReef(drivetrain, scoringPosition, true),
          new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
          new ParallelDeadlineGroup(
          new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)

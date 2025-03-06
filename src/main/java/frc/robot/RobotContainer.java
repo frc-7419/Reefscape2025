@@ -265,10 +265,8 @@ public class RobotContainer {
     operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-    operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
-    operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
-
-    operator.y().onTrue(alignAndScoreL4Left);
+    operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
+    operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
@@ -354,6 +352,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return new PathPlannerAuto("Single Command");
+    return new PathPlannerAuto("Three Coral Right");
   }
 }

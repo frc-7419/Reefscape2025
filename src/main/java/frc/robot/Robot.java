@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     for (VisionResult result : m_robotContainer.photonvision.getIndividualVisionEstimates()) {
       Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
+
       m_robotContainer.drivetrain.addVisionMeasurement(
           pose,
           Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
