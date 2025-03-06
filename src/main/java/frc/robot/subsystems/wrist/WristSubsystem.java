@@ -68,7 +68,8 @@ public class WristSubsystem extends SubsystemBase {
             WristConstants.feedforwardKv);
     pidController =
         new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
-    brake();
+    pidController.setTolerance(0.1);
+        brake();
   }
 
   /**

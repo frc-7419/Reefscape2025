@@ -37,6 +37,7 @@ import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorMM;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
 import frc.robot.subsystems.elevator.RunElevatorWithJoystick;
@@ -44,6 +45,7 @@ import frc.robot.subsystems.intake.IntakeWithBeamBreak;
 import frc.robot.subsystems.intake.RunIntakeWithJoystick;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.RunWristWithJoystick;
+import frc.robot.subsystems.wrist.WristPIDTest;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristToPosition;
 import java.util.ArrayList;
@@ -260,14 +262,16 @@ public class RobotContainer {
      * operator.leftBumper().whileTrue(scoreL1);
      */
     // operator.x().whileTrue(new ElevatorPIDTest(elevator));
-    operator.start().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
+    operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
     operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
     operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
+    operator.y().onTrue(alignAndScoreL4Left);
+
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
-    wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.3));
+    wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
 
     elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
     DoubleSupplier elevatorPowerSupplier = () -> operator.getLeftY();
@@ -346,20 +350,10 @@ public class RobotContainer {
             Commands.defer(
                 () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME),
                 scoringDependencies));
-
-    operator
-        .povUp()
-        .whileTrue(
-            Commands.defer(
-                () -> {
-                  if (coral) return new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2);
-                  else return new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE);
-                },
-                scoringDependencies));
   }
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return new PathPlannerAuto("Three Coral Right");
+    return new PathPlannerAuto("Single Command");
   }
 }

@@ -75,11 +75,11 @@ public class Constants {
     public enum ScoringSetpoint {
       L1("L1", 0, 0.38, false),
       L2("L2", 5, 0.38, true),
-      L3("L3", 12.7, 0.38, true),
-      L4("L4", 27.5, 0.38, true),
+      L3("L3", 12.5, 0.38, true),
+      L4("L4", 23.74, 0.34, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
-      BARGE("BARGE", 29.5, 0.20, true),
+      BARGE("BARGE", 29.5, 0.43, true),
       HOME("HOME", 0, 0.46, true);
 
       public final String name;
@@ -171,7 +171,7 @@ public class Constants {
     public static final TalonFXConfiguration kWristTalonFXConfiguration =
         new TalonFXConfiguration();
 
-    public static final double pidKp = 26;
+    public static final double pidKp = 18;
     public static final double pidKi = 0.0;
     public static final double pidKd = 0.2;
 
@@ -198,7 +198,7 @@ public class Constants {
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
 
-    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.40);
+    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.41);
   }
 
   public static class WristIntakeConstants {
@@ -238,9 +238,9 @@ public class Constants {
     static {
       kElevatorSlot0Configs.kG = 0.42; // output to overcome gravity (output)
       kElevatorSlot0Configs.kS = 0.52; // output to overcome static friction (output)
-      kElevatorSlot0Configs.kV = 0.01; // output per unit of target velocity (output/rps)
-      kElevatorSlot0Configs.kA = 0.0005; // output per unit of target acceleration (output/(rps/s))
-      kElevatorSlot0Configs.kP = 0.4; // output per unit of error in position (output)
+      kElevatorSlot0Configs.kV = 0.263; // output per unit of target velocity (output/rps)
+      kElevatorSlot0Configs.kA = 0.02; // output per unit of target acceleration (output/(rps/s))
+      kElevatorSlot0Configs.kP = 3; // output per unit of error in position (output)
       kElevatorSlot0Configs.kI = 0; // output per unit of integrated error in position (output)
       kElevatorSlot0Configs.kD = 0.1; // output per unit of error in velocity (output/rps)
     }
@@ -250,10 +250,9 @@ public class Constants {
         kElevatorTalonFXConfiguration.MotionMagic;
 
     static {
-      kMotionMagicConfig.MotionMagicCruiseVelocity = 0;
       // system’s max velocity
-      kMotionMagicConfig.MotionMagicExpo_kV = 0.01;
-      kMotionMagicConfig.MotionMagicExpo_kA = 0.0005;
+      kMotionMagicConfig.MotionMagicCruiseVelocity = 30;
+      kMotionMagicConfig.MotionMagicAcceleration = 40;
     }
 
     public static final double pidKp = 0.59;

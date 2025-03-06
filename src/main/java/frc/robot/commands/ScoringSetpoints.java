@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
@@ -41,7 +42,8 @@ public class ScoringSetpoints extends Command {
     this.elevator = elevator;
     this.wrist = wrist;
     this.targetPosition = position;
-    upAngle = position.name.equals("BARGE") ? Rotations.of(0.04) : Rotations.of(0.32);
+    boolean isAlgae = position.name.equals("BARGE") || position.name.contains("Algae");
+    upAngle = isAlgae ? Rotations.of(0.04) : Rotations.of(0.38);
     addRequirements(elevator, wrist);
   }
 
@@ -68,6 +70,11 @@ public class ScoringSetpoints extends Command {
     } else {
       setWristAngle(upAngle);
     }
+
+    SmartDashboard.putBoolean("ElevatorAtSepoint", elevator
+    .getPosition()
+    .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1)));
+    SmartDashboard.putBoolean("WristAtSetpoint", pidController.atSetpoint());
   }
 
   @Override
@@ -81,6 +88,6 @@ public class ScoringSetpoints extends Command {
     return elevator
             .getPosition()
             .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1))
-        && wrist.atSetpoint();
+        && pidController.atSetpoint();
   }
 }

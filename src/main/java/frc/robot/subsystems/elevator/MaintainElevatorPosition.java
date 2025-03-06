@@ -27,7 +27,7 @@ public class MaintainElevatorPosition extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (elevatorSubsystem.getPosition().gt(Rotations.of(0.2))) {
+    if (elevatorSubsystem.getPosition().gt(Rotations.of(0.5))) {
       elevatorSubsystem.setVelocity(0);
     } else {
       elevatorSubsystem.setPower(0);
