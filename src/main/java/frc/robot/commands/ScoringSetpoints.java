@@ -43,7 +43,7 @@ public class ScoringSetpoints extends Command {
     this.wrist = wrist;
     this.targetPosition = position;
     boolean isAlgae = position.name.equals("BARGE") || position.name.contains("Algae");
-    upAngle = isAlgae ? Rotations.of(0.04) : Rotations.of(0.38);
+    upAngle = isAlgae ? Rotations.of(0.0) : Rotations.of(0.38);
     addRequirements(elevator, wrist);
   }
 
@@ -71,9 +71,11 @@ public class ScoringSetpoints extends Command {
       setWristAngle(upAngle);
     }
 
-    SmartDashboard.putBoolean("ElevatorAtSepoint", elevator
-    .getPosition()
-    .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1)));
+    SmartDashboard.putBoolean(
+        "ElevatorAtSepoint",
+        elevator
+            .getPosition()
+            .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1)));
     SmartDashboard.putBoolean("WristAtSetpoint", pidController.atSetpoint());
   }
 

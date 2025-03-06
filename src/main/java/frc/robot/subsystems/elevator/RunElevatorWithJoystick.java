@@ -29,7 +29,7 @@ public class RunElevatorWithJoystick extends Command {
 
   @Override
   public void execute() {
-    elevatorSubsystem.setPower(powerSupplier.getAsDouble());
+    elevatorSubsystem.setPower(-powerSupplier.getAsDouble());
   }
 
   @Override

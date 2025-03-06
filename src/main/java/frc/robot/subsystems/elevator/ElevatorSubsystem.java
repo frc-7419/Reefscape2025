@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -41,8 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           ElevatorConstants.feedforwardKv,
           ElevatorConstants.feedforwardKa);
 
-  private final MotionMagicVoltage motionMagicRequest =
-      new MotionMagicVoltage(0).withSlot(0);
+  private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
   private final SysIdRoutine routine =
       new SysIdRoutine(
           new SysIdRoutine.Config(

@@ -37,7 +37,8 @@ public class WristToPosition extends Command {
     double currentPos = wristSubsystem.getPosition().in(Rotations);
     double pidOutput = pidController.calculate(currentPos);
     pidOutput = Math.max(-5, Math.min(pidOutput, 5));
-    double feedforwardCalculation = ff.calculate(wristSubsystem.getPosition().minus(Degrees.of(90)).in(Radians), 0);
+    double feedforwardCalculation =
+        ff.calculate(wristSubsystem.getPosition().minus(Degrees.of(90)).in(Radians), 0);
     pidOutput += feedforwardCalculation;
 
     wristSubsystem.setVoltage(pidOutput);

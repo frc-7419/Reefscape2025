@@ -22,7 +22,7 @@ public class RunWristWithJoystick extends Command {
 
   @Override
   public void execute() {
-    wristSubsystem.setPower(powerSupplier.getAsDouble());
+    wristSubsystem.setPower(-powerSupplier.getAsDouble());
   }
 
   @Override

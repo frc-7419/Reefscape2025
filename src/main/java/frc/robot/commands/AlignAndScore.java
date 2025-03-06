@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -39,20 +38,19 @@ public class AlignAndScore extends SequentialCommandGroup {
       ScoringSetpoint scoringSetpoint) {
 
     addCommands(
-      //commented for testing
+        // commented for testing
         // new AlignToReef(drivetrain, scoringPosition, true),
-        
-         new ParallelCommandGroup(
-         new AlignToReef(drivetrain, scoringPosition, true),
-         new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
-         new ParallelDeadlineGroup(
-         new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
-          .until(() -> wristIntake.beamBreakisTriggered()).finallyDo(() -> wristIntake.setPower(0)),
-         new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
-         new MaintainElevatorPosition(elevator)),
-         new MaintainElevatorPosition(elevator).withTimeout(1),
-         new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
-         
-        );
+
+        new ParallelCommandGroup(
+            new AlignToReef(drivetrain, scoringPosition, true),
+            new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
+        new ParallelDeadlineGroup(
+            new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
+                .until(() -> wristIntake.beamBreakisTriggered())
+                .finallyDo(() -> wristIntake.setPower(0)),
+            new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
+            new MaintainElevatorPosition(elevator)),
+        new MaintainElevatorPosition(elevator).withTimeout(1),
+        new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
   }
 }
