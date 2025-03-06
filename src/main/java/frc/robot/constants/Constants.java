@@ -146,7 +146,7 @@ public class Constants {
                 Units.inchesToMeters(11.375),
                 Units.inchesToMeters(11.375),
                 Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(61.875), Units.degreesToRadians(-90)));
+            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(90)));
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     public static final AprilTagFieldLayout kTagLayout =
@@ -154,10 +154,10 @@ public class Constants {
     public static final Transform3d kRobotToCamTwo =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(-11.375),
                 Units.inchesToMeters(11.375),
+                Units.inchesToMeters(-11.375),
                 Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(61.875), Units.degreesToRadians(0)));
+            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(0)));
   }
 
   public static class WristConstants {

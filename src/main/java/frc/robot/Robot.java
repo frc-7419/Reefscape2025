@@ -106,6 +106,10 @@ public class Robot extends TimedRobot {
           new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
     }
 
+    if(isSimulation()){
+      m_robotContainer.photonvision.simulationPeriodic(m_robotContainer.drivetrain.getState().Pose);
+    }
+
     updateRobotStatus();
   }
 

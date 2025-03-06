@@ -94,7 +94,7 @@ public class VisionSubsystem {
 
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(640, 360, Rotation2d.fromDegrees(90));
+        cameraProp.setCalibration(1280, 960, Rotation2d.fromDegrees(90));
         cameraProp.setCalibError(0.25, 0.10);
         cameraProp.setFPS(60);
         cameraProp.setAvgLatencyMs(10);
