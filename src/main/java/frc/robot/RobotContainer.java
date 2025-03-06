@@ -85,7 +85,8 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   private WristSubsystem wrist = new WristSubsystem();
-  private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition);
+  private final ElevatorSubsystem elevator =
+      new ElevatorSubsystem(wrist::getPosition, drivetrain::getPigeon2);
 
   public final VisionSubsystem photonvision;
   private final CameraConfig photonCamOne =

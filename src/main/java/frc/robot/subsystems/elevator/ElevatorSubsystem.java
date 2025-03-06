@@ -1,6 +1,7 @@
 package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Celsius;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -9,6 +10,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -32,6 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       new TalonFX(ElevatorConstants.kTopElevatorMotorId, RobotConstants.kCANivoreBus);
 
   private final Supplier<Angle> wristAngleSupplier;
+  private final Supplier<Pigeon2> robotPigeonSupplier;
+  private boolean tipLock = false;
 
   private final ElevatorFeedforward feedforward =
       new ElevatorFeedforward(
@@ -85,18 +89,17 @@ public class ElevatorSubsystem extends SubsystemBase {
           "The elevator motors are overheating. Subsystem disabled.");
 
   /** Creates a new {@code ElevatorSubsystem}. */
-  public ElevatorSubsystem(Supplier<Angle> wristAngleSupplier) {
-    // leftElevatorMotor.setPosition(0);
-    // rightElevatorMotor.setPosition(0);
-    // topElevatorMotor.setPosition(0);
-
+  public ElevatorSubsystem(
+      Supplier<Angle> wristAngleSupplier, Supplier<Pigeon2> robotPigeonSupplier) {
     this.wristAngleSupplier = wristAngleSupplier;
+    this.robotPigeonSupplier = robotPigeonSupplier;
 
     leftElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     rightElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
     topElevatorMotor.getConfigurator().apply(ElevatorConstants.kElevatorTalonFXConfiguration);
 
     brake();
+    zeroEncoder();
   }
 
   /**
@@ -120,6 +123,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (!checkMovementSafe(voltage) && voltage != 0) {
       voltage = feedforward.calculate(0);
     }
+
+    if (tipLock) return;
+
     leftElevatorMotor.setVoltage(voltage);
     rightElevatorMotor.setVoltage(voltage);
     topElevatorMotor.setVoltage(voltage);
@@ -162,11 +168,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void brake() {
-    // Redundancy to ensure all motors are stopped
-    leftElevatorMotor.set(0);
-    rightElevatorMotor.set(0);
-    topElevatorMotor.set(0);
-
     leftElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     rightElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
     topElevatorMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -217,6 +218,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
+
+    SmartDashboard.putBoolean("TIPPING", tipLock);
+
+    double pitch = robotPigeonSupplier.get().getPitch().getValue().in(Degrees);
+    double roll = robotPigeonSupplier.get().getRoll().getValue().in(Degrees);
+
+    if (isTipping(pitch, roll, RobotConstants.kTippingThresholdDeg)) {
+      tipLock = true;
+      positionMM(Rotations.of(0));
+    } else {
+      tipLock = false;
+    }
+  }
+
+  private boolean isTipping(double pitchDegrees, double rollDegrees, double thresholdDeg) {
+    return (Math.abs(pitchDegrees) > thresholdDeg) || (Math.abs(rollDegrees) > thresholdDeg);
   }
 
   /**
