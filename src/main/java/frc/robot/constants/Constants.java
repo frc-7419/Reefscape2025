@@ -40,17 +40,17 @@ public class Constants {
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
     public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(3);
-    public static final TrapezoidProfile.Constraints kVelocityConstraints =
-        new TrapezoidProfile.Constraints(kMaxVelocity.in(MetersPerSecond), 3);
+    public static final TrapezoidProfile.Constraints kVelocityConstraints = new TrapezoidProfile.Constraints(
+        kMaxVelocity.in(MetersPerSecond), 3);
 
-    public static final TrapezoidProfile.Constraints kThetaConstraints =
-        new TrapezoidProfile.Constraints(kMaxAngularRate.in(RotationsPerSecond), 3);
-    public static final ProfiledPIDController kPoseVelocityXController =
-        new ProfiledPIDController(5, 0, 0, kVelocityConstraints);
-    public static final ProfiledPIDController kPoseVelocityYController =
-        new ProfiledPIDController(5, 0, 0, kVelocityConstraints);
-    public static final ProfiledPIDController kPoseThetaController =
-        new ProfiledPIDController(10, 0, 0, kThetaConstraints);
+    public static final TrapezoidProfile.Constraints kThetaConstraints = new TrapezoidProfile.Constraints(
+        kMaxAngularRate.in(RotationsPerSecond), 3);
+    public static final ProfiledPIDController kPoseVelocityXController = new ProfiledPIDController(5.5, 0, 0,
+        kVelocityConstraints);
+    public static final ProfiledPIDController kPoseVelocityYController = new ProfiledPIDController(5.5, 0, 0,
+        kVelocityConstraints);
+    public static final ProfiledPIDController kPoseThetaController = new ProfiledPIDController(10, 0, 0,
+        kThetaConstraints);
 
     public static final double kTranslationDeadband = 0.01;
     public static final double kRotationDeadband = 0.01;
@@ -70,7 +70,7 @@ public class Constants {
     public static final double wristSetPointL2 = 0; // replace
     public static final double wristSetPointL1 = 0; // replace
 
-    public static int[] reefIds = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+    public static int[] reefIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
 
     public enum ScoringSetpoint {
       L1("L1", 0, 0.38, false),
@@ -96,8 +96,7 @@ public class Constants {
     }
 
     public static Map<Integer, Pose2d> getReefPoseMap() {
-      AprilTagFieldLayout fieldLayout =
-          AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+      AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
       Map<Integer, Pose2d> poseMap = new HashMap<>();
 
@@ -115,12 +114,10 @@ public class Constants {
 
     public static Map<Integer, Pose2d> reefPoseMap = getReefPoseMap();
 
-    public static final Translation2d leftReefOffset =
-        new Translation2d(0.444, 0.1651); // should probally be robot
+    public static final Translation2d leftReefOffset = new Translation2d(0.444, 0.1651); // should probally be robot
     // bumper
     // offset to be flush and then the left
-    public static final Translation2d rightReefOffset =
-        new Translation2d(0.444, -0.1651); // should probally be robot
+    public static final Translation2d rightReefOffset = new Translation2d(0.444, -0.1651); // should probally be robot
 
     // bumper
     // offset to be flush and then the
@@ -140,36 +137,32 @@ public class Constants {
   }
 
   public static class VisionConstants {
-    public static final Transform3d kRobotToCamOne =
-        new Transform3d(
-            new Translation3d(
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(90)));
+    public static final Transform3d kRobotToCamOne = new Transform3d(
+        new Translation3d(
+            Units.inchesToMeters(11.375),
+            Units.inchesToMeters(11.375),
+            Units.inchesToMeters(9)),
+        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(90)));
     public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(3, 5, 7);
     public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-    public static final AprilTagFieldLayout kTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    public static final Transform3d kRobotToCamTwo =
-        new Transform3d(
-            new Translation3d(
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(-11.375),
-                Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(0)));
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
+        .loadField(AprilTagFields.k2025ReefscapeWelded);
+    public static final Transform3d kRobotToCamTwo = new Transform3d(
+        new Translation3d(
+            Units.inchesToMeters(11.375),
+            Units.inchesToMeters(-11.375),
+            Units.inchesToMeters(9)),
+        new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(0)));
   }
 
   public static class WristConstants {
     public static final int kWristMotorID = 12; // Arbitrary ID (change)
     public static final int kWristEncoderID = 0; // Arbitrary ID (change)
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1); // Arbitrary velocity (change)
     public static final Angle kAngleTolerance = Degrees.of(5); // Arbitrary angle (change)
     public static final Angle kMaxAngle = Degrees.of(90); // Arbitrary angle (change)
     public static final Angle kMinAngle = Degrees.of(90); // Arbitrary angle (change)
-    public static final TalonFXConfiguration kWristTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final TalonFXConfiguration kWristTalonFXConfiguration = new TalonFXConfiguration();
 
     public static final double pidKp = 18;
     public static final double pidKi = 0.0;
@@ -180,15 +173,13 @@ public class Constants {
     public static final double feedforwardKs = 0.0;
 
     public static final Angle wristAngleOffset = Degrees.of(-184);
-    public static final MotorOutputConfigs kMotorOutputConfig =
-        kWristTalonFXConfiguration.MotorOutput;
+    public static final MotorOutputConfigs kMotorOutputConfig = kWristTalonFXConfiguration.MotorOutput;
 
     static {
       kMotorOutputConfig.Inverted = InvertedValue.Clockwise_Positive;
     }
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kWristTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kWristTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 57; // current limit in amps
@@ -204,13 +195,10 @@ public class Constants {
   public static class WristIntakeConstants {
     public static final int kWristIntakeBeamBreakChannel = 1; // Arbritary ID
     public static final int kWristIntakeMotorID = 13; // Arbitrary ID (change)
-    public static final AngularVelocity kMaxSpeed =
-        RotationsPerSecond.of(1); // Arbitrary velocity (change)
-    public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(1); // Arbitrary velocity (change)
+    public static final TalonFXConfiguration kWristIntakeTalonFXConfiguration = new TalonFXConfiguration();
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kWristIntakeTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kWristIntakeTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps
@@ -228,8 +216,7 @@ public class Constants {
     public static final Angle kMaxRotations = Rotations.of(29.5); // Taken from canvas
     public static final Angle kMinRotations = Rotations.of(0); // Taken from canvas
     public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(5);
-    public static final TalonFXConfiguration kElevatorTalonFXConfiguration =
-        new TalonFXConfiguration();
+    public static final TalonFXConfiguration kElevatorTalonFXConfiguration = new TalonFXConfiguration();
     public static final Angle kElevatorBarUpperLimit = Rotations.of(2.5);
     public static final Angle kElevatorBarLowerLimit = Rotations.of(9.4);
 
@@ -246,8 +233,7 @@ public class Constants {
     }
 
     // https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/motion-magic.html#motion-magic-expo
-    public static final MotionMagicConfigs kMotionMagicConfig =
-        kElevatorTalonFXConfiguration.MotionMagic;
+    public static final MotionMagicConfigs kMotionMagicConfig = kElevatorTalonFXConfiguration.MotionMagic;
 
     static {
       // system’s max velocity
@@ -269,8 +255,7 @@ public class Constants {
 
     public static final double joystickDeadband = 0.01;
 
-    public static final CurrentLimitsConfigs kCurrentLimitConfig =
-        kElevatorTalonFXConfiguration.CurrentLimits;
+    public static final CurrentLimitsConfigs kCurrentLimitConfig = kElevatorTalonFXConfiguration.CurrentLimits;
 
     static {
       kCurrentLimitConfig.StatorCurrentLimit = 80; // current limit in amps

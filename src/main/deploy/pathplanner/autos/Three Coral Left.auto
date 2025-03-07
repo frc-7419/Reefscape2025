@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right to Reef3"
+            "pathName": "Left to Reef5"
           }
         },
         {
@@ -19,25 +19,49 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef3 to Coral Station"
+            "pathName": "Reef5 to Coral Station"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 1.0
+            "name": "IntakeCoral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station to Reef6"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "AlignAndScoreL4Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef6 To Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL4Left"
           }
         }
       ]

@@ -3,48 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.83026294849537,
-        "y": 4.037869285300926
+        "x": 7.558823423032407,
+        "y": 1.2415657552083326
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.042149522569442,
-        "y": 4.530279586226852
+        "x": 2.7496306980423055,
+        "y": 1.297371750026648
       },
       "isLocked": false,
-      "linkedName": "Reef 4"
+      "linkedName": "Start Right"
     },
     {
       "anchor": {
-        "x": 6.441175491898147,
-        "y": 6.6399106626157405
+        "x": 1.7614871376439143,
+        "y": 1.4244320518092104
       },
       "prevControl": {
-        "x": 7.763043258101852,
-        "y": 5.893433883101851
+        "x": 2.1552614267463945,
+        "y": 1.321980457836301
       },
       "nextControl": {
-        "x": 4.832392828871552,
-        "y": 7.548412202586574
+        "x": 1.3815950063738682,
+        "y": 1.5232718071296818
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5383854166666655,
-        "y": 7.284830729166666
+        "x": 1.5041439658717104,
+        "y": 6.379763312088816
       },
       "prevControl": {
-        "x": 3.2861042390046293,
-        "y": 6.613531539351852
+        "x": 1.8254564787212173,
+        "y": 2.917262990851151
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.123169713050314,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "To Coral Station",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 179.9504266595902
   },
   "useDefaultConstraints": true
 }

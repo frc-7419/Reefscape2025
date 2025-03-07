@@ -1,10 +1,10 @@
 {
-  "robotWidth": 0.89,
-  "robotLength": 0.89,
+  "robotWidth": 0.888,
+  "robotLength": 0.888,
   "holonomicMode": true,
   "pathFolders": [
-    "From Start",
     "From Coral Station",
+    "From Start",
     "Processor",
     "To Coral Station"
   ],
