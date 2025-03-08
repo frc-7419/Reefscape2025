@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -56,291 +55,304 @@ import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 public class RobotContainer {
-    private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
-    private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
+  private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
+  private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
 
-    private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
+  private WristIntakeSubsystem wristIntakeSubsystem = new WristIntakeSubsystem();
 
-    private final CommandXboxController driver = new CommandXboxController(0);
-    private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandXboxController driver = new CommandXboxController(0);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
-    private RunIntakeWithJoystick runIntakeWithJoystick = new RunIntakeWithJoystick(wristIntakeSubsystem, operator);
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * DrivetrainConstants.kTranslationDeadband)
-            .withRotationalDeadband(
-                    MaxAngularRate * DrivetrainConstants.kRotationDeadband) // Add a 5%
-            // deadband
-            .withDriveRequestType(
-                    DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private RunIntakeWithJoystick runIntakeWithJoystick =
+      new RunIntakeWithJoystick(wristIntakeSubsystem, operator);
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed * DrivetrainConstants.kTranslationDeadband)
+          .withRotationalDeadband(
+              MaxAngularRate * DrivetrainConstants.kRotationDeadband) // Add a 5%
+          // deadband
+          .withDriveRequestType(
+              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  private final SwerveRequest.RobotCentric forwardStraight =
+      new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private WristSubsystem wrist = new WristSubsystem();
-    private final ElevatorSubsystem elevator = new ElevatorSubsystem(wrist::getPosition, drivetrain::getPigeon2);
+  private WristSubsystem wrist = new WristSubsystem();
+  private final ElevatorSubsystem elevator =
+      new ElevatorSubsystem(wrist::getPosition, drivetrain::getPigeon2);
 
-    public final VisionSubsystem photonvision;
-    private final CameraConfig photonCamOne = new CameraConfig("Cam1", VisionConstants.kRobotToCamOne);
-    private final CameraConfig photonCamTwo = new CameraConfig("Cam2", VisionConstants.kRobotToCamTwo);
+  public final VisionSubsystem photonvision;
+  private final CameraConfig photonCamOne =
+      new CameraConfig("Cam1", VisionConstants.kRobotToCamOne);
+  private final CameraConfig photonCamTwo =
+      new CameraConfig("Cam2", VisionConstants.kRobotToCamTwo);
 
-    private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
-    private final List<CameraConfig> cameraConfigs = new ArrayList<CameraConfig>() {
+  private final List<CameraConfig> cameraConfigs =
+      new ArrayList<CameraConfig>() {
         {
-            add(photonCamOne);
-            add(photonCamTwo);
+          add(photonCamOne);
+          add(photonCamTwo);
         }
-    };
+      };
 
-    private boolean coral = true;
+  private boolean slowMode = false;
 
-    public RobotContainer() {
-        photonvision = new VisionSubsystem(cameraConfigs);
+  private boolean coral = true;
 
-        configureBindings();
-        SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
+  public RobotContainer() {
+    photonvision = new VisionSubsystem(cameraConfigs);
 
-        SmartDashboard.putBoolean("Coral Mode", coral);
+    configureBindings();
+    SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
 
-        registerNamedCommands();
+    SmartDashboard.putBoolean("Coral Mode", coral);
 
-        autoChooser = AutoBuilder.buildAutoChooser();
+    registerNamedCommands();
 
-        SmartDashboard.putData("Auton Path", autoChooser);
-    }
+    autoChooser = AutoBuilder.buildAutoChooser();
 
-    private final Command alignAndScoreL1Left = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.LEFT,
-            ScoringSetpoint.L1);
-    private final Command alignAndScoreL1Right = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.RIGHT,
-            ScoringSetpoint.L1);
+    SmartDashboard.putData("Auton Path", autoChooser);
+  }
 
-    private final Command alignAndScoreL2Left = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.LEFT,
-            ScoringSetpoint.L2);
-    private final Command alignAndScoreL2Right = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.RIGHT,
-            ScoringSetpoint.L2);
+  private final Command alignAndScoreL1Left =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.LEFT,
+          ScoringSetpoint.L1);
+  private final Command alignAndScoreL1Right =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.RIGHT,
+          ScoringSetpoint.L1);
 
-    private final Command alignAndScoreL3Left = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.LEFT,
-            ScoringSetpoint.L3);
-    private final Command alignAndScoreL3Right = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.RIGHT,
-            ScoringSetpoint.L3);
+  private final Command alignAndScoreL2Left =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.LEFT,
+          ScoringSetpoint.L2);
+  private final Command alignAndScoreL2Right =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.RIGHT,
+          ScoringSetpoint.L2);
 
-    private final Command alignAndScoreL4Left = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.LEFT,
-            ScoringSetpoint.L4);
-    private final Command alignAndScoreL4Right = new AlignAndScore(
-            drivetrain,
-            elevator,
-            wrist,
-            wristIntakeSubsystem,
-            ScoringPosition.RIGHT,
-            ScoringSetpoint.L4);
+  private final Command alignAndScoreL3Left =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.LEFT,
+          ScoringSetpoint.L3);
+  private final Command alignAndScoreL3Right =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.RIGHT,
+          ScoringSetpoint.L3);
 
-    private void registerNamedCommands() {
-        Map<String, Command> namedCommands = new HashMap<>();
-        namedCommands.put("AlignAndScoreL1Left", alignAndScoreL1Left);
-        namedCommands.put("AlignAndScoreL1Right", alignAndScoreL1Right);
+  private final Command alignAndScoreL4Left =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.LEFT,
+          ScoringSetpoint.L4);
+  private final Command alignAndScoreL4Right =
+      new AlignAndScore(
+          drivetrain,
+          elevator,
+          wrist,
+          wristIntakeSubsystem,
+          ScoringPosition.RIGHT,
+          ScoringSetpoint.L4);
 
-        namedCommands.put("AlignAndScoreL2Left", alignAndScoreL2Left);
-        namedCommands.put("AlignAndScoreL2Right", alignAndScoreL2Right);
+  private void registerNamedCommands() {
+    Map<String, Command> namedCommands = new HashMap<>();
+    namedCommands.put("AlignAndScoreL1Left", alignAndScoreL1Left);
+    namedCommands.put("AlignAndScoreL1Right", alignAndScoreL1Right);
 
-        namedCommands.put("AlignAndScoreL3Left", alignAndScoreL3Left);
-        namedCommands.put("AlignAndScoreL3Right", alignAndScoreL3Right);
+    namedCommands.put("AlignAndScoreL2Left", alignAndScoreL2Left);
+    namedCommands.put("AlignAndScoreL2Right", alignAndScoreL2Right);
 
-        namedCommands.put("AlignAndScoreL4Left", alignAndScoreL4Left);
-        namedCommands.put("AlignAndScoreL4Right", alignAndScoreL4Right);
+    namedCommands.put("AlignAndScoreL3Left", alignAndScoreL3Left);
+    namedCommands.put("AlignAndScoreL3Right", alignAndScoreL3Right);
 
-        namedCommands.put("IntakeCoral", new IntakeWithBeamBreak(wristIntakeSubsystem));
+    namedCommands.put("AlignAndScoreL4Left", alignAndScoreL4Left);
+    namedCommands.put("AlignAndScoreL4Right", alignAndScoreL4Right);
 
-        NamedCommands.registerCommands(namedCommands);
-    }
+    namedCommands.put("IntakeCoral", new IntakeWithBeamBreak(wristIntakeSubsystem));
 
-    private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(
-                        () -> drive
-                                .withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive
-                                // forward
-                                // with
-                                // negative Y (forward)
-                                .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive
-                                // left
-                                // with
-                                // negative
-                                // X
-                                // (left)
-                                .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive
-                // counterclockwise
-                // with
-                // negative
-                // X
-                // (left)
-                ));
+    NamedCommands.registerCommands(namedCommands);
+  }
 
-        driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver
-                .b()
-                .whileTrue(
-                        drivetrain.applyRequest(
-                                () -> point.withModuleDirection(
-                                        new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
+  private void configureBindings() {
+    // Note that X is defined as forward according to WPILib convention,
+    // and Y is defined as to the left according to WPILib convention.
+    drivetrain.setDefaultCommand(
+        // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(
+            () ->
+                drive
+                    .withVelocityX(
+                        -driver.getLeftY()
+                            * MaxSpeed
+                            * (driver.rightBumper().getAsBoolean() ? 0.2 : 1)) // Drive
+                    // forward
+                    // with
+                    // negative Y (forward)
+                    .withVelocityY(
+                        -driver.getLeftX()
+                            * MaxSpeed
+                            * (driver.rightBumper().getAsBoolean() ? 0.2 : 1)) // Drive
+                    // left
+                    // with
+                    // negative
+                    // X
+                    // (left)
+                    .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive
+            // counterclockwise
+            // with
+            // negative
+            // X
+            // (left)
+            ));
 
-        driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
-        driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
+    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    driver
+        .b()
+        .whileTrue(
+            drivetrain.applyRequest(
+                () ->
+                    point.withModuleDirection(
+                        new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
+    driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT, true));
+    driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT, true));
 
-        driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
 
-        // reset the field-centric heading on left bumper press
-        driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
-        /*
-         * operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
-         *
-         * operator.b().whileTrue(scoreL4);
-         *
-         * operator.x().whileTrue(scoreL2);
-         *
-         * operator.y().whileTrue(scoreL3);
-         *
-         * operator.leftBumper().whileTrue(scoreL1);
-         */
-        // operator.x().whileTrue(new ElevatorPIDTest(elevator));
-        operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
-        operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
-        // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-        operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
-        operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
+    // reset the field-centric heading on left bumper press
+    driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
-        wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
+    drivetrain.registerTelemetry(logger::telemeterize);
+    /*
+     * operator.a().whileTrue(elevator.setPosition(Meters.of(0)));
+     *
+     * operator.b().whileTrue(scoreL4);
+     *
+     * operator.x().whileTrue(scoreL2);
+     *
+     * operator.y().whileTrue(scoreL3);
+     *
+     * operator.leftBumper().whileTrue(scoreL1);
+     */
+    // operator.x().whileTrue(new ElevatorPIDTest(elevator));
+    operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
+    operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
+    // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
+    operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
+    operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
-        elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
-        DoubleSupplier elevatorPowerSupplier = () -> operator.getLeftY();
-        new Trigger(
-                () -> (Math.abs(elevatorPowerSupplier.getAsDouble()) > ElevatorConstants.joystickDeadband))
-                .whileTrue(
-                        new RunElevatorWithJoystick(elevator, elevatorPowerSupplier, wrist::getPosition));
+    wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
+    wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
 
-        wristIntakeSubsystem
-                .isHolding()
-                .negate()
-                .whileTrue(new RunIntakeWithJoystick(wristIntakeSubsystem, operator));
-        operator
-                .leftTrigger(0.01)
-                .and(wristIntakeSubsystem.isHolding())
-                .onTrue(Commands.run(() -> wristIntakeSubsystem.setHolding(false), wristIntakeSubsystem));
-        wristIntakeSubsystem
-                .isHolding()
-                .onTrue(
-                        Commands.runEnd(
-                                () -> wristIntakeSubsystem.setTorque(Amps.of(10)),
-                                () -> wristIntakeSubsystem.setTorque(Amps.of(0)),
-                                wristIntakeSubsystem));
+    elevator.setDefaultCommand(new MaintainElevatorPosition(elevator));
+    DoubleSupplier elevatorPowerSupplier = () -> operator.getLeftY();
+    new Trigger(
+            () ->
+                (Math.abs(elevatorPowerSupplier.getAsDouble())
+                    > ElevatorConstants.joystickDeadband))
+        .whileTrue(
+            new RunElevatorWithJoystick(elevator, elevatorPowerSupplier, wrist::getPosition));
 
-        operator
-                .start()
-                .onTrue(
-                        new InstantCommand(
-                                () -> {
-                                    coral = !coral;
-                                    SmartDashboard.putBoolean("Coral Mode", coral);
-                                }));
-        Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
+    wristIntakeSubsystem.setDefaultCommand(
+        new RunIntakeWithJoystick(wristIntakeSubsystem, operator));
 
-        operator
-                .povUp()
-                .whileTrue(
-                        new ConditionalCommand(
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4),
-                                        scoringDependencies),
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
-                                        scoringDependencies),
-                                () -> coral));
+    operator
+        .start()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  coral = !coral;
+                  SmartDashboard.putBoolean("Coral Mode", coral);
+                }));
+    Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
-        operator
-                .povLeft()
-                .whileTrue(
-                        new ConditionalCommand(
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3),
-                                        scoringDependencies),
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
-                                        scoringDependencies),
-                                () -> coral));
+    operator
+        .povUp()
+        .whileTrue(
+            new ConditionalCommand(
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4),
+                    scoringDependencies),
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
+                    scoringDependencies),
+                () -> coral));
 
-        operator
-                .povRight()
-                .whileTrue(
-                        new ConditionalCommand(
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2),
-                                        scoringDependencies),
-                                Commands.defer(
-                                        () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),
-                                        scoringDependencies),
-                                () -> coral));
+    operator
+        .povLeft()
+        .whileTrue(
+            new ConditionalCommand(
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3),
+                    scoringDependencies),
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
+                    scoringDependencies),
+                () -> coral));
 
-        operator
-                .povDown()
-                .whileTrue(
-                        Commands.defer(
-                                () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME),
-                                scoringDependencies));
-    }
+    operator
+        .povRight()
+        .whileTrue(
+            new ConditionalCommand(
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2),
+                    scoringDependencies),
+                Commands.defer(
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),
+                    scoringDependencies),
+                () -> coral));
 
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+    operator
+        .povDown()
+        .whileTrue(
+            Commands.defer(
+                () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME),
+                scoringDependencies));
+  }
+
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
 }

@@ -25,38 +25,37 @@ import frc.robot.subsystems.wrist.WristToPosition;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AlignAndScore extends SequentialCommandGroup {
-    /**
-     * Creates a new AlignAndScore.
-     *
-     * <p>
-     * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
-     * THEY'RE GONNA
-     * BLAME SOFTWARE
-     */
-    public AlignAndScore(
-            CommandSwerveDrivetrain drivetrain,
-            ElevatorSubsystem elevator,
-            WristSubsystem wrist,
-            WristIntakeSubsystem wristIntake,
-            ScoringPosition scoringPosition,
-            ScoringSetpoint scoringSetpoint) {
+  /**
+   * Creates a new AlignAndScore.
+   *
+   * <p>ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND THEY'RE GONNA
+   * BLAME SOFTWARE
+   */
+  public AlignAndScore(
+      CommandSwerveDrivetrain drivetrain,
+      ElevatorSubsystem elevator,
+      WristSubsystem wrist,
+      WristIntakeSubsystem wristIntake,
+      ScoringPosition scoringPosition,
+      ScoringSetpoint scoringSetpoint) {
 
-        if (Robot.isReal()) {
-            addCommands(
-                    new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2),
-                    new ParallelCommandGroup(
-                            new AlignToReef(drivetrain, scoringPosition, true),
-                            new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
-                    new ParallelDeadlineGroup(
-                            new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
-                                    .until(() -> wristIntake.beamBreakisTriggered())
-                                    .finallyDo(() -> wristIntake.setPower(0)),
-                            new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
-                            new MaintainElevatorPosition(elevator)),
-                    new MaintainElevatorPosition(elevator).withTimeout(1),
-                    new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
-        } else {
-            addCommands(new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2), new WaitCommand(2));
-        }
+    if (Robot.isReal()) {
+      addCommands(
+          new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2),
+          new ParallelCommandGroup(
+              new AlignToReef(drivetrain, scoringPosition, true),
+              new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
+          new ParallelDeadlineGroup(
+              new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
+                  .until(() -> wristIntake.beamBreakisTriggered())
+                  .finallyDo(() -> wristIntake.setPower(0)),
+              new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
+              new MaintainElevatorPosition(elevator)),
+          new MaintainElevatorPosition(elevator).withTimeout(1),
+          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+    } else {
+      addCommands(
+          new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2), new WaitCommand(2));
     }
+  }
 }
