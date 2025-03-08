@@ -42,7 +42,7 @@ public class ScoringSetpoints extends Command {
     this.elevator = elevator;
     this.wrist = wrist;
     this.targetPosition = position;
-    boolean isAlgae = position.name.equals("BARGE") || position.name.contains("Algae");
+    boolean isAlgae = position.name.equals("BARGE") || position.name.contains("ALGAE") || position.name.contains("PROCESSOR");
     upAngle = isAlgae ? Rotations.of(0.0) : Rotations.of(0.38);
     addRequirements(elevator, wrist);
   }
