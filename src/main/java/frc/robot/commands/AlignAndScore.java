@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Rotations;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -42,17 +41,15 @@ public class AlignAndScore extends SequentialCommandGroup {
     if (Robot.isReal()) {
       addCommands(
           new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2),
-          new ParallelCommandGroup(
-              new AlignToReef(drivetrain, scoringPosition, true),
-              new ScoringSetpoints(elevator, wrist, scoringSetpoint)),
+          new ScoringSetpoints(elevator, wrist, scoringSetpoint),
           new ParallelDeadlineGroup(
               new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
                   .until(() -> wristIntake.beamBreakisTriggered())
                   .finallyDo(() -> wristIntake.setPower(0)),
               new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
               new MaintainElevatorPosition(elevator)),
-          new MaintainElevatorPosition(elevator).withTimeout(1),
-          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME));
+          new MaintainElevatorPosition(elevator).withTimeout(0.1),
+          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME).until(() -> elevator.getPosition().lt(Rotations.of(1))));
     } else {
       addCommands(
           new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2), new WaitCommand(2));

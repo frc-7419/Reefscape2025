@@ -9,6 +9,7 @@ import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -84,6 +85,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    DataLogManager.start();
   }
 
   @Override

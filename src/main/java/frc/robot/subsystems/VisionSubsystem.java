@@ -86,8 +86,9 @@ public class VisionSubsystem {
       PhotonCamera camera = new PhotonCamera(config.name);
       cameras.add(camera);
 
-      PhotonPoseEstimator estimator = new PhotonPoseEstimator(
-          kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, config.cameraToRobot);
+      PhotonPoseEstimator estimator =
+          new PhotonPoseEstimator(
+              kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, config.cameraToRobot);
       estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
       photonEstimators.add(estimator);
 
@@ -109,18 +110,14 @@ public class VisionSubsystem {
   }
 
   /**
-   * The latest estimated robot pose on the field from vision data. This may be
-   * empty. This should
+   * The latest estimated robot pose on the field from vision data. This may be empty. This should
    * only be called once per loop.
    *
-   * <p>
-   * Also includes updates for the standard deviations, which can (optionally) be
-   * retrieved with
+   * <p>Also includes updates for the standard deviations, which can (optionally) be retrieved with
    * {@link getEstimationStdDevs}
    *
-   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate
-   *         timestamp, and targets
-   *         used for estimation.
+   * @return An {@link EstimatedRobotPose} with an estimated pose, estimate timestamp, and targets
+   *     used for estimation.
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
     List<PhotonTrackedTarget> allCameraTargets = new ArrayList<>();
@@ -143,9 +140,10 @@ public class VisionSubsystem {
 
         if (Robot.isSimulation()) {
           visionEst.ifPresentOrElse(
-              est -> getSimDebugField()
-                  .getObject("VisionEstimation" + index)
-                  .setPose(est.estimatedPose.toPose2d()),
+              est ->
+                  getSimDebugField()
+                      .getObject("VisionEstimation" + index)
+                      .setPose(est.estimatedPose.toPose2d()),
               () -> getSimDebugField().getObject("VisionEstimation" + index).setPoses());
         }
       }
@@ -200,13 +198,11 @@ public class VisionSubsystem {
   }
 
   /**
-   * Calculates new standard deviations This algorithm is a heuristic that creates
-   * dynamic standard
-   * deviations based on number of tags, estimation strategy, and distance from
-   * the tags.
+   * Calculates new standard deviations This algorithm is a heuristic that creates dynamic standard
+   * deviations based on number of tags, estimation strategy, and distance from the tags.
    *
    * @param estimatedPose The estimated pose to guess standard deviations for.
-   * @param targets       All targets in this camera frame
+   * @param targets All targets in this camera frame
    */
   private void updateEstimationStdDevs(
       Optional<EstimatedRobotPose> estimatedPose,
@@ -222,14 +218,14 @@ public class VisionSubsystem {
 
       for (var tgt : targets) {
         var tagPose = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
-        if (tagPose.isEmpty())
-          continue;
+        if (tagPose.isEmpty()) continue;
         numTags++;
-        avgDist += tagPose
-            .get()
-            .toPose2d()
-            .getTranslation()
-            .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+        avgDist +=
+            tagPose
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
       }
 
       if (numTags == 0) {
@@ -254,8 +250,7 @@ public class VisionSubsystem {
   /**
    * Returns the latest standard deviations of the estimated pose from {@link
    * #getEstimatedGlobalPose()}, for use with {@link
-   * edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-   * SwerveDrivePoseEstimator}. This should
+   * edu.wpi.first.math.estimator.SwerveDrivePoseEstimator SwerveDrivePoseEstimator}. This should
    * only be used when there are targets visible.
    */
   public Matrix<N3, N1> getEstimationStdDevs() {
@@ -270,14 +265,12 @@ public class VisionSubsystem {
 
   /** Reset pose history of the robot in the vision system simulation. */
   public void resetSimPose(Pose2d pose) {
-    if (Robot.isSimulation())
-      visionSim.resetRobotPose(pose);
+    if (Robot.isSimulation()) visionSim.resetRobotPose(pose);
   }
 
   /** A Field2d for visualizing our robot and objects on the field. */
   public Field2d getSimDebugField() {
-    if (!Robot.isSimulation())
-      return null;
+    if (!Robot.isSimulation()) return null;
     return visionSim.getDebugField();
   }
 
@@ -295,14 +288,14 @@ public class VisionSubsystem {
       EstimatedRobotPose estimatedPose = estimatedPoseOpt.get();
       for (var tgt : targets) {
         var tagPoseOpt = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
-        if (tagPoseOpt.isEmpty())
-          continue;
+        if (tagPoseOpt.isEmpty()) continue;
         numTags++;
-        avgDist += tagPoseOpt
-            .get()
-            .toPose2d()
-            .getTranslation()
-            .getDistance(estimatedPose.estimatedPose.toPose2d().getTranslation());
+        avgDist +=
+            tagPoseOpt
+                .get()
+                .toPose2d()
+                .getTranslation()
+                .getDistance(estimatedPose.estimatedPose.toPose2d().getTranslation());
       }
       if (numTags == 0) {
         return kSingleTagStdDevs;
@@ -331,15 +324,17 @@ public class VisionSubsystem {
       for (var pipelineResult : allResults) {
         Optional<EstimatedRobotPose> visionEst = estimator.update(pipelineResult);
         if (visionEst.isPresent()) {
-          Matrix<N3, N1> stdDevs = computeStdDevs(visionEst, pipelineResult.getTargets(), estimator);
+          Matrix<N3, N1> stdDevs =
+              computeStdDevs(visionEst, pipelineResult.getTargets(), estimator);
           visionResults.add(new VisionResult(visionEst.get(), stdDevs, camera.getName()));
 
           if (Robot.isSimulation()) {
             final int index = i;
             visionEst.ifPresentOrElse(
-                est -> getSimDebugField()
-                    .getObject("VisionEstimation" + index)
-                    .setPose(est.estimatedPose.toPose2d()),
+                est ->
+                    getSimDebugField()
+                        .getObject("VisionEstimation" + index)
+                        .setPose(est.estimatedPose.toPose2d()),
                 () -> getSimDebugField().getObject("VisionEstimation" + index).setPoses());
           }
         }

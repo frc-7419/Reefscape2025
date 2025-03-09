@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
+import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -204,7 +205,7 @@ public class RobotContainer {
     namedCommands.put("AlignAndScoreL4Left", alignAndScoreL4Left);
     namedCommands.put("AlignAndScoreL4Right", alignAndScoreL4Right);
 
-    namedCommands.put("IntakeCoral", new IntakeWithBeamBreak(wristIntakeSubsystem));
+    namedCommands.put("IntakeCoral", new AutoIntakeCoral(wristIntakeSubsystem, elevator, wrist));
 
     NamedCommands.registerCommands(namedCommands);
   }
@@ -278,10 +279,11 @@ public class RobotContainer {
      */
     // operator.x().whileTrue(new ElevatorPIDTest(elevator));
     operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
-    operator.leftBumper().whileTrue(new IntakeWithBeamBreak(wristIntakeSubsystem));
+    operator.leftBumper().whileTrue(new AutoIntakeCoral(wristIntakeSubsystem, elevator, wrist));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
     operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
     operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
+    operator.x().onTrue(alignAndScoreL4Left);
 
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
