@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left to Reef5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL3Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef5 to Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL3Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef6 To Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL3Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef6 To Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL3Left"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
