@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.RobotConstants;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.VisionSubsystem.VisionResult;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.util.CombinedAlert;
 
 public class Robot extends TimedRobot {
@@ -96,10 +98,14 @@ public class Robot extends TimedRobot {
     }
 
     CommandScheduler.getInstance().run();
-    for (VisionResult result : m_robotContainer.photonvision.getIndividualVisionEstimates()) {
+
+    VisionSubsystem vision = m_robotContainer.photonvision;
+    CommandSwerveDrivetrain drivetrain = m_robotContainer.drivetrain;
+
+    for (VisionResult result : vision.getIndividualVisionEstimates()) {
       Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
 
-      m_robotContainer.drivetrain.addVisionMeasurement(
+      drivetrain.addVisionMeasurement(
           pose,
           Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
           result.stdDevs);
@@ -110,7 +116,7 @@ public class Robot extends TimedRobot {
     }
 
     if (isSimulation()) {
-      m_robotContainer.photonvision.simulationPeriodic(m_robotContainer.drivetrain.getState().Pose);
+      vision.simulationPeriodic(drivetrain.getState().Pose);
     }
 
     updateRobotStatus();

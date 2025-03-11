@@ -148,10 +148,12 @@ public class Constants {
                 Units.inchesToMeters(-11.375),
                 Units.inchesToMeters(9)),
             new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-90)));
+
     public static final Matrix<N3, N1> kSingleTagStdDevs =
         VecBuilder.fill(5, 5, Degrees.of(10).in(Radians));
     public static final Matrix<N3, N1> kMultiTagStdDevs =
         VecBuilder.fill(0.3, 0.3, Degrees.of(2).in(Radians));
+
     public static final AprilTagFieldLayout kTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d kRobotToCamTwo =
