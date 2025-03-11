@@ -17,6 +17,7 @@ public class ScoringSetpoints extends Command {
   private final WristSubsystem wrist;
   private final ScoringSetpoint targetPosition;
   private final Angle upAngle;
+  private final boolean hold;
 
   Angle wristSetpoint;
 
@@ -38,7 +39,7 @@ public class ScoringSetpoints extends Command {
   }
 
   public ScoringSetpoints(
-      ElevatorSubsystem elevator, WristSubsystem wrist, ScoringSetpoint position) {
+      ElevatorSubsystem elevator, WristSubsystem wrist, ScoringSetpoint position, boolean hold) {
     this.elevator = elevator;
     this.wrist = wrist;
     this.targetPosition = position;
@@ -47,7 +48,13 @@ public class ScoringSetpoints extends Command {
             || position.name.contains("ALGAE")
             || position.name.contains("PROCESSOR");
     upAngle = isAlgae ? Rotations.of(0.0) : Rotations.of(0.38);
+    this.hold = hold;
     addRequirements(elevator, wrist);
+  }
+
+  public ScoringSetpoints(
+      ElevatorSubsystem elevator, WristSubsystem wrist, ScoringSetpoint position) {
+    this(elevator, wrist, position, false);
   }
 
   @Override
@@ -68,10 +75,14 @@ public class ScoringSetpoints extends Command {
       setWristAngle(upAngle);
     } else if (!targetPosition.lateWrist) {
       setWristAngle(Rotations.of(targetPosition.wristAngle));
-    } else if (Math.abs(targetPosition.elevatorHeight - elevatorRotations) <= 0.2) {
+    } else if (Math.abs(targetPosition.elevatorHeight - elevatorRotations) <= 0.5) {
       setWristAngle(Rotations.of(targetPosition.wristAngle));
     } else {
       setWristAngle(upAngle);
+    }
+
+    if (targetPosition.name.equals("HOME") && elevator.isStalling()) {
+      elevator.zeroEncoder(); // Homing
     }
 
     SmartDashboard.putBoolean(
@@ -88,11 +99,15 @@ public class ScoringSetpoints extends Command {
     wrist.setPower(0);
   }
 
-  @Override
-  public boolean isFinished() {
+  public boolean atSetpoints() {
     return elevator
             .getPosition()
             .isNear(Rotations.of(targetPosition.elevatorHeight), Rotations.of(0.1))
         && pidController.atSetpoint();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return atSetpoints() && !hold;
   }
 }

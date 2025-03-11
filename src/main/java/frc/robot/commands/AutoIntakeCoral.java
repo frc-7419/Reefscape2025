@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -17,7 +16,8 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoIntakeCoral extends ParallelDeadlineGroup {
   /** Creates a new AutoIntakeCoral. */
-  public AutoIntakeCoral(WristIntakeSubsystem wristIntake, ElevatorSubsystem elevator, WristSubsystem wrist) {
+  public AutoIntakeCoral(
+      WristIntakeSubsystem wristIntake, ElevatorSubsystem elevator, WristSubsystem wrist) {
     // Add the deadline command in the super() call. Add other commands using
     // addCommands().
     super(new IntakeWithBeamBreak(wristIntake));

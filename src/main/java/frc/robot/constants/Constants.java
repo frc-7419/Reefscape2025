@@ -39,7 +39,7 @@ public class Constants {
 
   public static class DrivetrainConstants {
     public static final LinearVelocity kMaxVelocity = TunerConstants.kSpeedAt12Volts;
-    public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(3);
+    public static final AngularVelocity kMaxAngularRate = RotationsPerSecond.of(5);
     public static final TrapezoidProfile.Constraints kVelocityConstraints =
         new TrapezoidProfile.Constraints(kMaxVelocity.in(MetersPerSecond), 3);
 
@@ -149,9 +149,9 @@ public class Constants {
                 Units.inchesToMeters(9)),
             new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-90)));
     public static final Matrix<N3, N1> kSingleTagStdDevs =
-        VecBuilder.fill(3, 3, Degrees.of(7).in(Radians));
+        VecBuilder.fill(5, 5, Degrees.of(10).in(Radians));
     public static final Matrix<N3, N1> kMultiTagStdDevs =
-        VecBuilder.fill(0.2, 0.2, Degrees.of(2).in(Radians));
+        VecBuilder.fill(0.3, 0.3, Degrees.of(2).in(Radians));
     public static final AprilTagFieldLayout kTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
     public static final Transform3d kRobotToCamTwo =
@@ -201,7 +201,7 @@ public class Constants {
     public static final AngularVelocity UNSAFE_SPEED = RotationsPerSecond.of(1); // 1 rad/s
     public static final Temperature MAX_TEMPERATURE = Celsius.of(90); // Max rated temperature
 
-    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.41);
+    public static final Angle kElevatorSafeWristAngle = Rotations.of(0.42);
   }
 
   public static class WristIntakeConstants {

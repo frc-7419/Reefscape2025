@@ -40,7 +40,6 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.MaintainElevatorPosition;
 import frc.robot.subsystems.elevator.RunElevatorWithJoystick;
-import frc.robot.subsystems.intake.IntakeWithBeamBreak;
 import frc.robot.subsystems.intake.RunIntakeWithJoystick;
 import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.RunWristWithJoystick;
@@ -315,7 +314,7 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand(
                 Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4),
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true),
                     scoringDependencies),
                 Commands.defer(
                     () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
@@ -327,7 +326,7 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand(
                 Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3),
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true),
                     scoringDependencies),
                 Commands.defer(
                     () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
@@ -339,7 +338,7 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand(
                 Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2),
+                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true),
                     scoringDependencies),
                 Commands.defer(
                     () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),

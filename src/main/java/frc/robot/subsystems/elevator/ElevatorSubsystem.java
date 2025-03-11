@@ -1,5 +1,6 @@
 package frc.robot.subsystems.elevator;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
@@ -15,13 +16,14 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.RobotConstants;
-import frc.robot.constants.Constants.WristConstants;
 import frc.robot.util.CombinedAlert;
 import java.util.function.Supplier;
 
@@ -188,6 +190,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private boolean checkMovementSafe(double voltage) {
+    return true;
+    /*
     boolean aboveLimit = getPosition().gt(ElevatorConstants.kElevatorBarUpperLimit);
     boolean belowLimit = getPosition().lt(ElevatorConstants.kElevatorBarLowerLimit);
     boolean wristUnsafe = wristAngleSupplier.get().gt(WristConstants.kElevatorSafeWristAngle);
@@ -197,6 +201,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     return true;
+    */
+  }
+
+  public Current getCurrent() {
+    return leftElevatorMotor.getStatorCurrent().getValue();
+  }
+
+  public AngularVelocity getVelocity() {
+    return leftElevatorMotor.getVelocity().getValue();
+  }
+
+  public boolean isStalling() {
+    return getVelocity().isNear(RotationsPerSecond.of(0), RotationsPerSecond.of(0.1))
+        && (getCurrent().abs(Amps) > 50);
   }
 
   @Override
@@ -218,6 +236,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Elevator Acceleration (RotationsPerSecondPerSecond)",
         leftElevatorMotor.getAcceleration().getValue().in(RotationsPerSecondPerSecond));
+
+    SmartDashboard.putNumber("Elevator Current", getCurrent().in(Amps));
+    SmartDashboard.putBoolean("Is Elevator Stalling", isStalling());
 
     SmartDashboard.putBoolean("TIPPING", tipLock);
 

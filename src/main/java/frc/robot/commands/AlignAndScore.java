@@ -40,7 +40,7 @@ public class AlignAndScore extends SequentialCommandGroup {
 
     if (Robot.isReal()) {
       addCommands(
-          new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2),
+          new AlignToReef(drivetrain, scoringPosition, true).withTimeout(1),
           new ScoringSetpoints(elevator, wrist, scoringSetpoint),
           new ParallelDeadlineGroup(
               new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
@@ -49,7 +49,8 @@ public class AlignAndScore extends SequentialCommandGroup {
               new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
               new MaintainElevatorPosition(elevator)),
           new MaintainElevatorPosition(elevator).withTimeout(0.1),
-          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME).until(() -> elevator.getPosition().lt(Rotations.of(1))));
+          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
+              .until(() -> elevator.getPosition().lt(Rotations.of(1))));
     } else {
       addCommands(
           new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2), new WaitCommand(2));
