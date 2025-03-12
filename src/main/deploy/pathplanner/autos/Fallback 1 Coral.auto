@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "Mid to Reef4"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL4Left"
+            "name": "AlignAndScoreL2Left"
           }
         }
       ]
