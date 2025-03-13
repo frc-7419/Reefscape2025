@@ -3,8 +3,8 @@
   "robotLength": 0.888,
   "holonomicMode": true,
   "pathFolders": [
-    "From Coral Station",
     "From Start",
+    "Coral Station to Reef",
     "Processor",
     "To Coral Station"
   ],
