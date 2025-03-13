@@ -9,11 +9,13 @@
     "To Coral Station"
   ],
   "autoFolders": [
+    "1 Coral Right Back",
     "3 Coral Left",
+    "3 Coral Right",
     "4 Coral Left",
     "4 Coral Right",
     "Fallback 1 Coral",
-    "3 Coral Right"
+    "1 Coral Left Back"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 2.0,
