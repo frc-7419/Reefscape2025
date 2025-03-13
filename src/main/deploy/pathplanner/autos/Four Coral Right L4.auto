@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left to Reef5"
+            "pathName": "Right to Reef3"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef5 to Coral Station"
+            "pathName": "Reef3 to Coral Station"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef6"
+            "pathName": "Coral Station to Reef2"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef6 To Coral Station"
+            "pathName": "Reef2 To Coral Station"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef6"
+            "pathName": "Coral Station to Reef2"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef6 To Coral Station"
+            "pathName": "Reef2 To Coral Station"
           }
         },
         {
@@ -79,19 +79,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef 1"
+            "pathName": "Coral Station to Reef 1 (Processor)"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL4Left"
+            "name": "AlignAndScoreL4Right"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "4 Coral Right",
   "choreoAuto": false
 }

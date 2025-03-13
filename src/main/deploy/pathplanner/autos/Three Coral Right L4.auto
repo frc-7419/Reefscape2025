@@ -63,35 +63,11 @@
           "data": {
             "name": "AlignAndScoreL4Left"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Reef2 To Coral Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Coral Station to Reef 1 (Processor)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignAndScoreL4Right"
-          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "3 Coral Right",
   "choreoAuto": false
 }

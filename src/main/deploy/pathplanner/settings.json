@@ -8,7 +8,13 @@
     "Processor",
     "To Coral Station"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "3 Coral Left",
+    "4 Coral Left",
+    "4 Coral Right",
+    "Fallback 1 Coral",
+    "3 Coral Right"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 540.0,

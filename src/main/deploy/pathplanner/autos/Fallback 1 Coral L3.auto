@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to Reef3"
+            "pathName": "Mid to Reef4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL2Left"
+            "name": "AlignAndScoreL3Left"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Fallback 1 Coral",
   "choreoAuto": false
 }

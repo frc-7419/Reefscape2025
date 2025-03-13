@@ -20,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Fallback 1 Coral",
   "choreoAuto": false
 }

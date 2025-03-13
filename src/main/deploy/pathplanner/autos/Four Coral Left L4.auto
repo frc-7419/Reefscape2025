@@ -63,11 +63,35 @@
           "data": {
             "name": "AlignAndScoreL4Left"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef6 To Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral Station to Reef 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlignAndScoreL4Left"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "4 Coral Left",
   "choreoAuto": false
 }
