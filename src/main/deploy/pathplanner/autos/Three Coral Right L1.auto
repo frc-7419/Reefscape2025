@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Right"
+            "name": "AlignAndScoreL1Right"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Right"
+            "name": "AlignAndScoreL1Left"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Left"
+            "name": "AlignAndScoreL1Right"
           }
         }
       ]

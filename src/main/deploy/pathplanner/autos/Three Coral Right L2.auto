@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL2Right"
+            "name": "AlignAndScoreL2Left"
           }
         }
       ]

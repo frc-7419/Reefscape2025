@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mid to Reef4"
+            "pathName": "Left to Reef1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL4Left"
+            "name": "AlignAndScoreL1Right"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "1 Coral Middle",
+  "folder": "1 Coral Left Back",
   "choreoAuto": false
 }
