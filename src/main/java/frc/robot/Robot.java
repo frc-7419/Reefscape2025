@@ -8,6 +8,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.hal.can.CANStatus;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
@@ -101,7 +102,12 @@ public class Robot extends TimedRobot {
 
     VisionSubsystem vision = m_robotContainer.photonvision;
     CommandSwerveDrivetrain drivetrain = m_robotContainer.drivetrain;
-
+    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    if (limelightMeasurement.tagCount >= 2) {  
+        drivetrain.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds
+    );
     for (VisionResult result : vision.getIndividualVisionEstimates()) {
       Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
 
@@ -121,6 +127,7 @@ public class Robot extends TimedRobot {
 
     updateRobotStatus();
   }
+}
 
   @Override
   public void disabledInit() {}
