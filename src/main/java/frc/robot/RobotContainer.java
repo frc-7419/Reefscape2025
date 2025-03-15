@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
@@ -225,6 +226,13 @@ public class RobotContainer {
           ScoringPosition.RIGHT,
           ScoringSetpoint.L4);
 
+
+  private ScoringSetpoint setpoint = ScoringSetpoint.L2;
+  private Command raiseL4 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true);
+  private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
+  private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
+  private Command raiseHome = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME, true);
+
   private void registerNamedCommands() {
     Map<String, Command> namedCommands = new HashMap<>();
     namedCommands.put("AlignAndScoreL1Left", alignAndScoreL1Left);
@@ -285,8 +293,11 @@ public class RobotContainer {
                     point.withModuleDirection(
                         new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
 
-    driver.leftTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT, true));
-    driver.rightTrigger(0.2).whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT, true));
+    driver.leftTrigger(0.2).whileTrue(raiseHome);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -315,9 +326,8 @@ public class RobotContainer {
     operator.back().onTrue(new RunCommand(() -> elevator.zeroEncoder(), elevator));
     operator.leftBumper().whileTrue(new AutoIntakeCoral(wristIntakeSubsystem, elevator, wrist));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
-    operator.b().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
-    operator.a().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
-    operator.x().onTrue(alignAndScoreL4Left);
+    operator.povLeft().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
+    operator.povDown().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
@@ -344,48 +354,11 @@ public class RobotContainer {
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
-    operator
-        .povUp()
-        .whileTrue(
-            new ConditionalCommand(
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true),
-                    scoringDependencies),
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE),
-                    scoringDependencies),
-                () -> coral));
+    operator.y().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L4;}));
+    operator.x().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L3;}));
+    operator.b().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L2;}));
+    operator.a().whileTrue(raiseHome);
 
-    operator
-        .povLeft()
-        .whileTrue(
-            new ConditionalCommand(
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true),
-                    scoringDependencies),
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE),
-                    scoringDependencies),
-                () -> coral));
-
-    operator
-        .povRight()
-        .whileTrue(
-            new ConditionalCommand(
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true),
-                    scoringDependencies),
-                Commands.defer(
-                    () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE),
-                    scoringDependencies),
-                () -> coral));
-
-    operator
-        .povDown()
-        .whileTrue(
-            Commands.defer(
-                () -> new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME),
-                scoringDependencies));
   }
 
   public Command getAutonomousCommand() {

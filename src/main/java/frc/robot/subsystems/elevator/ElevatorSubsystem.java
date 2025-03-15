@@ -214,7 +214,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean isStalling() {
     return getVelocity().isNear(RotationsPerSecond.of(0), RotationsPerSecond.of(0.1))
-        && (getCurrent().abs(Amps) > 50);
+        && (getCurrent().abs(Amps) > 30);
   }
 
   @Override

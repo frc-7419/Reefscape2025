@@ -184,7 +184,7 @@ public class Constants {
     public static final double feedforwardKg = 0.0;
     public static final double feedforwardKs = 0.0;
 
-    public static final Angle wristAngleOffset = Degrees.of(-184);
+    public static final Angle wristAngleOffset = Degrees.of(-122);
     public static final MotorOutputConfigs kMotorOutputConfig =
         kWristTalonFXConfiguration.MotorOutput;
 
@@ -256,8 +256,9 @@ public class Constants {
 
     static {
       // system’s max velocity
-      kMotionMagicConfig.MotionMagicCruiseVelocity = 50;
-      kMotionMagicConfig.MotionMagicAcceleration = 70;
+      kMotionMagicConfig.MotionMagicCruiseVelocity = 70;
+      kMotionMagicConfig.MotionMagicAcceleration = 240;
+      kMotionMagicConfig.MotionMagicJerk = 691;
     }
 
     public static final double pidKp = 0.59;
