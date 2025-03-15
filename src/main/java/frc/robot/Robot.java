@@ -101,30 +101,25 @@ public class Robot extends TimedRobot {
 
     VisionSubsystem vision = m_robotContainer.photonvision;
     CommandSwerveDrivetrain drivetrain = m_robotContainer.drivetrain;
-    LimelightHelpers.PoseEstimate limelightMeasurement =
-        LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    if (limelightMeasurement.tagCount >= 2) {
+
+    for (VisionResult result : vision.getIndividualVisionEstimates()) {
+      Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
+
       drivetrain.addVisionMeasurement(
-          limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
-      for (VisionResult result : vision.getIndividualVisionEstimates()) {
-        Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
+          pose,
+          Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
+          result.stdDevs);
 
-        drivetrain.addVisionMeasurement(
-            pose,
-            Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
-            result.stdDevs);
-
-        SmartDashboard.putNumberArray(
-            "Vision Pose " + result.cameraName,
-            new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
-      }
-
-      if (isSimulation()) {
-        vision.simulationPeriodic(drivetrain.getState().Pose);
-      }
-
-      updateRobotStatus();
+      SmartDashboard.putNumberArray(
+          "Vision Pose " + result.cameraName,
+          new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
     }
+
+    if (isSimulation()) {
+      vision.simulationPeriodic(drivetrain.getState().Pose);
+    }
+
+    updateRobotStatus();
   }
 
   @Override
