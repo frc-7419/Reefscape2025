@@ -9,9 +9,6 @@ import static edu.wpi.first.units.Units.Rotations;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Robot;
-import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -24,31 +21,23 @@ import frc.robot.subsystems.wrist.WristToPosition;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreWithoutAlign extends SequentialCommandGroup {
-    /**
-     * Creates a new AlignAndScore.
-     *
-     * <p>
-     * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
-     * THEY'RE GONNA
-     * BLAME SOFTWARE
-     */
-    public ScoreWithoutAlign(
-            CommandSwerveDrivetrain drivetrain,
-            ElevatorSubsystem elevator,
-            WristSubsystem wrist,
-            WristIntakeSubsystem wristIntake,
-            ScoringSetpoint scoringSetpoint) {
+  public ScoreWithoutAlign(
+      CommandSwerveDrivetrain drivetrain,
+      ElevatorSubsystem elevator,
+      WristSubsystem wrist,
+      WristIntakeSubsystem wristIntake,
+      ScoringSetpoint scoringSetpoint) {
 
-        addCommands(
-                new ScoringSetpoints(elevator, wrist, scoringSetpoint),
-                new ParallelDeadlineGroup(
-                        new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
-                                .until(() -> wristIntake.beamBreakisTriggered())
-                                .finallyDo(() -> wristIntake.setPower(0)),
-                        new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
-                        new MaintainElevatorPosition(elevator)),
-                new MaintainElevatorPosition(elevator).withTimeout(0.1),
-                new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
-                        .until(() -> elevator.getPosition().lt(Rotations.of(1))));
-    }
+    addCommands(
+        new ScoringSetpoints(elevator, wrist, scoringSetpoint),
+        new ParallelDeadlineGroup(
+            new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
+                .until(() -> wristIntake.beamBreakisTriggered())
+                .finallyDo(() -> wristIntake.setPower(0)),
+            new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
+            new MaintainElevatorPosition(elevator)),
+        new MaintainElevatorPosition(elevator).withTimeout(0.1),
+        new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
+            .until(() -> elevator.getPosition().lt(Rotations.of(1))));
+  }
 }

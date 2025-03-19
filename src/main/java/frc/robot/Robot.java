@@ -22,6 +22,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.VisionSubsystem.VisionResult;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.util.CombinedAlert;
+import frc.robot.util.TunableBoolean;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -31,6 +32,8 @@ public class Robot extends TimedRobot {
   Timer gcTimer = new Timer();
 
   private final Field2d vision = new Field2d();
+
+  private final TunableBoolean useVision = new TunableBoolean("Use Vision", true);
 
   private final CombinedAlert canErrorAlert =
       new CombinedAlert(
@@ -99,24 +102,26 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
 
-    VisionSubsystem vision = m_robotContainer.photonvision;
-    CommandSwerveDrivetrain drivetrain = m_robotContainer.drivetrain;
+    if (useVision.getValue()) {
+      VisionSubsystem vision = m_robotContainer.photonvision;
+      CommandSwerveDrivetrain drivetrain = m_robotContainer.drivetrain;
 
-    for (VisionResult result : vision.getIndividualVisionEstimates()) {
-      Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
+      for (VisionResult result : vision.getIndividualVisionEstimates()) {
+        Pose2d pose = result.estimatedRobotPose.estimatedPose.toPose2d();
 
-      drivetrain.addVisionMeasurement(
-          pose,
-          Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
-          result.stdDevs);
+        drivetrain.addVisionMeasurement(
+            pose,
+            Utils.fpgaToCurrentTime(result.estimatedRobotPose.timestampSeconds),
+            result.stdDevs);
 
-      SmartDashboard.putNumberArray(
-          "Vision Pose " + result.cameraName,
-          new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
-    }
+        SmartDashboard.putNumberArray(
+            "Vision Pose " + result.cameraName,
+            new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
+      }
 
-    if (isSimulation()) {
-      vision.simulationPeriodic(drivetrain.getState().Pose);
+      if (isSimulation()) {
+        vision.simulationPeriodic(drivetrain.getState().Pose);
+      }
     }
 
     updateRobotStatus();
