@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
-import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
+import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -54,7 +54,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
 
-
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
   private double MaxAngularRate = DrivetrainConstants.kMaxAngularRate.in(RotationsPerSecond);
@@ -77,7 +76,7 @@ public class RobotContainer {
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final SwerveRequest.RobotCentric forwardStraight =
+  private final SwerveRequest.RobotCentric robotCentric =
       new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -230,6 +229,13 @@ public class RobotContainer {
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
   private Command raiseHome = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME, true);
 
+  private final Command scoreL4 =
+      new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L4);
+  private final Command scoreL3 =
+      new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L3);
+  private final Command scoreL2 =
+      new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L2);
+
   private void registerNamedCommands() {
     Map<String, Command> namedCommands = new HashMap<>();
     namedCommands.put("AlignAndScoreL1Left", alignAndScoreL1Left);
@@ -245,6 +251,15 @@ public class RobotContainer {
     namedCommands.put("AlignAndScoreL4Right", alignAndScoreL4Right);
 
     namedCommands.put("IntakeCoral", new AutoIntakeCoral(wristIntakeSubsystem, elevator, wrist));
+
+    namedCommands.put("RaiseL4", raiseL4);
+    namedCommands.put("RaiseL3", raiseL3);
+    namedCommands.put("RaiseL2", raiseL2);
+    namedCommands.put("RaiseHome", raiseHome);
+
+    namedCommands.put("ScoreL4", scoreL4);
+    namedCommands.put("ScoreL3", scoreL3);
+    namedCommands.put("ScoreL2", scoreL2);
 
     NamedCommands.registerCommands(namedCommands);
   }
@@ -280,6 +295,9 @@ public class RobotContainer {
             // X
             // (left)
             ));
+
+    driver.povLeft().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(0.5)));
+    driver.povRight().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(-0.5)));
 
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
     driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
@@ -345,6 +363,27 @@ public class RobotContainer {
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
+    operator
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L4;
+                }));
+    operator
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L3;
+                }));
+    operator
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L2;
+                }));
     operator
         .y()
         .onTrue(

@@ -3,8 +3,9 @@
   "robotLength": 0.888,
   "holonomicMode": true,
   "pathFolders": [
-    "From Start",
     "Coral Station to Reef",
+    "From Start",
+    "No Vision",
     "Processor",
     "To Coral Station"
   ],
@@ -18,8 +19,8 @@
     "4 Coral Right",
     "1 Coral Middle"
   ],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 2.0,
+  "defaultMaxVel": 5.0,
+  "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
