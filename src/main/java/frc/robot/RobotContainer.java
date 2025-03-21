@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
+import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
