@@ -10,16 +10,16 @@ import frc.robot.LimelightHelpers;
 
 public class ColorDetectionSubsystem extends SubsystemBase {
   private final String limelight;
-  private static final double ALIGN_THRESHOLD = 0.1;
-  private static final double MIN_TARGET_AREA = 10.0;
+  private static final double ALIGN_THRESHOLD = 1;
+  private static final double MIN_TARGET_AREA = 2.0;
 
   public ColorDetectionSubsystem(String limelightName) {
     this.limelight = limelightName;
     LimelightHelpers.setLEDMode_ForceOff(limelight);
   }
 
-  public double getTXNC() {
-    return LimelightHelpers.getTXNC(limelight);
+  public double getTX() {
+    return LimelightHelpers.getTX(limelight);
   }
 
   public double getTargetArea() {
@@ -34,7 +34,7 @@ public class ColorDetectionSubsystem extends SubsystemBase {
     if (!hasValidTarget()) {
       return false;
     }
-    return Math.abs(getTXNC()) < ALIGN_THRESHOLD;
+    return Math.abs(getTX()) < ALIGN_THRESHOLD;
   }
 
   public void enableLED() {
@@ -59,7 +59,7 @@ public class ColorDetectionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Reef TXNC", getTXNC());
+    SmartDashboard.putNumber("Reef TX", getTX());
     SmartDashboard.putBoolean("Is Aligned (Color)", isAligned());
   }
 }

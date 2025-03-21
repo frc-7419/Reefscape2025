@@ -35,14 +35,14 @@ public class AlignToColor extends Command {
     pid.setConstraints(velocityConstraints);
     pid.setGoal(0);
 
-    pid.reset(colorDetectionSubsystem.getTXNC());
+    pid.reset(colorDetectionSubsystem.getTX());
     pid.setTolerance(5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double error = colorDetectionSubsystem.getTXNC();
+    double error = colorDetectionSubsystem.getTX();
     double output = pid.calculate(error);
 
     drivetrain.setControl(drive.withVelocityY(output));

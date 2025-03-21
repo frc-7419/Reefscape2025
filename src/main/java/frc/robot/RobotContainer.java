@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
+import frc.robot.commands.AlignToColor;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.ScoreWithoutAlign;
@@ -36,6 +37,7 @@ import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.constants.Constants.VisionConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.ColorDetectionSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -87,6 +89,8 @@ public class RobotContainer {
   private WristSubsystem wrist = new WristSubsystem();
   private final ElevatorSubsystem elevator =
       new ElevatorSubsystem(wrist::getPosition, drivetrain::getPigeon2);
+
+    private final ColorDetectionSubsystem colorDetectionSubsystem = new ColorDetectionSubsystem("");
 
   public final VisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
@@ -303,6 +307,8 @@ public class RobotContainer {
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
     driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
     driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
+    driver.y().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
+
 
     driver.leftTrigger(0.2).whileTrue(raiseHome);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
