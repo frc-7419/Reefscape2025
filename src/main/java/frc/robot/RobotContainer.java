@@ -12,11 +12,9 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -55,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
@@ -226,7 +224,6 @@ public class RobotContainer {
           ScoringPosition.RIGHT,
           ScoringSetpoint.L4);
 
-
   private ScoringSetpoint setpoint = ScoringSetpoint.L2;
   private Command raiseL4 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true);
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
@@ -285,19 +282,13 @@ public class RobotContainer {
             ));
 
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    driver
-        .b()
-        .whileTrue(
-            drivetrain.applyRequest(
-                () ->
-                    point.withModuleDirection(
-                        new Rotation2d(-driver.getLeftY(), -driver.getLeftX()))));
+    driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
+    driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
 
     driver.leftTrigger(0.2).whileTrue(raiseHome);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
-
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -354,11 +345,28 @@ public class RobotContainer {
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
-    operator.y().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L4;}));
-    operator.x().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L3;}));
-    operator.b().onTrue(new InstantCommand(() -> {setpoint = ScoringSetpoint.L2;}));
+    operator
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L4;
+                }));
+    operator
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L3;
+                }));
+    operator
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L2;
+                }));
     operator.a().whileTrue(raiseHome);
-
   }
 
   public Command getAutonomousCommand() {

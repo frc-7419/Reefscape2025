@@ -76,7 +76,7 @@ public class Constants {
       L1("L1", 0, 0.38, false),
       L2("L2", 5, 0.38, true),
       L3("L3", 12.8, 0.38, true),
-      L4("L4", 24.5, 0.34, true),
+      L4("L4", 25.5, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
       BARGE("BARGE", 30, 0.43, true),
@@ -146,8 +146,8 @@ public class Constants {
             new Translation3d(
                 Units.inchesToMeters(11.375),
                 Units.inchesToMeters(-11.375),
-                Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-90)));
+                Units.inchesToMeters(8.5)),
+            new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-90)));
 
     public static final Matrix<N3, N1> kSingleTagStdDevs =
         VecBuilder.fill(5, 5, Degrees.of(10).in(Radians));
