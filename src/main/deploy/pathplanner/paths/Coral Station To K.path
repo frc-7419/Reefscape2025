@@ -36,7 +36,12 @@
       "name": "RaiseL3",
       "waypointRelativePos": 0.38175166560913704,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RaiseL3"
+        }
+      }
     }
   ],
   "globalConstraints": {

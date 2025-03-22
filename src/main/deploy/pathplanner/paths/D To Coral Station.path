@@ -36,7 +36,12 @@
       "name": "RaiseHome",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RaiseHome"
+        }
+      }
     }
   ],
   "globalConstraints": {
