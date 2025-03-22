@@ -7,7 +7,9 @@ package frc.robot.commands;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.DrivetrainConstants;
 import frc.robot.subsystems.ColorDetectionSubsystem;
@@ -18,6 +20,7 @@ public class AlignToColor extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final ColorDetectionSubsystem colorDetectionSubsystem;
   private final ProfiledPIDController pid = DrivetrainConstants.kPoseVelocityYController;
+  private final LinearFilter filter = LinearFilter.movingAverage(10);
 
   private final SwerveRequest.RobotCentric drive =
       new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -31,7 +34,7 @@ public class AlignToColor extends Command {
 
   @Override
   public void initialize() {
-    TrapezoidProfile.Constraints velocityConstraints = new TrapezoidProfile.Constraints(1, 1);
+    TrapezoidProfile.Constraints velocityConstraints = new TrapezoidProfile.Constraints(0.5, 0.5);
     pid.setConstraints(velocityConstraints);
     pid.setGoal(0);
 
@@ -43,9 +46,10 @@ public class AlignToColor extends Command {
   @Override
   public void execute() {
     double error = colorDetectionSubsystem.getTX();
-    double output = pid.calculate(error);
+    double output = pid.calculate(filter.calculate(error));
 
-    drivetrain.setControl(drive.withVelocityY(output));
+    drivetrain.setControl(drive.withVelocityY(-output));
+    SmartDashboard.putNumber("Color Align PID", output);
   }
 
   // Called once the command ends or is interrupted.
@@ -57,6 +61,6 @@ public class AlignToColor extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pid.atGoal();
+    return false;
   }
 }

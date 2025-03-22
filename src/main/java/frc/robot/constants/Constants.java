@@ -74,12 +74,12 @@ public class Constants {
 
     public enum ScoringSetpoint {
       L1("L1", 0, 0.38, false),
-      L2("L2", 5, 0.38, true),
-      L3("L3", 12.8, 0.38, true),
-      L4("L4", 25.5, 0.32, true),
+      L2("L2", 6, 0.38, true),
+      L3("L3", 13.8, 0.38, true),
+      L4("L4", 27.5, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
-      BARGE("BARGE", 30, 0.43, true),
+      BARGE("BARGE", 30, 0, true),
       HOME("HOME", 0, 0.46, false),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
 
@@ -152,7 +152,7 @@ public class Constants {
     public static final Matrix<N3, N1> kSingleTagStdDevs =
         VecBuilder.fill(5, 5, Degrees.of(10).in(Radians));
     public static final Matrix<N3, N1> kMultiTagStdDevs =
-        VecBuilder.fill(0.3, 0.3, Degrees.of(2).in(Radians));
+        VecBuilder.fill(0.1, 0.1, Degrees.of(2).in(Radians));
 
     public static final AprilTagFieldLayout kTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);

@@ -75,7 +75,7 @@ public class ScoringSetpoints extends Command {
       setWristAngle(upAngle);
     } else if (!targetPosition.lateWrist) {
       setWristAngle(Rotations.of(targetPosition.wristAngle));
-    } else if (Math.abs(targetPosition.elevatorHeight - elevatorRotations) <= 0.5) {
+    } else if (Math.abs(targetPosition.elevatorHeight - elevatorRotations) <= 1) {
       setWristAngle(Rotations.of(targetPosition.wristAngle));
     } else {
       setWristAngle(upAngle);

@@ -103,7 +103,7 @@ public class RobotContainer {
   private final List<CameraConfig> cameraConfigs =
       new ArrayList<CameraConfig>() {
         {
-          add(photonCamOne);
+          // add(photonCamOne);
           add(photonCamTwo);
         }
       };
@@ -370,27 +370,6 @@ public class RobotContainer {
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
-    operator
-        .y()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  setpoint = ScoringSetpoint.L4;
-                }));
-    operator
-        .x()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  setpoint = ScoringSetpoint.L3;
-                }));
-    operator
-        .b()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  setpoint = ScoringSetpoint.L2;
-                }));
     operator
         .y()
         .onTrue(
