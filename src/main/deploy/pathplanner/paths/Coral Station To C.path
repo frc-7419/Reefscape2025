@@ -42,10 +42,21 @@
           "name": "RaiseL3"
         }
       }
+    },
+    {
+      "name": "RaiseL4",
+      "waypointRelativePos": 0.8318703578663051,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RaiseL4"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -62,5 +73,5 @@
     "velocity": 0,
     "rotation": 55.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

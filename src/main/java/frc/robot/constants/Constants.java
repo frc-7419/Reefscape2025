@@ -75,12 +75,12 @@ public class Constants {
     public enum ScoringSetpoint {
       L1("L1", 0, 0.38, false),
       L2("L2", 6, 0.38, true),
-      L3("L3", 13.8, 0.38, true),
-      L4("L4", 27.5, 0.32, true),
+      L3("L3", 14, 0.38, true),
+      L4("L4", 28, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
-      BARGE("BARGE", 30, 0, true),
-      HOME("HOME", 0, 0.46, false),
+      BARGE("BARGE", 30, 0, false),
+      HOME("HOME", 0, 0.46, true),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
 
       public final String name;

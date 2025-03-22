@@ -229,6 +229,7 @@ public class RobotContainer {
           ScoringSetpoint.L4);
 
   private ScoringSetpoint setpoint = ScoringSetpoint.L2;
+  private Command raiseBarge = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE, true);
   private Command raiseL4 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true);
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
@@ -304,13 +305,13 @@ public class RobotContainer {
     driver.povLeft().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(0.5)));
     driver.povRight().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(-0.5)));
 
-    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
     driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
     driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
-    driver.y().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
+    driver.a().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
 
 
     driver.leftTrigger(0.2).whileTrue(raiseHome);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
@@ -391,6 +392,13 @@ public class RobotContainer {
                 () -> {
                   setpoint = ScoringSetpoint.L2;
                 }));
+                operator
+                .povUp()
+                .onTrue(
+                    new InstantCommand(
+                        () -> {
+                          setpoint = ScoringSetpoint.BARGE;
+                        }));
     operator.a().whileTrue(raiseHome);
   }
 

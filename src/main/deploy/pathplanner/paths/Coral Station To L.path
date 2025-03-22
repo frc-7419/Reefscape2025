@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.6908458931621078,
-        "y": 5.071608254371128
+        "x": 3.6952499999999997,
+        "y": 5.08775
       },
       "prevControl": {
-        "x": 3.190515584246168,
-        "y": 5.6038019502889185
+        "x": 3.19491969108406,
+        "y": 5.61994369591779
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,21 @@
           "name": "RaiseL3"
         }
       }
+    },
+    {
+      "name": "RaiseL4",
+      "waypointRelativePos": 0.8075624577987803,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RaiseL4"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -62,5 +73,5 @@
     "velocity": 0,
     "rotation": -55.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

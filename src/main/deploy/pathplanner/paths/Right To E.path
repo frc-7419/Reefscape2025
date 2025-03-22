@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.553312864141949,
-        "y": 2.4303288863877115
+        "x": 6.97125,
+        "y": 2.45525
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.518928568310273,
-        "y": 2.358760914293779
+        "x": 5.976749999999999,
+        "y": 3.2645
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.00706597465264,
-        "y": 2.8057740640150373
+        "x": 5.010860655737704,
+        "y": 2.8022540983606565
       },
       "prevControl": {
-        "x": 5.27265802366513,
-        "y": 2.8405852058941683
+        "x": 5.381360655737703,
+        "y": 2.9875040983606564
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,22 +31,10 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "RaiseL3",
-      "waypointRelativePos": 0.17798223350253806,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RaiseL3"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -60,7 +48,7 @@
   "folder": "No Vision",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.9504266595902
+    "rotation": 135.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
