@@ -91,7 +91,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "4 Coral Right",
   "choreoAuto": false
 }

@@ -28,6 +28,7 @@ import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToColor;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
+import frc.robot.commands.DriveRobotCentric;
 import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
@@ -310,11 +311,15 @@ public class RobotContainer {
     driver.a().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
 
 
-    driver.leftTrigger(0.2).whileTrue(raiseHome);
+    driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.

@@ -79,7 +79,7 @@ public class Constants {
       L4("L4", 28, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
-      BARGE("BARGE", 30, 0, false),
+      BARGE("BARGE", 34.5, 0.05, false),
       HOME("HOME", 0, 0.46, true),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
 

@@ -36,8 +36,7 @@ public class ScoreWithoutAlign extends SequentialCommandGroup {
                 .finallyDo(() -> wristIntake.setPower(0)),
             new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
             new MaintainElevatorPosition(elevator)),
-        new MaintainElevatorPosition(elevator).withTimeout(0.1),
-        new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
-            .until(() -> elevator.getPosition().lt(Rotations.of(1))));
+        new MaintainElevatorPosition(elevator).withTimeout(0.1)
+        );
   }
 }

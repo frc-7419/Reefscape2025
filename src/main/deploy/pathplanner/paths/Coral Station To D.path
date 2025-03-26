@@ -33,19 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "RaiseL3",
-      "waypointRelativePos": 0.2809723984771573,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RaiseL3"
-        }
-      }
-    },
-    {
       "name": "RaiseL4",
-      "waypointRelativePos": 0.8885887913571892,
+      "waypointRelativePos": 0.6428089128967063,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -56,7 +45,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 5.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
