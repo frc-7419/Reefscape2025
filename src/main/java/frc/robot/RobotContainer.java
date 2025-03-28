@@ -104,7 +104,7 @@ public class RobotContainer {
   private final List<CameraConfig> cameraConfigs =
       new ArrayList<CameraConfig>() {
         {
-          // add(photonCamOne);
+          add(photonCamOne);
           add(photonCamTwo);
         }
       };
@@ -123,8 +123,8 @@ public class RobotContainer {
 
     registerNamedCommands();
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-
+    autoChooser = AutoBuilder.buildAutoChooser("Four Coral Right L4 No Align");
+    
     SmartDashboard.putData("Auton Path", autoChooser);
   }
 

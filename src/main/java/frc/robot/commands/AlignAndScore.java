@@ -27,7 +27,9 @@ public class AlignAndScore extends SequentialCommandGroup {
   /**
    * Creates a new AlignAndScore.
    *
-   * <p>ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND THEY'RE GONNA
+   * <p>
+   * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
+   * THEY'RE GONNA
    * BLAME SOFTWARE
    */
   public AlignAndScore(
@@ -40,18 +42,18 @@ public class AlignAndScore extends SequentialCommandGroup {
 
     if (Robot.isReal()) {
       addCommands(
-          new AlignToReef(drivetrain, scoringPosition, true).withTimeout(1),
-          new ScoringSetpoints(elevator, wrist, scoringSetpoint),
           new ParallelDeadlineGroup(
-              new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
-                  .until(() -> wristIntake.beamBreakisTriggered())
-                  .withTimeout(0.)
-                  .finallyDo(() -> wristIntake.setPower(0)),
-              new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
-              new MaintainElevatorPosition(elevator)),
-          new MaintainElevatorPosition(elevator).withTimeout(0.1),
-          new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME)
-              .until(() -> elevator.getPosition().lt(Rotations.of(14))));
+              new SequentialCommandGroup(
+                  new ScoringSetpoints(elevator, wrist, scoringSetpoint),
+                  new ParallelDeadlineGroup(
+                      new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
+                          .until(() -> wristIntake.beamBreakisTriggered())
+                          .withTimeout(0.)
+                          .finallyDo(() -> wristIntake.setPower(0)),
+                      new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
+                      new MaintainElevatorPosition(elevator)),
+                  new MaintainElevatorPosition(elevator).withTimeout(0.1)),
+              new AlignToReef(drivetrain, scoringPosition, true)));
     } else {
       addCommands(
           new AlignToReef(drivetrain, scoringPosition, true).withTimeout(2), new WaitCommand(2));

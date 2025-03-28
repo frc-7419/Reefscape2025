@@ -117,11 +117,11 @@ public class Constants {
     public static Map<Integer, Pose2d> reefPoseMap = getReefPoseMap();
 
     public static final Translation2d leftReefOffset =
-        new Translation2d(0.444, 0.1651); // should probally be robot
+        new Translation2d(0.426, -0.1651); // should probally be robot
     // bumper
     // offset to be flush and then the left
     public static final Translation2d rightReefOffset =
-        new Translation2d(0.444, -0.1651); // should probally be robot
+        new Translation2d(0.426, 0.1651); // should probally be robot
 
     // bumper
     // offset to be flush and then the
@@ -141,13 +141,13 @@ public class Constants {
   }
 
   public static class VisionConstants {
-    public static final Transform3d kRobotToCamOne =
+    public static final Transform3d kRobotToCamTwo =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(-11.375),
+                Units.inchesToMeters(9.894219),
+                Units.inchesToMeters(-11.075061),
                 Units.inchesToMeters(8.5)),
-            new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-90)));
+            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(30)));
 
     public static final Matrix<N3, N1> kSingleTagStdDevs =
         VecBuilder.fill(5, 5, Degrees.of(10).in(Radians));
@@ -156,14 +156,14 @@ public class Constants {
 
     public static final AprilTagFieldLayout kTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    public static final Transform3d kRobotToCamTwo =
+    public static final Transform3d kRobotToCamOne =
         new Transform3d(
             new Translation3d(
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(11.375),
-                Units.inchesToMeters(9)),
-            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(0)));
-  }
+                Units.inchesToMeters(9.894219),
+                Units.inchesToMeters(11.075061),
+                Units.inchesToMeters(8.5)),
+            new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-30)));
+  };
 
   public static class WristConstants {
     public static final int kWristMotorID = 12; // Arbitrary ID (change)
