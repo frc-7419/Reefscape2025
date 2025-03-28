@@ -91,7 +91,7 @@ public class RobotContainer {
   private final ElevatorSubsystem elevator =
       new ElevatorSubsystem(wrist::getPosition, drivetrain::getPigeon2);
 
-    private final ColorDetectionSubsystem colorDetectionSubsystem = new ColorDetectionSubsystem("");
+  private final ColorDetectionSubsystem colorDetectionSubsystem = new ColorDetectionSubsystem("");
 
   public final VisionSubsystem photonvision;
   private final CameraConfig photonCamOne =
@@ -308,8 +308,8 @@ public class RobotContainer {
 
     driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
     driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
-    driver.a().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
-
+    driver.y().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
+    driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
@@ -397,13 +397,13 @@ public class RobotContainer {
                 () -> {
                   setpoint = ScoringSetpoint.L2;
                 }));
-                operator
-                .povUp()
-                .onTrue(
-                    new InstantCommand(
-                        () -> {
-                          setpoint = ScoringSetpoint.BARGE;
-                        }));
+    operator
+        .povUp()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.BARGE;
+                }));
     operator.a().whileTrue(raiseHome);
   }
 

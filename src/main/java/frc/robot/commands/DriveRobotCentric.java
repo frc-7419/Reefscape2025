@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants.DrivetrainConstants;
@@ -24,6 +23,7 @@ public class DriveRobotCentric extends Command {
   private final CommandXboxController driver;
   private final SwerveRequest.RobotCentric robotCentric =
       new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
   /** Creates a new DriveRobotCentric. */
   public DriveRobotCentric(CommandXboxController driver, CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
@@ -34,22 +34,16 @@ public class DriveRobotCentric extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.setControl(robotCentric
-      .withVelocityX(
-          -driver.getLeftY()
-              * MaxSpeed * 0.7)
-      .withVelocityY(
-          -driver.getLeftX()
-              * MaxSpeed * 0.7)
-      .withRotationalRate(-driver.getRightX() * MaxAngularRate) 
-    );
+    drivetrain.setControl(
+        robotCentric
+            .withVelocityX(-driver.getLeftY() * MaxSpeed * 0.7)
+            .withVelocityY(-driver.getLeftX() * MaxSpeed * 0.7)
+            .withRotationalRate(-driver.getRightX() * MaxAngularRate));
   }
 
   // Called once the command ends or is interrupted.

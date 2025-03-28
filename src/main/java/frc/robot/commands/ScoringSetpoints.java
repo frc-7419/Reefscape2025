@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.ElevatorConstants;
 import frc.robot.constants.Constants.ScoringConstants.ScoringSetpoint;
 import frc.robot.constants.Constants.WristConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;

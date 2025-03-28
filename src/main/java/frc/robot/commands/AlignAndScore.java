@@ -44,7 +44,8 @@ public class AlignAndScore extends SequentialCommandGroup {
           new ScoringSetpoints(elevator, wrist, scoringSetpoint),
           new ParallelDeadlineGroup(
               new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)
-                  .until(() -> wristIntake.beamBreakisTriggered()).withTimeout(0.)
+                  .until(() -> wristIntake.beamBreakisTriggered())
+                  .withTimeout(0.)
                   .finallyDo(() -> wristIntake.setPower(0)),
               new WristToPosition(wrist, Rotations.of(scoringSetpoint.wristAngle)),
               new MaintainElevatorPosition(elevator)),
