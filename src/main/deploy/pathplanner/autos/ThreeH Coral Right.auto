@@ -75,23 +75,11 @@
           "data": {
             "name": "IntakeCoral"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Coral Station To B"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignAndScoreL4Right"
-          }
         }
       ]
     }
   },
   "resetOdom": false,
-  "folder": "4 Coral Right",
+  "folder": "Coral",
   "choreoAuto": false
 }

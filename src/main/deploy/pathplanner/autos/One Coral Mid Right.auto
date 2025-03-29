@@ -5,27 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "Left to Reef5"
+            "waitTime": 5.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Reef5 to Coral Station"
+            "pathName": "Mid To H"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Coral Station to Reef6"
+            "name": "ScoreL4"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "Test",
+  "resetOdom": false,
+  "folder": "Coral",
   "choreoAuto": false
 }

@@ -27,9 +27,7 @@ public class AlignAndScore extends SequentialCommandGroup {
   /**
    * Creates a new AlignAndScore.
    *
-   * <p>
-   * ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND
-   * THEY'RE GONNA
+   * <p>ONLY USE WHEN ALREADY AGAINST REEF WALL OR ELSE ROBOT WILL TIP AND BREAK AND THEY'RE GONNA
    * BLAME SOFTWARE
    */
   public AlignAndScore(

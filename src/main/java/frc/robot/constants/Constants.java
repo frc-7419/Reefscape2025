@@ -163,7 +163,8 @@ public class Constants {
                 Units.inchesToMeters(11.075061),
                 Units.inchesToMeters(8.5)),
             new Rotation3d(0, Units.degreesToRadians(-28.125), Units.degreesToRadians(-30)));
-  };
+  }
+  ;
 
   public static class WristConstants {
     public static final int kWristMotorID = 12; // Arbitrary ID (change)

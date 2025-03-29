@@ -21,8 +21,8 @@ public class DriveRobotCentric extends Command {
 
   private final CommandSwerveDrivetrain drivetrain;
   private final CommandXboxController driver;
-  private final SwerveRequest.RobotCentric robotCentric =
-      new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   /** Creates a new DriveRobotCentric. */
   public DriveRobotCentric(CommandXboxController driver, CommandSwerveDrivetrain drivetrain) {
@@ -34,15 +34,16 @@ public class DriveRobotCentric extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     drivetrain.setControl(
         robotCentric
-            .withVelocityX(-driver.getLeftY() * MaxSpeed * 0.7)
-            .withVelocityY(-driver.getLeftX() * MaxSpeed * 0.7)
+            .withVelocityX(-driver.getLeftY() * MaxSpeed * 0.4)
+            .withVelocityY(-driver.getLeftX() * MaxSpeed * 0.4)
             .withRotationalRate(-driver.getRightX() * MaxAngularRate));
   }
 

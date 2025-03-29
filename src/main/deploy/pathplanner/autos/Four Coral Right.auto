@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right to Reef3"
+            "pathName": "Right To E"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Left"
+            "name": "AlignAndScoreL4Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Reef3 to Coral Station"
+            "pathName": "E to Coral Station"
           }
         },
         {
@@ -31,19 +31,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station To D"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Right"
+            "name": "AlignAndScoreL4Right"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Reef2 To Coral Station"
+            "pathName": "D To Coral Station"
           }
         },
         {
@@ -55,19 +55,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station To C"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Left"
+            "name": "AlignAndScoreL4Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Reef2 To Coral Station"
+            "pathName": "C To Coral Station"
           }
         },
         {
@@ -79,19 +79,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef 1 (Processor)"
+            "pathName": "Coral Station To B"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlignAndScoreL3Right"
+            "name": "AlignAndScoreL4Right"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "4 Coral Right",
+  "resetOdom": false,
+  "folder": "Coral",
   "choreoAuto": false
 }

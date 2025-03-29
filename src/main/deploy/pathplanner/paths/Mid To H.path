@@ -3,50 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5344262295081967,
-        "y": 7.297643442622951
+        "x": 7.591608072916666,
+        "y": 4.037869285300926
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1667006055698597,
-        "y": 6.621962674194278
+        "x": 6.144899356006699,
+        "y": 4.035837782752257
       },
       "isLocked": false,
-      "linkedName": "Coral Station"
+      "linkedName": "Start Mid"
     },
     {
       "anchor": {
-        "x": 3.68872444983052,
-        "y": 5.0698533551636045
+        "x": 5.794261791672529,
+        "y": 4.194441077809507
       },
       "prevControl": {
-        "x": 3.18839414091458,
-        "y": 5.602047051081395
+        "x": 5.963857056443482,
+        "y": 4.0107635174836185
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "L"
+      "linkedName": "H"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "RaiseL4",
-      "waypointRelativePos": 0.6617150573936518,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RaiseL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.5,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "No Vision",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

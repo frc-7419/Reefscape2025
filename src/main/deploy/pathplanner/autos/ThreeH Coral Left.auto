@@ -7,31 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right to Reef3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlignAndScoreL4Left"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Reef3 to Coral Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeCoral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Left To J"
           }
         },
         {
@@ -43,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef2 To Coral Station"
+            "pathName": "J To Coral Station"
           }
         },
         {
@@ -55,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef2"
+            "pathName": "Coral Station To K"
           }
         },
         {
@@ -67,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef2 To Coral Station"
+            "pathName": "K To Coral Station"
           }
         },
         {
@@ -79,19 +55,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral Station to Reef 1 (Processor)"
+            "pathName": "Coral Station To L"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "AlignAndScoreL4Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L To Coral Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeCoral"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "4 Coral Right",
+  "resetOdom": false,
+  "folder": "Coral",
   "choreoAuto": false
 }
