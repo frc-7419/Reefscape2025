@@ -161,8 +161,8 @@ public class AlignToReef extends Command {
     pidTheta.setTolerance(Units.degreesToRadians(0.1));
 
     if (slowMode) {
-      TrapezoidProfile.Constraints velocityConstraints = new TrapezoidProfile.Constraints(1, 1);
-      TrapezoidProfile.Constraints thetaConstraints = new TrapezoidProfile.Constraints(3, 2);
+      TrapezoidProfile.Constraints velocityConstraints = new TrapezoidProfile.Constraints(1.5, 1.5);
+      TrapezoidProfile.Constraints thetaConstraints = new TrapezoidProfile.Constraints(4, 2);
       pidX.setConstraints(velocityConstraints);
       pidY.setConstraints(velocityConstraints);
       pidTheta.setConstraints(thetaConstraints);

@@ -117,11 +117,11 @@ public class Constants {
     public static Map<Integer, Pose2d> reefPoseMap = getReefPoseMap();
 
     public static final Translation2d leftReefOffset =
-        new Translation2d(0.426, -0.1651); // should probally be robot
+        new Translation2d(0.422, -0.1651); // should probally be robot
     // bumper
     // offset to be flush and then the left
     public static final Translation2d rightReefOffset =
-        new Translation2d(0.426, 0.1651); // should probally be robot
+        new Translation2d(0.422, 0.1651); // should probally be robot
 
     // bumper
     // offset to be flush and then the
