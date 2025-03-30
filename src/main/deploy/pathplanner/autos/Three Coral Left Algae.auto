@@ -7,6 +7,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Warmup Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Left To J"
           }
         },

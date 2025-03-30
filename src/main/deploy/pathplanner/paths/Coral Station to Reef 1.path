@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 1.5344262295081967,
-        "y": 7.297643442622951
+        "y": 7.321618852459016
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.9494735585240965,
-        "y": 5.060344965717798
+        "y": 5.0843203755538635
       },
       "isLocked": false,
       "linkedName": "Coral Station"

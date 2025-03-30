@@ -7,6 +7,12 @@
         {
           "type": "path",
           "data": {
+            "pathName": "Warmup Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Right To E"
           }
         },
