@@ -131,9 +131,6 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser("Three Coral Right Algae");
 
     SmartDashboard.putData("Auton Path", autoChooser);
-
-    FollowPathCommand.warmupCommand().schedule();
-    PathfindingCommand.warmupCommand().schedule();
   }
 
   private final Command alignAndScoreL1Left =

@@ -61,22 +61,13 @@ public class Constants {
   }
 
   public static class ScoringConstants {
-    public static final double elevatorSetPointL4 = 0; // replace
-    public static final double elevatorSetPointL3 = 0; // replace
-    public static final double elevatorSetPointL2 = 0; // replace
-    public static final double elevatorSetPointL1 = 0; // replace
-    public static final double wristSetPointL4 = 0; // replace
-    public static final double wristSetPointL3 = 0; // replace
-    public static final double wristSetPointL2 = 0; // replace
-    public static final double wristSetPointL1 = 0; // replace
-
     public static int[] reefIds = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
 
     public enum ScoringSetpoint {
       L1("L1", 0, 0.38, false),
-      L2("L2", 6, 0.38, true),
-      L3("L3", 14, 0.38, true),
-      L4("L4", 28.5, 0.32, true),
+      L2("L2", 6.5, 0.38, true),
+      L3("L3", 15, 0.38, true),
+      L4("L4", 29, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
       BARGE("BARGE", 34.5, 0.05, false),

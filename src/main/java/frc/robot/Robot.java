@@ -8,6 +8,9 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.CANBus.CANBusStatus;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -30,8 +33,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-
-  Timer gcTimer = new Timer();
 
   private final Field2d vision = new Field2d();
 
@@ -94,18 +95,18 @@ public class Robot extends TimedRobot {
   }
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
     DataLogManager.start();
     SignalLogger.enableAutoLogging(false);
+
+    
+    FollowPathCommand.warmupCommand().schedule();
+    PathfindingCommand.warmupCommand().schedule();
+
+    m_robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
-
-    if (gcTimer.advanceIfElapsed(5)) {
-      System.gc();
-    }
-
     CommandScheduler.getInstance().run();
 
     if (useVision.getValue()) {

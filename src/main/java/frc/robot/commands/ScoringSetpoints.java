@@ -75,7 +75,7 @@ public class ScoringSetpoints extends Command {
       setWristAngle(upAngle);
     }
 
-    if (targetPosition.name.equals("HOME") && elevator.isStalling()) {
+    if (targetPosition.name.equals("HOME") && elevator.isStalling() && elevator.getPosition().lt(Rotations.of(5))) {
       elevator.zeroEncoder(); // Homing
     }
 
