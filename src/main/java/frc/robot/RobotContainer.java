@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AlignAndScore;
+import frc.robot.commands.AlignToBarge;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.DriveRobotCentric;
@@ -237,8 +238,10 @@ public class RobotContainer {
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
   private Command raiseHome = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME, true);
-  private Command raiseHighCoral = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE, true);
-  private Command raiseLowCoral = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE, true);
+  private Command raiseHighCoral =
+      new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE, true);
+  private Command raiseLowCoral =
+      new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE, true);
 
   private final Command scoreL4 =
       new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L4);
@@ -280,6 +283,7 @@ public class RobotContainer {
 
     namedCommands.put("GrabAlgaeHigh", grabAlgaeHigh);
     namedCommands.put("GrabAlgaeLow", grabAlgaeLow);
+    namedCommands.put("AlignToBarge", new AlignToBarge(drivetrain, driver));
 
     NamedCommands.registerCommands(namedCommands);
   }
@@ -319,12 +323,28 @@ public class RobotContainer {
     driver.povLeft().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(0.5)));
     driver.povRight().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(-0.5)));
 
-    driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
-    driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
+    // X button - Align to reef LEFT or barge based on coral mode
+    driver.x().whileTrue(
+        new ConditionalCommand(
+            new AlignToReef(drivetrain, ScoringPosition.LEFT),
+            new AlignToBarge(drivetrain, driver),
+            () -> coral));
+    
+    // B button - Align to reef RIGHT or barge based on coral mode
+    driver.b().whileTrue(
+        new ConditionalCommand(
+            new AlignToReef(drivetrain, ScoringPosition.RIGHT),
+            new AlignToBarge(drivetrain, driver),
+            () -> coral));
+    // Y button - Grab algae based on setpoint
     driver.y().whileTrue(
-        setpoint == ScoringSetpoint.HIGH_ALGAE
-            ? grabAlgaeHigh
-            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabAlgaeLow : new InstantCommand()));
+        new ConditionalCommand(
+            grabAlgaeHigh,
+            new ConditionalCommand(
+                grabAlgaeLow,
+                new InstantCommand(),
+                () -> setpoint == ScoringSetpoint.LOW_ALGAE),
+            () -> setpoint == ScoringSetpoint.HIGH_ALGAE));
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));
@@ -332,14 +352,26 @@ public class RobotContainer {
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
-    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE).whileTrue(raiseHighCoral);
-    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.LOW_ALGAE).whileTrue(raiseLowCoral);
+    driver
+        .rightTrigger(0.2)
+        .and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE)
+        .whileTrue(raiseHighCoral);
+    driver
+        .rightTrigger(0.2)
+        .and(() -> setpoint == ScoringSetpoint.LOW_ALGAE)
+        .whileTrue(raiseLowCoral);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(scoreBarge);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
-    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE).whileTrue(raiseHighCoral);
-    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.LOW_ALGAE).whileTrue(raiseLowCoral);
+    operator
+        .rightBumper()
+        .and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE)
+        .whileTrue(raiseHighCoral);
+    operator
+        .rightBumper()
+        .and(() -> setpoint == ScoringSetpoint.LOW_ALGAE)
+        .whileTrue(raiseLowCoral);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.

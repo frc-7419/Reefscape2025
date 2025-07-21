@@ -18,28 +18,26 @@ public class ScoreBarge extends Command {
   private final WristSubsystem wrist;
   private final WristIntakeSubsystem wristIntake;
   private final ScoringSetpoint bargeSetpoint;
-  
+
   private final Angle upAngle = Rotations.of(0.0); // Wrist out position
   private final Angle bargeAngle = Rotations.of(0.38); // Barge scoring angle
-  
+
   private PIDController pidController =
       new PIDController(WristConstants.pidKp, WristConstants.pidKi, WristConstants.pidKd);
-  
+
   private enum State {
     MOVING_TO_HEIGHT,
     FLIPPING_WRIST,
     SCORING
   }
-  
+
   private State currentState = State.MOVING_TO_HEIGHT;
   private boolean wristFlipped = false;
   private boolean intakeStarted = false;
   private Timer scoringTimer = new Timer();
 
   public ScoreBarge(
-      ElevatorSubsystem elevator, 
-      WristSubsystem wrist, 
-      WristIntakeSubsystem wristIntake) {
+      ElevatorSubsystem elevator, WristSubsystem wrist, WristIntakeSubsystem wristIntake) {
     this.elevator = elevator;
     this.wrist = wrist;
     this.wristIntake = wristIntake;
@@ -68,27 +66,28 @@ public class ScoreBarge extends Command {
   @Override
   public void execute() {
     double elevatorRotations = elevator.getPosition().in(Rotations);
-    boolean elevatorAtSetpoint = elevator
-        .getPosition()
-        .isNear(Rotations.of(bargeSetpoint.elevatorHeight), Rotations.of(0.1));
-    
+    boolean elevatorAtSetpoint =
+        elevator
+            .getPosition()
+            .isNear(Rotations.of(bargeSetpoint.elevatorHeight), Rotations.of(0.1));
+
     switch (currentState) {
       case MOVING_TO_HEIGHT:
         // Move elevator to barge height while keeping wrist out
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
         setWristAngle(upAngle);
-        
+
         if (elevatorAtSetpoint) {
           currentState = State.FLIPPING_WRIST;
           SmartDashboard.putString("ScoreBarge State", currentState.toString());
         }
         break;
-        
+
       case FLIPPING_WRIST:
         // Keep elevator at height and flip wrist to barge angle
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
         setWristAngle(bargeAngle);
-        
+
         // Check if wrist is close to barge angle
         double wristError = Math.abs(wrist.getPosition().in(Rotations) - bargeAngle.in(Rotations));
         if (wristError < 0.05) { // Within 0.05 rotations of target
@@ -98,7 +97,7 @@ public class ScoreBarge extends Command {
           SmartDashboard.putString("ScoreBarge State", currentState.toString());
         }
         break;
-        
+
       case SCORING:
         // Keep everything in position and run intake at full speed
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
@@ -106,12 +105,13 @@ public class ScoreBarge extends Command {
         wristIntake.setPower(1.0); // Full speed out
         break;
     }
-    
+
     SmartDashboard.putBoolean("ElevatorAtBargeHeight", elevatorAtSetpoint);
     SmartDashboard.putBoolean("WristAtBargeAngle", pidController.atSetpoint());
     SmartDashboard.putBoolean("IntakeRunning", intakeStarted);
     SmartDashboard.putNumber("ScoreBarge Timer", scoringTimer.get());
-    SmartDashboard.putNumber("Wrist Error", Math.abs(wrist.getPosition().in(Rotations) - bargeAngle.in(Rotations)));
+    SmartDashboard.putNumber(
+        "Wrist Error", Math.abs(wrist.getPosition().in(Rotations) - bargeAngle.in(Rotations)));
   }
 
   @Override
@@ -128,4 +128,4 @@ public class ScoreBarge extends Command {
     // Run for 1 second in scoring state to ensure algae is flung out
     return currentState == State.SCORING && scoringTimer.hasElapsed(1.0);
   }
-} 
+}
