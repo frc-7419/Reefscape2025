@@ -143,10 +143,14 @@ public class AlignToReef extends Command {
       targetPose =
           selectedPose.transformBy(
               new Transform2d(ScoringConstants.leftReefOffset, new Rotation2d()));
-    } else {
+    } else if (scoringPosition == ScoringPosition.RIGHT) {
       targetPose =
           selectedPose.transformBy(
               new Transform2d(ScoringConstants.rightReefOffset, new Rotation2d()));
+    } else { // CENTER
+      targetPose =
+          selectedPose.transformBy(
+              new Transform2d(ScoringConstants.centerReefOffset, new Rotation2d()));
     }
 
     targetPose =

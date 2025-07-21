@@ -70,7 +70,7 @@ public class Constants {
       L4("L4", 29, 0.32, true),
       HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
       LOW_ALGAE("LOW_ALGAE", 0, 0, false),
-      BARGE("BARGE", 34.5, 0.05, false),
+      BARGE("BARGE", 34.5, 0.05, true),
       HOME("HOME", 0, 0.46, true),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
 
@@ -117,6 +117,10 @@ public class Constants {
     // bumper
     // offset to be flush and then the
     // right
+    public static final Translation2d centerReefOffset =
+        new Translation2d(0.422, 0); // should probally be robot
+    // bumper
+    // offset to be flush and then the center
 
     public enum ScoringHeights {
       L1,
@@ -127,7 +131,8 @@ public class Constants {
 
     public enum ScoringPosition {
       LEFT,
-      RIGHT
+      RIGHT,
+      CENTER
     }
   }
 

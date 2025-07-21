@@ -28,6 +28,7 @@ import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.DriveRobotCentric;
+import frc.robot.commands.GrabCoral;
 import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
@@ -234,6 +235,8 @@ public class RobotContainer {
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
   private Command raiseHome = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME, true);
+  private Command raiseHighCoral = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE, true);
+  private Command raiseLowCoral = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.LOW_ALGAE, true);
 
   private final Command scoreL4 =
       new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L4);
@@ -241,6 +244,11 @@ public class RobotContainer {
       new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L3);
   private final Command scoreL2 =
       new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L2);
+
+  private final Command grabCoralHigh =
+      new GrabCoral(drivetrain, elevator, wrist, ScoringSetpoint.HIGH_ALGAE);
+  private final Command grabCoralLow =
+      new GrabCoral(drivetrain, elevator, wrist, ScoringSetpoint.LOW_ALGAE);
 
   private void registerNamedCommands() {
     Map<String, Command> namedCommands = new HashMap<>();
@@ -266,6 +274,9 @@ public class RobotContainer {
     namedCommands.put("ScoreL4", scoreL4);
     namedCommands.put("ScoreL3", scoreL3);
     namedCommands.put("ScoreL2", scoreL2);
+
+    namedCommands.put("GrabCoralHigh", grabCoralHigh);
+    namedCommands.put("GrabCoralLow", grabCoralLow);
 
     NamedCommands.registerCommands(namedCommands);
   }
@@ -307,7 +318,10 @@ public class RobotContainer {
 
     driver.x().whileTrue(new AlignToReef(drivetrain, ScoringPosition.LEFT));
     driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
-    // driver.y().whileTrue(new AlignToColor(drivetrain, colorDetectionSubsystem));
+    driver.y().whileTrue(
+        setpoint == ScoringSetpoint.HIGH_ALGAE
+            ? grabCoralHigh
+            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabCoralLow : null));
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));
@@ -315,10 +329,14 @@ public class RobotContainer {
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE).whileTrue(raiseHighCoral);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.LOW_ALGAE).whileTrue(raiseLowCoral);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE).whileTrue(raiseHighCoral);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.LOW_ALGAE).whileTrue(raiseLowCoral);
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -380,21 +398,21 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(
                 () -> {
-                  setpoint = ScoringSetpoint.L4;
+                  setpoint = coral ? ScoringSetpoint.L4 : ScoringSetpoint.HIGH_ALGAE;
                 }));
     operator
         .x()
         .onTrue(
             new InstantCommand(
                 () -> {
-                  setpoint = ScoringSetpoint.L3;
+                  setpoint = coral ? ScoringSetpoint.L3 : ScoringSetpoint.HIGH_ALGAE;
                 }));
     operator
         .b()
         .onTrue(
             new InstantCommand(
                 () -> {
-                  setpoint = ScoringSetpoint.L2;
+                  setpoint = coral ? ScoringSetpoint.L2 : ScoringSetpoint.LOW_ALGAE;
                 }));
     operator
         .povUp()
