@@ -12,7 +12,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,7 +47,6 @@ import frc.robot.subsystems.intake.WristIntakeSubsystem;
 import frc.robot.subsystems.wrist.RunWristWithJoystick;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristToPosition;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,10 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.DoubleSupplier;
-
-import com.ctre.phoenix6.controls.Follower;
-import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathfindingCommand;
 
 public class RobotContainer {
   private double MaxSpeed = DrivetrainConstants.kMaxVelocity.in(MetersPerSecond);
