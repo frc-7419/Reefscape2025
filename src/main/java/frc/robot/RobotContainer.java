@@ -324,7 +324,7 @@ public class RobotContainer {
     driver.y().whileTrue(
         setpoint == ScoringSetpoint.HIGH_ALGAE
             ? grabCoralHigh
-            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabCoralLow : null));
+            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabCoralLow : new InstantCommand()));
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));

@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.Constants.ScoringConstants.ScoringPosition;
@@ -33,12 +34,11 @@ public class GrabCoral extends SequentialCommandGroup {
       ScoringSetpoint setpoint) {
 
     addCommands(
-        new ParallelDeadlineGroup(
+        new ParallelCommandGroup(
             new AlignToReef(drivetrain, ScoringPosition.CENTER, true),
             new SequentialCommandGroup(
                 new ScoringSetpoints(elevator, wrist, setpoint),
                 new ParallelDeadlineGroup(
-                    new AlignToReef(drivetrain, ScoringPosition.CENTER, true),
                     new WristToPosition(wrist, Rotations.of(setpoint.wristAngle)),
                     new MaintainElevatorPosition(elevator)),
                 new MaintainElevatorPosition(elevator))));

@@ -68,8 +68,8 @@ public class Constants {
       L2("L2", 6.5, 0.38, true),
       L3("L3", 15, 0.38, true),
       L4("L4", 29, 0.32, true),
-      HIGH_ALGAE("HIGH_ALGAE", 11, 0, false),
-      LOW_ALGAE("LOW_ALGAE", 0, 0, false),
+      HIGH_ALGAE("HIGH_ALGAE", 18.6, 0, false),
+      LOW_ALGAE("LOW_ALGAE", 11.8, 0, false),
       BARGE("BARGE", 34.5, 0.05, true),
       HOME("HOME", 0, 0.46, true),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
