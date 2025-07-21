@@ -28,7 +28,7 @@ import frc.robot.commands.AlignAndScore;
 import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.DriveRobotCentric;
-import frc.robot.commands.GrabCoral;
+import frc.robot.commands.GrabAlgae;
 import frc.robot.commands.ScoreBarge;
 import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
@@ -247,10 +247,10 @@ public class RobotContainer {
   private final Command scoreL2 =
       new ScoreWithoutAlign(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.L2);
 
-  private final Command grabCoralHigh =
-      new GrabCoral(drivetrain, elevator, wrist, ScoringSetpoint.HIGH_ALGAE);
-  private final Command grabCoralLow =
-      new GrabCoral(drivetrain, elevator, wrist, ScoringSetpoint.LOW_ALGAE);
+  private final Command grabAlgaeHigh =
+      new GrabAlgae(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.HIGH_ALGAE);
+  private final Command grabAlgaeLow =
+      new GrabAlgae(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.LOW_ALGAE);
 
   private void registerNamedCommands() {
     Map<String, Command> namedCommands = new HashMap<>();
@@ -278,8 +278,8 @@ public class RobotContainer {
     namedCommands.put("ScoreL3", scoreL3);
     namedCommands.put("ScoreL2", scoreL2);
 
-    namedCommands.put("GrabCoralHigh", grabCoralHigh);
-    namedCommands.put("GrabCoralLow", grabCoralLow);
+    namedCommands.put("GrabAlgaeHigh", grabAlgaeHigh);
+    namedCommands.put("GrabAlgaeLow", grabAlgaeLow);
 
     NamedCommands.registerCommands(namedCommands);
   }
@@ -323,8 +323,8 @@ public class RobotContainer {
     driver.b().whileTrue(new AlignToReef(drivetrain, ScoringPosition.RIGHT));
     driver.y().whileTrue(
         setpoint == ScoringSetpoint.HIGH_ALGAE
-            ? grabCoralHigh
-            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabCoralLow : new InstantCommand()));
+            ? grabAlgaeHigh
+            : (setpoint == ScoringSetpoint.LOW_ALGAE ? grabAlgaeLow : new InstantCommand()));
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));

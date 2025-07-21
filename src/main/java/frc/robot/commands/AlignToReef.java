@@ -208,6 +208,8 @@ public class AlignToReef extends Command {
     SmartDashboard.putNumber("PID vy", vy);
     SmartDashboard.putNumber("PID omega", omega);
 
+    SmartDashboard.putBoolean("At Goal", atGoal());
+
     if (DriverStation.getAlliance().get() == Alliance.Red) {
       vx *= -1;
       vy *= -1;
