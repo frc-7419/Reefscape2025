@@ -57,7 +57,7 @@ public class Constants {
   }
 
   public static class IntakeCoralConstants {
-    public static final double intakeCoralVoltage = -0.2; // placeholder, insert actual value
+    public static final double intakeCoralVoltage = -0.2;
   }
 
   public static class ScoringConstants {

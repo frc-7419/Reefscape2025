@@ -29,6 +29,7 @@ import frc.robot.commands.AlignToReef;
 import frc.robot.commands.AutoIntakeCoral;
 import frc.robot.commands.DriveRobotCentric;
 import frc.robot.commands.GrabCoral;
+import frc.robot.commands.ScoreBarge;
 import frc.robot.commands.ScoreWithoutAlign;
 import frc.robot.commands.ScoringSetpoints;
 import frc.robot.constants.Constants.CameraConfig;
@@ -231,6 +232,7 @@ public class RobotContainer {
 
   private ScoringSetpoint setpoint = ScoringSetpoint.L2;
   private Command raiseBarge = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.BARGE, true);
+  private Command scoreBarge = new ScoreBarge(elevator, wrist, wristIntakeSubsystem);
   private Command raiseL4 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true);
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
@@ -270,6 +272,7 @@ public class RobotContainer {
     namedCommands.put("RaiseL3", raiseL3);
     namedCommands.put("RaiseL2", raiseL2);
     namedCommands.put("RaiseHome", raiseHome);
+    namedCommands.put("ScoreBarge", scoreBarge);
 
     namedCommands.put("ScoreL4", scoreL4);
     namedCommands.put("ScoreL3", scoreL3);
@@ -331,7 +334,7 @@ public class RobotContainer {
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE).whileTrue(raiseHighCoral);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.LOW_ALGAE).whileTrue(raiseLowCoral);
-    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(raiseBarge);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.BARGE).whileTrue(scoreBarge);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
