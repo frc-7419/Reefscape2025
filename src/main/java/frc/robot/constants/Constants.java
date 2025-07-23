@@ -68,9 +68,9 @@ public class Constants {
       L2("L2", 6.5, 0.38, true),
       L3("L3", 15, 0.38, true),
       L4("L4", 29, 0.32, true),
-      HIGH_ALGAE("HIGH_ALGAE", 18.6, 0, false),
+      HIGH_ALGAE("HIGH_ALGAE", 21.2, 0, false),
       LOW_ALGAE("LOW_ALGAE", 11.8, 0, false),
-      BARGE("BARGE", 34.5, 0.05, true),
+      BARGE("BARGE", 36, 0.05, true),
       HOME("HOME", 0, 0.46, true),
       PROCESSOR("PROCESSOR", 5, 0.43, false);
 
@@ -228,7 +228,7 @@ public class Constants {
     public static final int kLeftElevatorMotorId = 9; // Arbitrary ID (change)
     public static final int kRightElevatorMotorId = 11; // Arbitrary ID (change)
     public static final int kTopElevatorMotorId = 10; // Arbitrary ID (change)
-    public static final Angle kMaxRotations = Rotations.of(29.5); // Taken from canvas
+    public static final Angle kMaxRotations = Rotations.of(40); // Taken from canvas
     public static final Angle kMinRotations = Rotations.of(0); // Taken from canvas
     public static final AngularVelocity kMaxSpeed = RotationsPerSecond.of(5);
     public static final TalonFXConfiguration kElevatorTalonFXConfiguration =

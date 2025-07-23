@@ -75,6 +75,7 @@ public class ScoreBarge extends Command {
       case MOVING_TO_HEIGHT:
         // Move elevator to barge height while keeping wrist out
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
+        wristIntake.setPower(1.0);
         setWristAngle(upAngle);
 
         if (elevatorAtSetpoint) {
@@ -86,6 +87,7 @@ public class ScoreBarge extends Command {
       case FLIPPING_WRIST:
         // Keep elevator at height and flip wrist to barge angle
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
+        wristIntake.setPower(1.0);
         setWristAngle(bargeAngle);
 
         // Check if wrist is close to barge angle
@@ -102,7 +104,7 @@ public class ScoreBarge extends Command {
         // Keep everything in position and run intake at full speed
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
         setWristAngle(bargeAngle);
-        wristIntake.setPower(1.0); // Full speed out
+        wristIntake.setPower(-1.0); // Full speed out
         break;
     }
 
