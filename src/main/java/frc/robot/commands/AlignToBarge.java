@@ -18,6 +18,7 @@ public class AlignToBarge extends Command {
   private final CommandXboxController driver;
   private final double targetX;
   private final double MaxSpeed = 4.5;
+  private final double targetTheta;
 
   private final ProfiledPIDController pidX = DrivetrainConstants.kPoseVelocityXController;
   private final ProfiledPIDController pidTheta = DrivetrainConstants.kPoseThetaController;
@@ -39,8 +40,10 @@ public class AlignToBarge extends Command {
     if (DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == Alliance.Red) {
       this.targetX = 9.35; // Red alliance
+      this.targetTheta = 0;
     } else {
       this.targetX = 8.2; // Blue alliance (default)
+      this.targetTheta = 180;
     }
 
     addRequirements(drivetrain);
@@ -70,7 +73,7 @@ public class AlignToBarge extends Command {
 
     // Set goals - only X position and rotation (facing forward)
     pidX.setGoal(targetX);
-    pidTheta.setGoal(0.0); // Face forward (0 degrees)
+    pidTheta.setGoal(Units.degreesToRadians(targetTheta));
   }
 
   public boolean atGoal() {
@@ -95,7 +98,7 @@ public class AlignToBarge extends Command {
     double omega = pidTheta.calculate(currentPose.getRotation().getRadians());
 
     // Get Y velocity from joystick (allowing driver control)
-    double vy = -driver.getLeftY() * MaxSpeed * 0.5; // Reduced speed for precision
+    double vy = -driver.getLeftX() * MaxSpeed * 0.5; // Reduced speed for precision
 
     SmartDashboard.putNumber("Barge PID vx", vx);
     SmartDashboard.putNumber("Barge PID vy", vy);
