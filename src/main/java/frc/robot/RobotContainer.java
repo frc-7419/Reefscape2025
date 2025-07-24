@@ -122,6 +122,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("isConfigured", AutoBuilder.isConfigured());
 
     SmartDashboard.putBoolean("Coral Mode", coral);
+    updateSetpointDisplay();
 
     registerNamedCommands();
 
@@ -255,6 +256,40 @@ public class RobotContainer {
   private final Command grabAlgaeLow =
       new GrabAlgae(drivetrain, elevator, wrist, wristIntakeSubsystem, ScoringSetpoint.LOW_ALGAE);
 
+  private void updateSetpointDisplay() {
+    String setpointName;
+    switch (setpoint) {
+      case BARGE:
+        setpointName = "Barge";
+        break;
+      case L4:
+        setpointName = coral ? "Coral L4" : "High Algae";
+        break;
+      case L3:
+        setpointName = coral ? "Coral L3" : "High Algae";
+        break;
+      case L2:
+        setpointName = coral ? "Coral L2" : "Low Algae";
+        break;
+      case L1:
+        setpointName = coral ? "Coral L1" : "Low Algae";
+        break;
+      case HOME:
+        setpointName = "Home";
+        break;
+      case HIGH_ALGAE:
+        setpointName = "High Algae";
+        break;
+      case LOW_ALGAE:
+        setpointName = "Low Algae";
+        break;
+      default:
+        setpointName = "Unknown";
+        break;
+    }
+    SmartDashboard.putString("Current Setpoint", setpointName);
+  }
+
   private void registerNamedCommands() {
     Map<String, Command> namedCommands = new HashMap<>();
     namedCommands.put("AlignAndScoreL1Left", alignAndScoreL1Left);
@@ -324,27 +359,33 @@ public class RobotContainer {
     driver.povRight().whileTrue(drivetrain.applyRequest(() -> robotCentric.withVelocityY(-0.5)));
 
     // X button - Align to reef LEFT or barge based on coral mode
-    driver.x().whileTrue(
-        new ConditionalCommand(
-            new AlignToReef(drivetrain, ScoringPosition.LEFT),
-            new AlignToBarge(drivetrain, driver),
-            () -> coral));
-    
-    // B button - Align to reef RIGHT or barge based on coral mode
-    driver.b().whileTrue(
-        new ConditionalCommand(
-            new AlignToReef(drivetrain, ScoringPosition.RIGHT),
-            new AlignToBarge(drivetrain, driver),
-            () -> coral));
-    // Y button - Grab algae based on setpoint
-    driver.y().whileTrue(
-        new ConditionalCommand(
-            grabAlgaeHigh,
+    driver
+        .x()
+        .whileTrue(
             new ConditionalCommand(
-                grabAlgaeLow,
-                new InstantCommand(),
-                () -> setpoint == ScoringSetpoint.LOW_ALGAE),
-            () -> setpoint == ScoringSetpoint.HIGH_ALGAE));
+                new AlignToReef(drivetrain, ScoringPosition.LEFT),
+                new AlignToBarge(drivetrain, driver),
+                () -> coral));
+
+    // B button - Align to reef RIGHT or barge based on coral mode
+    driver
+        .b()
+        .whileTrue(
+            new ConditionalCommand(
+                new AlignToReef(drivetrain, ScoringPosition.RIGHT),
+                new AlignToBarge(drivetrain, driver),
+                () -> coral));
+    // Y button - Grab algae based on setpoint
+    driver
+        .y()
+        .whileTrue(
+            new ConditionalCommand(
+                grabAlgaeHigh,
+                new ConditionalCommand(
+                    grabAlgaeLow,
+                    new InstantCommand(),
+                    () -> setpoint == ScoringSetpoint.LOW_ALGAE),
+                () -> setpoint == ScoringSetpoint.HIGH_ALGAE));
     driver.a().whileTrue(drivetrain.applyRequest(() -> brake));
 
     driver.leftTrigger(0.2).whileTrue(new DriveRobotCentric(driver, drivetrain));
@@ -425,6 +466,7 @@ public class RobotContainer {
                 () -> {
                   coral = !coral;
                   SmartDashboard.putBoolean("Coral Mode", coral);
+                  updateSetpointDisplay();
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
@@ -434,6 +476,7 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   setpoint = coral ? ScoringSetpoint.L4 : ScoringSetpoint.HIGH_ALGAE;
+                  updateSetpointDisplay();
                 }));
     operator
         .x()
@@ -441,6 +484,7 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   setpoint = coral ? ScoringSetpoint.L3 : ScoringSetpoint.HIGH_ALGAE;
+                  updateSetpointDisplay();
                 }));
     operator
         .b()
@@ -448,6 +492,7 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   setpoint = coral ? ScoringSetpoint.L2 : ScoringSetpoint.LOW_ALGAE;
+                  updateSetpointDisplay();
                 }));
     operator
         .povUp()
@@ -455,6 +500,7 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   setpoint = ScoringSetpoint.BARGE;
+                  updateSetpointDisplay();
                 }));
     operator.a().whileTrue(raiseHome);
   }
