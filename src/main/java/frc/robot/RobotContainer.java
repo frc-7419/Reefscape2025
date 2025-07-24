@@ -466,7 +466,6 @@ public class RobotContainer {
                 () -> {
                   coral = !coral;
                   SmartDashboard.putBoolean("Coral Mode", coral);
-                  updateSetpointDisplay();
                 }));
     Set<Subsystem> scoringDependencies = new HashSet<>(Arrays.asList(elevator, wrist));
 
