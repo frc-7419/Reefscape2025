@@ -238,6 +238,7 @@ public class RobotContainer {
   private Command raiseL4 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L4, true);
   private Command raiseL3 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L3, true);
   private Command raiseL2 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L2, true);
+  private Command raiseL1 = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.L1, true);
   private Command raiseHome = new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HOME, true);
   private Command raiseHighCoral =
       new ScoringSetpoints(elevator, wrist, ScoringSetpoint.HIGH_ALGAE, true);
@@ -405,6 +406,7 @@ public class RobotContainer {
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+    operator.rightBumper().and(() -> setpoint == ScoringSetpoint.L1).whileTrue(raiseL1);
     operator
         .rightBumper()
         .and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE)
@@ -442,7 +444,6 @@ public class RobotContainer {
     operator.leftBumper().whileTrue(new AutoIntakeCoral(wristIntakeSubsystem, elevator, wrist));
     // operator.y().whileTrue(new WristPIDTest(wristSubsystem));
     operator.povLeft().whileTrue(new WristToPosition(wrist, Rotations.of(0.46)));
-    operator.povDown().whileTrue(new WristToPosition(wrist, Rotations.of(0.38)));
 
     wristIntakeSubsystem.setDefaultCommand(runIntakeWithJoystick);
     wrist.setDefaultCommand(new RunWristWithJoystick(wrist, () -> operator.getRightY() * 0.15));
@@ -501,6 +502,16 @@ public class RobotContainer {
                   setpoint = ScoringSetpoint.BARGE;
                   updateSetpointDisplay();
                 }));
+    
+    operator
+        .povDown()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  setpoint = ScoringSetpoint.L1;
+                  updateSetpointDisplay();
+                }));
+
     operator.a().whileTrue(raiseHome);
   }
 

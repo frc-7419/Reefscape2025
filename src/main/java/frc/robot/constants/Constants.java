@@ -64,7 +64,7 @@ public class Constants {
     public static int[] reefIds = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
 
     public enum ScoringSetpoint {
-      L1("L1", 0, 0.38, false),
+      L1("L1", 10, 0.0, false),
       L2("L2", 6.5, 0.38, true),
       L3("L3", 15, 0.38, true),
       L4("L4", 29, 0.32, true),
