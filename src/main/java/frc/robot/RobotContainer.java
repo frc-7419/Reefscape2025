@@ -394,6 +394,7 @@ public class RobotContainer {
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L4).whileTrue(raiseL4);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L3).whileTrue(raiseL3);
     driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L2).whileTrue(raiseL2);
+    driver.rightTrigger(0.2).and(() -> setpoint == ScoringSetpoint.L1).whileTrue(raiseL1);
     driver
         .rightTrigger(0.2)
         .and(() -> setpoint == ScoringSetpoint.HIGH_ALGAE)
