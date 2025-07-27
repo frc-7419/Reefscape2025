@@ -100,7 +100,8 @@ public class WristIntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Motor Coral Speed: ", intakeMotor.get());
     SmartDashboard.putNumber("Wrist Intake Voltage", getVoltage().in(Volts));
     SmartDashboard.putNumber("Wrist Intake Current", getCurrent().in(Amps));
-    SmartDashboard.putBoolean("Beam Break Triggred", beamBreakisTriggered());
+    SmartDashboard.putBoolean("Beam Broken", beamBreakisTriggered());
+    SmartDashboard.putBoolean("Has Coral", !beamBreakisTriggered());
     SmartDashboard.putBoolean("Intake Holding", HOLDING);
     if (coralDetectedByCurrent()) HOLDING = true;
   }

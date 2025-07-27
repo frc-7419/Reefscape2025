@@ -135,10 +135,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {
-    Command warmup = new PathPlannerAuto("Warmup").ignoringDisable(true);
-    warmup.schedule();
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
