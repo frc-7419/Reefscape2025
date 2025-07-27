@@ -503,7 +503,7 @@ public class RobotContainer {
                   setpoint = ScoringSetpoint.BARGE;
                   updateSetpointDisplay();
                 }));
-    
+
     operator
         .povDown()
         .onTrue(

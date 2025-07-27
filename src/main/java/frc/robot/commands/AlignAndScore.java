@@ -42,7 +42,6 @@ public class AlignAndScore extends SequentialCommandGroup {
       addCommands(
           new ParallelDeadlineGroup(
               new SequentialCommandGroup(
-                  new WaitCommand(0.25),
                   new ScoringSetpoints(elevator, wrist, scoringSetpoint),
                   new ParallelDeadlineGroup(
                       new RunCommand(() -> wristIntake.setPower(-0.5), wristIntake)

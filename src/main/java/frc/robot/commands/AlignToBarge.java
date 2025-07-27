@@ -5,8 +5,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -16,15 +14,21 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 public class AlignToBarge extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final CommandXboxController driver;
-  private final double targetX;
   private final double MaxSpeed = 4.5;
-  private final double targetTheta;
+  private double targetX;
+  private double targetTheta;
 
   private final ProfiledPIDController pidX = DrivetrainConstants.kPoseVelocityXController;
   private final ProfiledPIDController pidTheta = DrivetrainConstants.kPoseThetaController;
 
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+  // Define target positions for both alliances
+  private static final double RED_TARGET_X = 9.35;
+  private static final double BLUE_TARGET_X = 8.2;
+  private static final double RED_TARGET_THETA = 0;
+  private static final double BLUE_TARGET_THETA = 180;
 
   /**
    * Creates a new AlignToBarge command.
@@ -36,16 +40,6 @@ public class AlignToBarge extends Command {
     this.drivetrain = drivetrain;
     this.driver = driver;
 
-    // Set target X position based on alliance
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red) {
-      this.targetX = 9.35; // Red alliance
-      this.targetTheta = 0;
-    } else {
-      this.targetX = 8.2; // Blue alliance (default)
-      this.targetTheta = 180;
-    }
-
     addRequirements(drivetrain);
   }
 
@@ -53,14 +47,25 @@ public class AlignToBarge extends Command {
   @Override
   public void initialize() {
     Pose2d robotPose = drivetrain.getState().Pose;
+
+    // Determine which target is closer
+    double distanceToRed = Math.abs(robotPose.getX() - RED_TARGET_X);
+    double distanceToBlue = Math.abs(robotPose.getX() - BLUE_TARGET_X);
+
+    if (distanceToRed <= distanceToBlue) {
+      this.targetX = RED_TARGET_X;
+      this.targetTheta = RED_TARGET_THETA;
+    } else {
+      this.targetX = BLUE_TARGET_X;
+      this.targetTheta = BLUE_TARGET_THETA;
+    }
+
     resetPID(robotPose);
 
     SmartDashboard.putNumber("Barge Target X", targetX);
-    SmartDashboard.putString(
-        "Barge Alliance",
-        DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red
-            ? "Red"
-            : "Blue");
+    SmartDashboard.putString("Barge Target", targetX == RED_TARGET_X ? "Red" : "Blue");
+    SmartDashboard.putNumber("Barge Distance to Red", distanceToRed);
+    SmartDashboard.putNumber("Barge Distance to Blue", distanceToBlue);
 
     // Set tolerances
     pidX.setTolerance(0.02);
@@ -106,13 +111,6 @@ public class AlignToBarge extends Command {
     SmartDashboard.putNumber("Barge Current X", currentPose.getX());
     SmartDashboard.putNumber("Barge X Error", targetX - currentPose.getX());
     SmartDashboard.putBoolean("Barge At Goal", atGoal());
-
-    // Apply alliance transformation if needed
-    if (DriverStation.getAlliance().isPresent()
-        && DriverStation.getAlliance().get() == Alliance.Red) {
-      vx *= -1;
-      vy *= -1;
-    }
 
     final double vxf = vx;
     final double vyf = vy;
