@@ -87,12 +87,12 @@ public class ScoreBarge extends Command {
       case FLIPPING_WRIST:
         // Keep elevator at height and flip wrist to barge angle
         elevator.positionMM(Rotations.of(bargeSetpoint.elevatorHeight));
-        wristIntake.setPower(1.0);
         setWristAngle(bargeAngle);
+        wristIntake.setPower(1.0);
 
         // Check if wrist is close to barge angle
         double wristError = Math.abs(wrist.getPosition().in(Rotations) - bargeAngle.in(Rotations));
-        if (wristError < 0.05) { // Within 0.05 rotations of target
+        if (wristError < 0.3) { // Within 0.05 rotations of target
           currentState = State.SCORING;
           intakeStarted = true;
           scoringTimer.start();

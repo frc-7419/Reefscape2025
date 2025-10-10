@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 1.9757516822609493,
-        "y": 2.7800521026519562
+        "y": 2.780052102651956
       },
       "isLocked": false,
       "linkedName": "Coral Station (Processor)"
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 5.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
